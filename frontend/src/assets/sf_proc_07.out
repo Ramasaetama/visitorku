@@ -1,0 +1,19 @@
+
+7-Zip 19.00 (x64) : Copyright (c) 1999-2018 Igor Pavlov : 2019-02-21
+
+Scanning the drive for archives:
+1 file, 986123 bytes (964 KiB)
+
+Extracting archive: E:\web undangan pernikahan\V9 (Hosting)\weddlings_backend\vendor\composer\tmp-c5b06e6d847aad118e351c542bc875b0.zip
+--
+Path = E:\web undangan pernikahan\V9 (Hosting)\weddlings_backend\vendor\composer\tmp-c5b06e6d847aad118e351c542bc875b0.zip
+Type = zip
+Physical Size = 986123
+Comment = 4cd72faaa8f811e4cc63040cba167757660a5538
+
+Everything is Ok
+
+Folders: 119
+Files: 975
+Size:       2696162
+Compressed: 986123

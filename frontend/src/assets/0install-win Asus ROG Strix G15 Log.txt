@@ -1,0 +1,200 @@
+﻿
+/// 0install-win 2.28.0
+/// Install base: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install
+/// Command-line args: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install-win.exe" run --no-wait https://appdownload.deepl.com/windows/0install/deepl.xml
+/// Process 23156 started at: 11/24/2025 14:52:06
+
+[14:52:07] 23156 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:07] 23156 DEBUG: Loading trust database from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\trustdb.xml
+[14:52:07] 23156 INFO: Minimal-network Solve for faster startup
+[14:52:07] 23156 INFO: Running Backtracking Solver for https://appdownload.deepl.com/windows/0install/deepl.xml (run)
+[14:52:08] 23156 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:08] 23156 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:08] 23156 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:08] 23156 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:08] 23156 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/cef.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:08] 23156 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:08] 23156 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:08] 23156 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:08] 23156 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/msvcrt.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:08] 23156 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:08] 23156 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:08] 23156 DEBUG: Applying DOTNET_ROOT = Impl+. (Replace) for sha1new=fa6fde8ad1b2ad1b26f3c233024076964a7f75af, Windows-x86_64, 9.0.3, 03/13/2025, Stable, MIT License (https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml)
+[14:52:08] 23156 DEBUG: Applying CEF_PATH = Impl+. (Replace) for sha1new=e1c9862d34bcb2f2664f84e50b74f21eaa932d6e, Windows-x86_64, 135.0.17, 04/30/2025, Stable, BSD License (https://appdownload.deepl.com/windows/0install/cef.xml)
+[14:52:08] 23156 DEBUG: Applying PATH = Impl+. (Prepend) for sha1new=1a29891ae218c129c83484ae175be02e583ec551, Windows-x86_64, 14.44.35208.0, 07/01/2025, Stable (https://appdownload.deepl.com/windows/0install/msvcrt.xml)
+[14:52:08] 23156 DEBUG: Applying TESS_DATA_PATH = Impl+. (Replace) for sha1new=8116ea4ca618d49f5fb910b0087635cbc3bfa693, Windows-x86_64, 0.3, 12/10/2024, Stable, Apache-2.0 license (https://appdownload.deepl.com/windows/0install/tesseract-data.xml)
+[14:52:08] 23156 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\implementations\sha256new_KWZO3BD3RK7XIZR4T3TUKWALWUEI3L2C6LK6RWAEP7FZZ5HOCCDQ\DeepL.exe"
+[14:52:08] 23156 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:09] 23156 INFO: Starting background update because feeds have become stale
+[14:52:09] 23156 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install-win.exe" update --background --batch https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:09] 23156 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/0install-win.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#0install-win.xml
+[14:52:09] 23156 INFO: Starting periodic background self-update check
+[14:52:09] 23156 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install-win.exe" self --background update --batch
+[14:52:09] 23156 DEBUG: Not waiting for program to exit
+
+/// 0install-win 2.28.0
+/// Install base: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install
+/// Command-line args: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install-win.exe" update --background --batch https://appdownload.deepl.com/windows/0install/deepl.xml
+/// Process 25976 started at: 11/24/2025 14:52:09
+
+[14:52:09] 25976 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:09] 25976 DEBUG: Loading trust database from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\trustdb.xml
+[14:52:09] 25976 INFO: Running Backtracking Solver for https://appdownload.deepl.com/windows/0install/deepl.xml (run)
+[14:52:09] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:09] 25976 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:09] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-win[14:52:10] 17900 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/0install-win.xml
+[14:52:10] 17900 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/0install-win.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2f0install-win.xml
+[14:52:10] 17900 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/0install-win.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#0install-win.xml
+[14:52:10] 17900 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/0install-win.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#0install-win.xml
+[14:52:10] 17900 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/0install-win.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2f0install-win.xml
+[14:52:10] 17900 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/0install-win.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2f0install-win.xml
+/windows/0install/msvcrt.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:09] 25976 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:09] 25976 INFO: Running Refresh Solve to find updates
+[14:52:09] 25976 INFO: Running Backtracking Solver for https://appdownload.deepl.com/windows/0install/deepl.xml (run)
+[14:52:09] 25976 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:09] 25976 DEBUG: Starting async thread: AsyncFormWrapper: ProgressForm
+[14:52:09] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:09] 25976 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:09] 25976 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:10] 25976 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:10] 25976 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/deepl.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:10] 25976 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:10] 25976 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:10] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:10] 25976 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml
+[14:52:10] 25976 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml
+[14:52:10] 25976 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:10] 25976 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:10] 25976 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:10] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:10] 25976 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/cef.xml
+[14:52:11] 25976 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/cef.xml
+[14:52:11] 25976 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/cef.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:11] 25976 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:11] 25976 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:11] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/cef.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:11] 25976 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/tesseract-data.xml
+[14:52:11] 25976 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml
+[14:52:11] 25976 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:11] 25976 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:11] 25976 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:11] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:11] 25976 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/msvcrt.xml
+[14:52:11] 25976 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/msvcrt.xml
+[14:52:11] 25976 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/msvcrt.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:11] 25976 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:11] 25976 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:11] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/msvcrt.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:11] 25976 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:12] 25976 DEBUG: Attempting to connect to Store Service
+[14:52:12] 25976 DEBUG: Attempting to store implementation sha256new_FMEHOS3PY3YFIZZ2Z3CPWMYAQUBUDQ5SM5I7DFLB4X2F2SO3CB5A in ReadWrite: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\implementations
+[14:52:12] 25976 DEBUG: Temp directory for extracting: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\implementations\0install-extract-zjfgjtw0.0e4
+[14:52:12] 25976 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/archives/deepl-25.11.3.18890.tar.zst
+[14:52:17] 25976 DEBUG: Enabling write protection for: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\implementations\sha256new_FMEHOS3PY3YFIZZ2Z3CPWMYAQUBUDQ5SM5I7DFLB4X2F2SO3CB5A
+[14:52:17] 25976 INFO: Changes found:
+	https://appdownload.deepl.com/windows/0install/deepl.xml: 25.10.3.18629 -> 25.11.3.18890
+968 started at: 11/24/2025 14:52:13
+
+[14:52:13] 28968 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:13] 28968 DEBUG: Loading trust database from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\trustdb.xml
+[14:52:13] 28968 INFO: Running Backtracking Solver for https://appdownload.deepl.com/windows/0install/deepl.xml (run)
+[14:52:13] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:14] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:14] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:14] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:14] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/cef.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:14] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:14] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:14] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:14] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/msvcrt.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:14] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:14] 28968 INFO: Running Refresh Solve to find updates
+[14:52:14] 28968 INFO: Running Backtracking Solver for https://appdownload.deepl.com/windows/0install/deepl.xml (run)
+[14:52:14] 28968 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:14] 28968 DEBUG: Starting async thread: AsyncFormWrapper: ProgressForm
+[14:52:14] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:14] 28968 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:14] 28968 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:15] 28968 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:16] 28968 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/deepl.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:16] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:16] 28968 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:16] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:16] 28968 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml
+[14:52:16] 28968 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml
+[14:52:16] 28968 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:16] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:16] 28968 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:16] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:16] 28968 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/cef.xml
+[14:52:17] 28968 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/cef.xml
+[14:52:17] 28968 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/cef.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:17] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:17] 28968 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:17] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/cef.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:17] 28968 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/tesseract-data.xml
+[14:52:17] 28968 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml
+[14:52:17] 28968 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:17] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:17] 28968 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:17] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:17] 28968 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/msvcrt.xml
+[14:52:18] 28968 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/msvcrt.xml
+[14:52:18] 28968 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/msvcrt.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:18] 28968 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:18] 28968 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:18] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/msvcrt.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:18] 28968 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:18] 28968 INFO: Starting background removal of outdated implementations
+[14:52:18] 28968 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install-win.exe" update-all --background --clean --batch
+[14:52:18] 28968 INFO: No updates found:
+	No updates found
+
+/// 0install-win 2.28.0
+/// Install base: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install
+/// Command-line args: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install-win.exe" update-all --background --clean --batch
+/// Process 8748 started at: 11/24/2025 14:52:18
+
+[14:52:18] 8748 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:18] 8748 DEBUG: Loading trust database from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\trustdb.xml
+[14:52:18] 8748 INFO: Running Backtracking Solver for https://appdownload.deepl.com/windows/0install/deepl.xml (run)
+[14:52:18] 8748 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:18] 8748 DEBUG: Starting async thread: AsyncFormWrapper: ProgressForm
+[14:52:18] 8748 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:18] 8748 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:18] 8748 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:19] 8748 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:19] 8748 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/deepl.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:19] 8748 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:19] 8748 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/deepl.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#deepl.xml
+[14:52:19] 8748 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:19] 8748 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml
+[14:52:19] 8748 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml
+[14:52:19] 8748 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:19] 8748 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:19] 8748 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#dotnet-windowsdesktop-runtime.xml
+[14:52:19] 8748 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/dotnet-windowsdesktop-runtime.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdotnet-windowsdesktop-runtime.xml
+[14:52:19] 8748 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/cef.xml
+[14:52:20] 8748 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/cef.xml
+[14:52:20] 8748 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/cef.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:20] 8748 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:20] 8748 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/cef.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#cef.xml
+[14:52:20] 8748 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/cef.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fcef.xml
+[14:52:20] 8748 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/tesseract-data.xml
+[14:52:20] 8748 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml
+[14:52:20] 8748 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:20] 8748 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:20] 8748 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/tesseract-data.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#tesseract-data.xml
+[14:52:20] 8748 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/tesseract-data.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2ftesseract-data.xml
+[14:52:20] 8748 DEBUG: Task: Downloading https://appdownload.deepl.com/windows/0install/msvcrt.xml
+[14:52:21] 8748 DEBUG: Importing feed https://appdownload.deepl.com/windows/0install/msvcrt.xml
+[14:52:21] 8748 DEBUG: Adding feed https://appdownload.deepl.com/windows/0install/msvcrt.xml to disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:21] 8748 DEBUG: Loading feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:21] 8748 DEBUG: Saving feed preferences for https://appdownload.deepl.com/windows/0install/msvcrt.xml to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\feeds\https%3a##appdownload.deepl.com#windows#0install#msvcrt.xml
+[14:52:21] 8748 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/msvcrt.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fmsvcrt.xml
+[14:52:21] 8748 DEBUG: Task: Removing outdated implementations
+[14:52:21] 8748 INFO: Deleting implementation sha256new_KWZO3BD3RK7XIZR4T3TUKWALWUEI3L2C6LK6RWAEP7FZZ5HOCCDQ
+[14:52:21] 8748 DEBUG: Searching for open file references
+[14:52:21] 8748 INFO: Using default answer No for question: The files you want to delete are currently in use. Do you want to close these applications and continue?
+	DeepL

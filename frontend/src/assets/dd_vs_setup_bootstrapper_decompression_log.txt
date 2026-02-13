@@ -1,0 +1,9 @@
+[11/25/2025, 15:6:19] === Logging started: 2025/11/25 15:06:19 ===
+[11/25/2025, 15:6:19] Executable: C:\Users\Asus ROG Strix G15\AppData\Local\Temp\821e3c840b0e41878a2fcb079efa0e53\vs_setup_bootstrapper.exe v17.14.36717.8
+[11/25/2025, 15:6:19] --- logging level: standard ---
+[11/25/2025, 15:6:19] Directory 'C:\Users\Asus ROG Strix G15\AppData\Local\Temp\b70f367750aa4f98a381f602a4d65f70' has been selected for file extraction
+[11/25/2025, 15:6:19] Extracting files to: C:\Users\Asus ROG Strix G15\AppData\Local\Temp\b70f367750aa4f98a381f602a4d65f70
+[11/25/2025, 15:6:20] Extraction took 610 milliseconds
+[11/25/2025, 15:6:20] The entire Box execution exiting with result code: 0x0
+[11/25/2025, 15:6:20] Launched extracted application exiting with result code: 0x0
+[11/25/2025, 15:6:20] === Logging stopped: 2025/11/25 15:06:20 ===

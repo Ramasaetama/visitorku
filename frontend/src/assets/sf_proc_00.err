@@ -1,0 +1,269 @@
+[Sat Jan 24 09:38:31 2026] PHP 8.2.12 Development Server (http://127.0.0.1:8000) started
+[Sat Jan 24 09:38:39 2026] 127.0.0.1:53714 Accepted
+[Sat Jan 24 09:38:45 2026] 127.0.0.1:53714 Closed without sending a request; it was probably just an unused speculative preconnection
+[Sat Jan 24 09:38:45 2026] 127.0.0.1:53714 Closing
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:64435 Accepted
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:64435 Closing
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:64519 Accepted
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:64519 [200]: GET /css/style.css
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:64519 Closing
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:56265 Accepted
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:62779 Accepted
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:56265 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:62779 [200]: GET /uploads/abstract.svg
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:52852 Accepted
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:53790 Accepted
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:56265 Closing
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:62779 Closing
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:52852 [200]: GET /uploads/pure.svg
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:53790 [200]: GET /uploads/time.svg
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:52852 Closing
+[Sat Jan 24 09:43:34 2026] 127.0.0.1:53790 Closing
+[Sat Jan 24 09:43:35 2026] 127.0.0.1:50185 Accepted
+[Sat Jan 24 09:43:35 2026] 127.0.0.1:50185 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:43:35 2026] 127.0.0.1:50185 Closing
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:58672 Accepted
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:58672 Closing
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:63770 Accepted
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:63770 [200]: GET /js/script.js
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:58809 Accepted
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:58809 [200]: GET /css/style.css
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:63770 Closing
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:58809 Closing
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:55183 Accepted
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:55183 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:55183 Closing
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:63808 Accepted
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:63808 [200]: GET /favicon.ico
+[Sat Jan 24 09:43:37 2026] 127.0.0.1:63808 Closing
+[Sat Jan 24 09:43:39 2026] 127.0.0.1:64711 Accepted
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:64711 Closing
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:55704 Accepted
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:55704 [200]: GET /css/style.css
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:49243 Accepted
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:56145 Accepted
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:49243 [200]: GET /js/script.js
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:56145 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:55704 Closing
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:49243 Closing
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:56145 Closing
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:65491 Accepted
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:65491 [200]: GET /favicon.ico
+[Sat Jan 24 09:43:42 2026] 127.0.0.1:65491 Closing
+[Sat Jan 24 09:44:42 2026] 127.0.0.1:55427 Accepted
+[Sat Jan 24 09:44:43 2026] 127.0.0.1:55427 Closing
+[Sat Jan 24 09:44:43 2026] 127.0.0.1:52045 Accepted
+[Sat Jan 24 09:44:44 2026] 127.0.0.1:52045 Closing
+[Sat Jan 24 09:44:44 2026] 127.0.0.1:53074 Accepted
+[Sat Jan 24 09:44:44 2026] 127.0.0.1:64102 Accepted
+[Sat Jan 24 09:44:44 2026] 127.0.0.1:53074 [200]: GET /css/style.css
+[Sat Jan 24 09:44:44 2026] 127.0.0.1:64102 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:44:44 2026] 127.0.0.1:61856 Accepted
+[Sat Jan 24 09:44:44 2026] 127.0.0.1:61514 Accepted
+[Sat Jan 24 09:44:45 2026] 127.0.0.1:61856 Closing
+[Sat Jan 24 09:44:45 2026] 127.0.0.1:53074 Closing
+[Sat Jan 24 09:44:45 2026] 127.0.0.1:61514 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:44:45 2026] 127.0.0.1:64102 Closing
+[Sat Jan 24 09:44:45 2026] 127.0.0.1:61514 Closing
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:57595 Accepted
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:57595 Closing
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:65471 Accepted
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:65471 [200]: GET /css/style.css
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:56690 Accepted
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:52267 Accepted
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:56690 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:52267 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:65471 Closing
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:56690 Closing
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:52267 Closing
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:64001 Accepted
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:60766 Accepted
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:52846 Accepted
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:64001 [200]: GET /uploads/abstract.svg
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:60766 [200]: GET /uploads/pure.svg
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:52846 [200]: GET /uploads/time.svg
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:64001 Closing
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:60766 Closing
+[Sat Jan 24 09:44:51 2026] 127.0.0.1:52846 Closing
+[Sat Jan 24 09:45:02 2026] 127.0.0.1:51183 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:51183 Closing
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:58045 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:55685 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:58045 [200]: GET /uploads/undangan-website.webp
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:63739 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:55685 [200]: GET /css/style.css
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:53626 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:63739 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:64206 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:53626 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:58045 Closing
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:64033 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:64206 [200]: GET /uploads/blue-casanova.webp
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:55685 Closing
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:56143 Accepted
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:64033 [200]: GET /uploads/minang-maroon.webp
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:63739 Closing
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:56143 [200]: GET /js/script.js
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:53626 Closing
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:64206 Closing
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:64033 Closing
+[Sat Jan 24 09:45:03 2026] 127.0.0.1:56143 Closing
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:59353 Accepted
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:59353 Closing
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:61131 Accepted
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:61131 [200]: GET /css/style.css
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:50591 Accepted
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:63845 Accepted
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:50591 [200]: GET /uploads/blue-casanova.webp
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:63845 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:61131 Closing
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:50591 Closing
+[Sat Jan 24 09:45:11 2026] 127.0.0.1:63845 Closing
+[Sat Jan 24 09:46:21 2026] 127.0.0.1:64267 Accepted
+[Sat Jan 24 09:46:22 2026] 127.0.0.1:64267 Closing
+[Sat Jan 24 09:46:22 2026] 127.0.0.1:64976 Accepted
+[Sat Jan 24 09:46:22 2026] 127.0.0.1:64976 Closing
+[Sat Jan 24 09:46:22 2026] 127.0.0.1:60595 Accepted
+[Sat Jan 24 09:46:22 2026] 127.0.0.1:60595 [200]: GET /css/style.css
+[Sat Jan 24 09:46:22 2026] 127.0.0.1:60595 Closing
+[Sat Jan 24 09:46:38 2026] 127.0.0.1:59691 Accepted
+[Sat Jan 24 09:46:40 2026] 127.0.0.1:59691 Closing
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:53046 Accepted
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:53046 Closing
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:49671 Accepted
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:49671 [200]: GET /css/style.css
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:52502 Accepted
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:49672 Accepted
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:56519 Accepted
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:49671 Closing
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:52502 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:49672 [200]: GET /uploads/blue-casanova.webp
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:56519 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:52502 Closing
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:49672 Closing
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:56519 Closing
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:60211 Accepted
+[Sat Jan 24 09:46:52 2026] 127.0.0.1:60211 Closing
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:56766 Accepted
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:56766 Closing
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54230 Accepted
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54230 [200]: GET /css/style.css
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:49306 Accepted
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:56533 Accepted
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:49306 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:56533 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54230 Closing
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:49306 Closing
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:56533 Closing
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54483 Accepted
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54020 Accepted
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:53578 Accepted
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54483 [200]: GET /uploads/abstract.svg
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54020 [200]: GET /uploads/pure.svg
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:53578 [200]: GET /uploads/time.svg
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54483 Closing
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:54020 Closing
+[Sat Jan 24 09:47:54 2026] 127.0.0.1:53578 Closing
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:53561 Accepted
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:53561 Closing
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:60343 Accepted
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:60343 [200]: GET /css/style.css
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:64765 Accepted
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:62779 Accepted
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:60343 Closing
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:64765 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:62779 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:64765 Closing
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:62779 Closing
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:62709 Accepted
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:62709 [200]: GET /js/script.js
+[Sat Jan 24 09:48:45 2026] 127.0.0.1:62709 Closing
+[Sat Jan 24 09:49:37 2026] 127.0.0.1:59063 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59063 Closing
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:63830 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:63830 [200]: GET /css/style.css
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59400 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59111 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:57552 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:63830 Closing
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59400 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59111 [200]: GET /uploads/undangan-website.webp
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:57552 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59400 Closing
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59111 Closing
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:57552 Closing
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59083 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:54422 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:62902 Accepted
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59083 [200]: GET /uploads/blue-casanova.webp
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:54422 [200]: GET /uploads/minang-maroon.webp
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:62902 [200]: GET /js/script.js
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:59083 Closing
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:62902 Closing
+[Sat Jan 24 09:49:38 2026] 127.0.0.1:54422 Closing
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:57678 Accepted
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:57678 Closing
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:51724 Accepted
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:51724 [200]: GET /css/style.css
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:59739 Accepted
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:50169 Accepted
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:59739 [200]: GET /uploads/blue-casanova.webp
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:50169 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:51724 Closing
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:59739 Closing
+[Sat Jan 24 09:49:47 2026] 127.0.0.1:50169 Closing
+[Sat Jan 24 09:50:17 2026] 127.0.0.1:51974 Accepted
+[Sat Jan 24 09:50:17 2026] 127.0.0.1:51974 Closing
+[Sat Jan 24 09:50:17 2026] 127.0.0.1:51848 Accepted
+[Sat Jan 24 09:50:18 2026] 127.0.0.1:51848 Closing
+[Sat Jan 24 09:50:18 2026] 127.0.0.1:61137 Accepted
+[Sat Jan 24 09:50:18 2026] 127.0.0.1:61137 [200]: GET /css/style.css
+[Sat Jan 24 09:50:18 2026] 127.0.0.1:61137 Closing
+[Sat Jan 24 09:50:20 2026] 127.0.0.1:60383 Accepted
+[Sat Jan 24 09:50:20 2026] 127.0.0.1:60383 Closing
+[Sat Jan 24 09:50:56 2026] 127.0.0.1:52367 Accepted
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:52367 Closing
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:65352 Accepted
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:65352 [200]: GET /css/style.css
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:54112 Accepted
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:59437 Accepted
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:54112 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:59437 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:65352 Closing
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:54112 Closing
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:59437 Closing
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:60429 Accepted
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:59442 Accepted
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:49671 Accepted
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:60429 [200]: GET /uploads/abstract.svg
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:59442 [200]: GET /uploads/pure.svg
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:49671 [200]: GET /uploads/time.svg
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:60429 Closing
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:59442 Closing
+[Sat Jan 24 09:50:58 2026] 127.0.0.1:49671 Closing
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:56900 Accepted
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:56900 Closing
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:61664 Accepted
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:61664 [200]: GET /css/style.css
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:64510 Accepted
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:59328 Accepted
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:61664 Closing
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:64510 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:59328 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:64510 Closing
+[Sat Jan 24 09:53:56 2026] 127.0.0.1:59328 Closing
+[Sat Jan 24 09:54:05 2026] 127.0.0.1:63285 Accepted
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:63285 Closing
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52067 Accepted
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52067 [200]: GET /css/style.css
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52520 Accepted
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:61245 Accepted
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52520 [200]: GET /uploads/avatar.png
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52736 Accepted
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:61245 [200]: GET /uploads/logo.svg
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52067 Closing
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52736 [200]: GET /js/script.js
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52520 Closing
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:61245 Closing
+[Sat Jan 24 09:54:07 2026] 127.0.0.1:52736 Closing
+^C

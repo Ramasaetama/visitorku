@@ -1,0 +1,26 @@
+﻿
+/// 0install 2.28.0
+/// Install base: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install
+/// Command-line args: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe" list-apps --batch --xml https://appdownload.deepl.com/windows/0install/deepl.xml
+/// Process 25872 started at: 11/24/2025 14:52:11
+
+
+/// 0install 2.28.0
+/// Install base: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install
+/// Command-line args: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe" list-apps --batch --xml https://appdownload.deepl.com/windows/0install/deepl.xml
+/// Process 19772 started at: 11/24/2025 14:52:11
+
+
+/// 0install 2.28.0
+/// Install base: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install
+/// Command-line args: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe" integrate --batch https://appdownload.deepl.com/windows/0install/deepl.xml --add default-access-point
+/// Process 1896 started at: 11/24/2025 14:52:12
+
+[14:52:12] 1896 DEBUG: Reading config from file: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\global
+[14:52:12] 1896 DEBUG: Loading AppList for IntegrationManager from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\desktop-integration\app-list.xml
+[14:52:12] 1896 DEBUG: Loading trust database from: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\injector\trustdb.xml
+[14:52:12] 1896 DEBUG: Loading feed https://appdownload.deepl.com/windows/0install/deepl.xml from disk cache: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\interfaces\https%3a%2f%2fappdownload.deepl.com%2fwindows%2f0install%2fdeepl.xml
+[14:52:12] 1896 INFO: Downloading https://appdownload.deepl.com/windows/0install/deepl-splash.png
+[14:52:12] 1896 INFO: Applying desktop integration for DeepL
+[14:52:12] 1896 INFO: Downloading https://appdownload.deepl.com/windows/0install/deepl.ico
+[14:52:13] 1896 DEBUG: Saving AppList to: C:\Users\Asus ROG Strix G15\AppData\Roaming\0install.net\desktop-integration\app-list.xml

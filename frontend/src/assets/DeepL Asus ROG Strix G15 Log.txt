@@ -1,0 +1,19 @@
+﻿
+/// DeepL 25.10.3.18629
+/// Install base: C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\implementations\sha256new_KWZO3BD3RK7XIZR4T3TUKWALWUEI3L2C6LK6RWAEP7FZZ5HOCCDQ
+/// Command-line args: "C:\Users\Asus ROG Strix G15\AppData\Local\0install.net\implementations\sha256new_KWZO3BD3RK7XIZR4T3TUKWALWUEI3L2C6LK6RWAEP7FZZ5HOCCDQ\DeepL.dll"
+/// Process 20524 started at: 11/24/2025 14:52:10
+
+[14:52:10] 20524 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe" list-apps --batch --xml https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:10] 20524 DEBUG: Starting background thread: StreamConsumer
+[14:52:10] 20524 DEBUG: Starting background thread: StreamConsumer
+[14:52:11] 20524 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe" list-apps --batch --xml https://appdownload.deepl.com/windows/0install/deepl.xml
+[14:52:11] 20524 DEBUG: Starting background thread: StreamConsumer
+[14:52:11] 20524 DEBUG: Starting background thread: StreamConsumer
+[14:52:12] 20524 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe" integrate --batch https://appdownload.deepl.com/windows/0install/deepl.xml --add default-access-point
+[14:52:12] 20524 DEBUG: Starting background thread: StreamConsumer
+[14:52:12] 20524 DEBUG: Starting background thread: StreamConsumer
+[14:52:12] 20524 INFO: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe: Downloading https://appdownload.deepl.com/windows/0install/deepl-splash.png
+[14:52:12] 20524 INFO: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe: Applying desktop integration for DeepL
+[14:52:12] 20524 INFO: C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install.exe: Downloading https://appdownload.deepl.com/windows/0install/deepl.ico
+[14:52:13] 20524 DEBUG: Launching process: "C:\Users\Asus ROG Strix G15\AppData\Roaming\Programs\Zero Install\0install-win.exe" update --batch https://appdownload.deepl.com/windows/0install/deepl.xml --background
