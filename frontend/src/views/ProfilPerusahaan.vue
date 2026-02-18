@@ -3,6 +3,7 @@
     
     <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-[56px] flex items-center justify-between px-6 overflow-hidden">
       <div 
+        
         class="absolute inset-0" 
         :style="{ 
           backgroundImage: `url(${patternBg})`, 
@@ -100,8 +101,7 @@
                 </div>
                 <div class="flex-1">
                   <div class="w-full rounded-xl overflow-hidden relative cursor-pointer group" @click="openUploadModal('header')">
-                    <div class="h-[100px] w-full bg-gradient-to-r from-[#F7941D] to-[#F9A825] flex items-center justify-end px-6 transition-all" :style="companyProfile.headerBg ? { backgroundImage: `url(${companyProfile.headerBg})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}">
-                      <button class="bg-white/25 hover:bg-white/40 text-white px-4 py-1.5 rounded-lg text-[12px] font-medium backdrop-blur-sm transition shadow-sm">Ubah</button>
+                    <div class="h-[100px] w-full bg-gradient-to-r from-[#F7941D] to-[#F9A825] flex items-center justify-end px-6 transition-all" :style="companyProfile.headerBg ? { backgroundImage: `url(${companyProfile.headerBg})`, backgroundSize: '100% 100%', backgroundPosition: 'center' } : {}">
                     </div>
                   </div>
                   <p class="text-[12px] text-[#EE9D0F] mt-2 italic">Pastikan file menggunakan format PNG dengan latar transparan</p>
@@ -467,7 +467,7 @@ const availableScopes = ref([
 ]);
 
 const modalTitle = computed(() => {
-  return uploadType.value === 'logo' ? 'Ubah Logo' : 'Customize Header';
+  return uploadType.value === 'logo' ? 'Ubah Logo' : 'Sesuaikan Header';
 });
 
 const modalDescription = computed(() => {
