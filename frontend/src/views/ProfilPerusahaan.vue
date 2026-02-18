@@ -513,7 +513,7 @@ const processGenerate = () => {
   
   setTimeout(() => {
       const randomStr = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-      generatedToken.value = `vk_${randomStr}`; 
+      generatedToken.value = `${randomStr}`; 
       isCopied.value = false;
 
       showLoadingModal.value = false;
