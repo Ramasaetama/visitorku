@@ -316,6 +316,7 @@
         </div>
     </div>
 
+    
     <div v-if="showSuccessModal" class="fixed inset-0 z-60 flex items-center justify-center p-4 font-['Poppins']">
       
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showSuccessModal = false"></div>
@@ -413,7 +414,7 @@ const availableScopes = ref([
     id: 'branch',
     label: 'Branch',
     desc: 'Digunakan untuk mengelola data cabang perusahaan',
-    isOpen: true,
+    isOpen: false,
     isSensitive: true, 
     checked: false,
     permissions: [
