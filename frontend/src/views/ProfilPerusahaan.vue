@@ -539,7 +539,7 @@ const copyToken = async () => {
 };
 
 const saveProfile = () => {
-  console.log('💾 Save Profile clicked!', companyProfile.value);
+  console.log('Save Profile clicked!', companyProfile.value);
   alert('Data profil akan disimpan ke backend');
 };
 
