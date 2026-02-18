@@ -185,7 +185,16 @@ const confirmUpload = () => {
       file: selectedFile.value,
       previewUrl: previewUrl.value
     });
-    closeModal();
+    // Don't revoke the URL - the parent needs it to display the image
+    // Just reset state without revoking
+    selectedFile.value = null;
+    previewUrl.value = null;
+    errorMessage.value = '';
+    isDragging.value = false;
+    if (fileInput.value) {
+      fileInput.value.value = '';
+    }
+    emit('close');
   }
 };
 
