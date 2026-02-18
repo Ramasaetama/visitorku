@@ -429,7 +429,7 @@ const availableScopes = ref([
     desc: 'Digunakan untuk membaca kategori kunjungan',
     isOpen: false,
     checked: false,
-    permissions: [ { id: 'get', label: 'Get', desc: 'Read category', checked: false } ]
+    permissions: []
   },
   {
     id: 'event',
