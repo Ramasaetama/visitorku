@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
     
-    <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-[56px] flex items-center justify-between px-6 overflow-hidden">
+    <header class="relative bg-linear-to-r from-[#F7941D] to-[#F9A825] h-14 flex items-center justify-between px-6 overflow-hidden">
       <div 
         class="absolute inset-0" 
         :style="{ 
@@ -45,16 +45,16 @@
               <p class="text-sm text-gray-500">Kelola informasi profil perusahaan Anda</p>
             </div>
 
-            <div class="max-w-[900px] mx-auto w-full">
+            <div class="max-w-225 mx-auto w-full">
 
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
-                <div class="lg:w-[220px] flex-shrink-0">
+                <div class="lg:w-55 shrink-0">
                   <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Profil</h2>
                   <p class="text-[13px] text-gray-500 leading-relaxed">Informasi ini digunakan sebagai identitas resmi perusahaan.</p>
                 </div>
                 <div class="flex-1 space-y-6">
                    <div class="flex items-start gap-4">
-                      <div @click="openUploadModal('logo')" class="w-[80px] h-[80px] rounded-full bg-gradient-to-br from-[#F5A623] to-[#E8920D] flex-shrink-0 relative overflow-hidden cursor-pointer group shadow-md">
+                      <div @click="openUploadModal('logo')" class="w-20 h-20 rounded-full bg-linear-to-br from-[#F5A623] to-[#E8920D] shrink-0 relative overflow-hidden cursor-pointer group shadow-md">
                         <img v-if="companyProfile.logoUrl" :src="companyProfile.logoUrl" alt="Logo" class="absolute inset-0 w-full h-full object-cover" />
                         <div v-else class="absolute inset-0 flex items-center justify-center"><span class="text-[30px] font-bold text-white">GM</span></div>
                         <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-white/40 flex items-center justify-center group-hover:bg-white/55 transition"><span class="text-[11px] font-semibold text-[#EE9D0F]">Ubah</span></div>
@@ -70,20 +70,20 @@
                    </div>
                    <div>
                     <label class="block text-[13px] font-medium text-gray-700 mb-2">Alamat Perusahan<span class="text-red-400">*</span></label>
-                    <textarea v-model="companyProfile.address" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition resize-y min-h-[80px]" rows="3"></textarea>
+                    <textarea v-model="companyProfile.address" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition resize-y min-h-20" rows="3"></textarea>
                    </div>
                 </div>
               </div>
               <hr class="border-gray-200 mb-10" />
 
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
-                <div class="lg:w-[220px] flex-shrink-0">
+                <div class="lg:w-55 shrink-0">
                   <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Warna Brand</h2>
                   <p class="text-[13px] text-gray-500 leading-relaxed">Pilih tema warna yang diinginkan</p>
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-3 bg-[#FEF3E2] px-4 py-3 rounded-xl w-fit">
-                    <div class="w-[42px] h-[42px] rounded-full border border-gray-200 cursor-pointer relative overflow-hidden flex-shrink-0" :style="{ backgroundColor: companyProfile.brandColor }" @click="$refs.colorInput.click()">
+                    <div class="w-10.5 h-10.5 rounded-full border border-gray-200 cursor-pointer relative overflow-hidden shrink-0" :style="{ backgroundColor: companyProfile.brandColor }" @click="$refs.colorInput.click()">
                       <input ref="colorInput" v-model="companyProfile.brandColor" type="color" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
                     </div>
                     <div><span class="text-[14px] font-mono text-gray-700 tracking-wider">{{ companyProfile.brandColor.replace('#', '').toUpperCase() }}</span></div>
@@ -94,13 +94,13 @@
               <hr class="border-gray-200 mb-10" />
 
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
-                <div class="lg:w-[220px] flex-shrink-0">
+                <div class="lg:w-55 shrink-0">
                   <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Sesuaikan Header</h2>
                   <p class="text-[13px] text-gray-500 leading-relaxed">Anda dapat menyesuaikan header sesuai identitas.</p>
                 </div>
                 <div class="flex-1">
                   <div class="w-full rounded-xl overflow-hidden relative cursor-pointer group" @click="openUploadModal('header')">
-                    <div class="h-[100px] w-full bg-gradient-to-r from-[#F7941D] to-[#F9A825] flex items-center justify-end px-6 transition-all" :style="companyProfile.headerBg ? { backgroundImage: `url(${companyProfile.headerBg})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}">
+                    <div class="h-25 w-full bg-linear-to-r from-[#F7941D] to-[#F9A825] flex items-center justify-end px-6 transition-all" :style="companyProfile.headerBg ? { backgroundImage: `url(${companyProfile.headerBg})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}">
                       <button class="bg-white/25 hover:bg-white/40 text-white px-4 py-1.5 rounded-lg text-[12px] font-medium backdrop-blur-sm transition shadow-sm">Ubah</button>
                     </div>
                   </div>
@@ -110,7 +110,7 @@
               <hr class="border-gray-200 mb-10" />
 
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
-                <div class="lg:w-[220px] flex-shrink-0">
+                <div class="lg:w-55 shrink-0">
                   <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Bahasa &amp; Wilayah</h2>
                   <p class="text-[13px] text-gray-500 leading-relaxed">Atur bahasa &amp; wilayah</p>
                 </div>
@@ -149,9 +149,9 @@
                   </button>
                 </div>
                 
-                <div v-if="!existingToken" class="text-center py-12 px-6 bg-gradient-to-b from-gray-50 to-white rounded-xl border border-dashed border-gray-200">
+                <div v-if="!existingToken" class="text-center py-12 px-6 bg-linear-to-b from-gray-50 to-white rounded-xl border border-dashed border-gray-200">
                   <div class="flex justify-center mb-4">
-                    <img :src="nochathistory" alt="API Icon" class="w-[200px] h-[200px] object-contain opacity-80" />
+                    <img :src="nochathistory" alt="API Icon" class="w-50 h-50 object-contain opacity-80" />
                   </div>
                   <h3 class="text-[15px] font-semibold text-gray-800 mb-1.5">Generate token untuk memberikan akses API</h3>
                   <p class="text-[13px] text-gray-500 mb-6">Token digunakan sebagai akses API untuk kebutuhan integrasi sistem.</p>
@@ -268,7 +268,7 @@
                     </div>
                 </div>
                 <div v-if="scope.isSensitive" class="mt-4 bg-[#FFF8E6] px-4 py-3 rounded-lg flex items-center gap-2 border border-[#FFEAC2]">
-                  <svg class="w-5 h-5 text-[#F7941D] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  <svg class="w-5 h-5 text-[#F7941D] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   <span class="text-xs text-[#d68516] font-medium">Scope ini mengakses data sensitif perusahaan</span>
                 </div>
               </div>
@@ -290,12 +290,12 @@
       </template>
     </Modal>
 
-    <div v-if="showLoadingModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 font-['Poppins']">
+    <div v-if="showLoadingModal" class="fixed inset-0 z-60 flex items-center justify-center p-4 font-['Poppins']">
         <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-[700px] p-12 flex flex-col items-center text-center">
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-175 p-12 flex flex-col items-center text-center">
             
             <div class="mb-8">
-                <img :src="nochathistory" alt="Loading Illustration" class="w-[140px] h-[140px] object-contain opacity-90 mx-auto" />
+                <img :src="nochathistory" alt="Loading Illustration" class="w-35 h-35 object-contain opacity-90 mx-auto" />
             </div>
 
             <div class="flex items-center gap-4 mb-8">
@@ -316,11 +316,11 @@
         </div>
     </div>
 
-    <div v-if="showSuccessModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 font-['Poppins']">
+    <div v-if="showSuccessModal" class="fixed inset-0 z-60 flex items-center justify-center p-4 font-['Poppins']">
       
       <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="showSuccessModal = false"></div>
       
-      <div class="relative bg-white rounded-3xl shadow-xl w-full max-w-[710px] p-12 flex flex-col items-center text-center">
+      <div class="relative bg-white rounded-3xl shadow-xl w-full max-w-177.5 p-12 flex flex-col items-center text-center">
         
         <button @click="showSuccessModal = false" class="absolute top-5 right-5 p-2 text-gray-400 hover:text-gray-600 transition">
              <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -329,7 +329,7 @@
         </button>
 
         <div class="mb-6">
-            <img :src="nochathistory" alt="Success Illustration" class="w-[140px] h-[140px] object-contain opacity-90 mx-auto" />
+            <img :src="nochathistory" alt="Success Illustration" class="w-35 h-35 object-contain opacity-90 mx-auto" />
         </div>
 
         <h3 class="text-[24px] font-bold text-gray-900 mb-2">Token Berhasil Dibuat</h3>
@@ -345,7 +345,7 @@
            
            <button 
              @click="copyToken"
-             class="flex-shrink-0 p-2 text-gray-400 hover:text-[#EE9D0F] transition-colors"
+             class="shrink-0 p-2 text-gray-400 hover:text-[#EE9D0F] transition-colors"
              title="Salin Token"
            >
               <svg v-if="!isCopied" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -396,13 +396,12 @@ const companyProfile = ref({
 const showUploadModal = ref(false);
 const uploadType = ref('logo'); 
 
-// --- STATES UNTUK FLOW TOKEN ---
-const showFormModal = ref(false);    // 1. Form
-const showLoadingModal = ref(false); // 2. Loading
-const showSuccessModal = ref(false); // 3. Success
+const showFormModal = ref(false);  
+const showLoadingModal = ref(false); 
+const showSuccessModal = ref(false);
 const generatedToken = ref('');
 const isCopied = ref(false);
-const existingToken = ref(null); // State untuk menyimpan data token yg sudah digenerate
+const existingToken = ref(null);
 
 const tokenForm = ref({
   name: '',
@@ -508,28 +507,23 @@ const processGenerate = () => {
     return;
   }
   
-  // 1. TUTUP FORM INPUT
   showFormModal.value = false;
   
-  // 2. BUKA LOADING MODAL
   showLoadingModal.value = true;
   
-  // 3. Simulasi Delay 2 Detik
   setTimeout(() => {
       const randomStr = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
       generatedToken.value = `vk_${randomStr}`; 
       isCopied.value = false;
 
-      // 4. TUTUP LOADING, BUKA SUCCESS MODAL
       showLoadingModal.value = false;
       showSuccessModal.value = true;
       
-      // 5. SET STATE TOKEN JADI ADA (Simpan data token di sini)
       existingToken.value = {
-          name: tokenForm.value.name, // Menyimpan nama token dari form
+          name: tokenForm.value.name,
           token: generatedToken.value,
           scopes: availableScopes.value.filter(s => s.checked).map(s => s.label),
-          createdAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) // Format tanggal Indonesia
+          createdAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) 
       }
   }, 2000);
 };
@@ -564,7 +558,7 @@ const handleImageConfirm = (data) => {
 </script>
 
 <style scoped>
-/* Minimal custom styles */
+
 textarea {
   resize: vertical;
 }
