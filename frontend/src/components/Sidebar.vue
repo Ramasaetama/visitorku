@@ -44,16 +44,16 @@ const shouldShowQuickGuide = computed(() => {
 
 // Tambahkan property 'path' untuk setiap menu item
 const mainMenuItems = [
-  { name: 'Ringkasan', icon: layoutMasonryIcon, path: '/dashboard' },
-  { name: 'Data Visitor', icon: groupLineIcon, path: '/data-visitor' },
-  { name: 'Data Kunjungan', icon: logoutBoxIcon, path: '/data-kunjungan' },
-  { name: 'Layar Informasi', icon: listIndefiniteIcon, path: '/layar-informasi' },
+  { name: 'Dashboard', icon: layoutMasonryIcon, path: '/dashboard' },
+  { name: 'Visitor', icon: groupLineIcon, path: '/data-visitor' },
+  { name: 'Visit', icon: logoutBoxIcon, path: '/data-kunjungan' },
+  { name: 'Signage', icon: listIndefiniteIcon, path: '/layar-informasi' },
 ];
 
 const masterDataItems = [
   { name: 'Profil Perusahaan', icon: buildingIcon, path: '/profil-perusahaan' },
   { name: 'Cabang', icon: gitMergeIcon, path: '/cabang' },
-  { name: 'Tujuan & Divisi', icon: listIndefiniteIcon, path: '/tujuan-kunjungan' },
+  { name: 'Tujuan Kunjungan', icon: listIndefiniteIcon, path: '/tujuan-kunjungan' },
   { name: 'Pengaturan Form Visitor', icon: settingsIcon, path: '/pengaturan-form' },
   { name: 'Manajemen Pengguna', icon: groupLineIcon, path: '/manajemen-pengguna' },
   { name: 'Invoice', icon: fileTextIcon, path: '/invoice' },
@@ -73,7 +73,7 @@ const isActive = (path) => {
 };
 
 const quickGuideItems = [
-  { name: 'Profil Perusahaan', completed: true },
+  { name: 'Profil Perusahaan', completed: false },
   { name: 'Cabang', completed: false },
   { name: 'Tujuan & Divisi', completed: false },
 ];

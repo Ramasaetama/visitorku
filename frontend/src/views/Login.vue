@@ -1,7 +1,5 @@
 <template>
-  <!-- Loading State -->
   <div v-if="isLoading" class="min-h-screen flex items-center justify-center relative">
-    <!-- Top Background Pattern - Orange -->
     <div class="absolute top-0 left-0 right-0 h-[45%] bg-[#EE9D0F] overflow-hidden">
       <img 
         src="../assets/images/background.svg" 
@@ -10,13 +8,10 @@
       />
     </div>
     
-    <!-- Bottom Background - Light Gray -->
     <div class="absolute bottom-0 left-0 right-0 h-[55%] bg-gray-100"></div>
 
-    <!-- Loading Card -->
     <div class="relative z-10 px-4">
       <div class="bg-white rounded-2xl shadow-xl p-12 max-w-md w-full text-center">
-        <!-- Spinner -->
         <div class="w-16 h-16 mx-auto mb-6">
           <svg class="animate-spin w-16 h-16 text-[#EE9D0F]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -25,13 +20,12 @@
         </div>
 
         <p class="text-base text-gray-600 font-poppins">
-          Memverifikasi akun anda
+          Memverifikasi akun anda...
         </p>
       </div>
     </div>
   </div>
 
-  <!-- Login Form -->
   <OnboardingLayout v-else :current-step="0" :total-steps="0" :show-progress="false">
     <div class="w-full">
       <h2 class="text-h2 font-bold text-gray-900 mb-2 font-poppins">
@@ -83,7 +77,6 @@
       </p>
     </div>
 
-    <!-- Footer -->
     <template #footer>
       <div class="flex items-center justify-between text-sm text-gray-500 font-poppins px-8 py-4 border-t border-gray-100">
         <span>Visitorku Member of GMEDIA © 2025</span>
@@ -105,6 +98,9 @@ import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../components/layout'
 import { Input, PasswordInput } from '../components/common'
 
+// Import fungsi login-nya dari service yang sudah dibuat
+import { loginUser } from '../services/authService' 
+
 const router = useRouter()
 
 const isLoading = ref(false)
@@ -118,13 +114,36 @@ const formIsValid = computed(() => {
   return form.value.email.trim() !== '' && form.value.password.trim() !== ''
 })
 
-const handleLogin = () => {
+// Fungsi handleLogin
+const handleLogin = async () => {
   isLoading.value = true
   
-  // Simulate login process
-  setTimeout(() => {
+  try {
+    const response = await loginUser(form.value.email, form.value.password)
+    
+    // PERBAIKAN: Ambil token dari response.data
+    const token = response.data?.token;
+
+    if (token) {
+      // Simpan token ke Local Storage
+      localStorage.setItem('token', token);
+      console.log('Login Sukses:', response);
+
+      // Arahkan ke dashboard
+      router.push('/dashboard');
+    } else {
+      alert('Login berhasil, tetapi token tidak ditemukan dari server.');
+    }
+
+  } catch (error) {
+    console.error('Login Gagal:', error)
+
+    const pesanDariBackend = error.response?.data?.message;
+    const pesanTampil = pesanDariBackend || 'Login gagal. Silakan periksa jaringan Anda.';
+    
+    alert(pesanTampil);
+  } finally {
     isLoading.value = false
-    router.push('/dashboard')
-  }, 2000)
+  }
 }
 </script>

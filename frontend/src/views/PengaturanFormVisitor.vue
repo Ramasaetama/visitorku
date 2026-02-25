@@ -110,7 +110,9 @@ const handleCloseToast = () => {
         }"
       ></div>
       <div class="relative z-10 flex items-center gap-2">
-        <img :src="visitorkulogo" alt="Visitorku" class="h-7" />
+        <router-link to="/dashboard" class="cursor-pointer hover:opacity-80 transition-opacity">
+          <img :src="visitorkulogo" alt="Visitorku" class="h-7" />
+        </router-link>
       </div>
       <div class="relative z-10 flex items-center gap-4">
         <button class="p-1.5 rounded-full hover:bg-white/20 transition">

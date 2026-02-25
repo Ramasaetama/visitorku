@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { isAuthenticated } from '../services/authService'
 
 const routes = [
   {
@@ -49,10 +50,26 @@ const routes = [
   },
 ]
 
-
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const authenticated = isAuthenticated()
+
+  if (to.meta.requiresAuth && !authenticated) {
+    next({ name: 'Login' })
+    return
+  }
+
+  if (to.meta.guest && authenticated) {
+    next({ name: 'Dashboard' })
+    return
+  }
+
+  next()
 })
 
 export default router

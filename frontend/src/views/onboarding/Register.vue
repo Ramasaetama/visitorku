@@ -1,7 +1,5 @@
 <template>
-  <!-- Step 3: Success - Full Width Layout -->
   <div v-if="currentStep === 3" class="min-h-screen flex items-center justify-center relative">
-    <!-- Top Background Pattern - Orange -->
     <div class="absolute top-0 left-0 right-0 h-[45%] bg-[#EE9D0F] overflow-hidden">
       <img 
         src="../../assets/images/background.svg" 
@@ -10,13 +8,10 @@
       />
     </div>
     
-    <!-- Bottom Background - Light Gray -->
     <div class="absolute bottom-0 left-0 right-0 h-[55%] bg-gray-100"></div>
 
-    <!-- Card Content - Centered and Floating -->
     <div class="relative z-10 px-4">
       <div class="bg-white rounded-2xl shadow-xl p-12 max-w-md w-full text-center">
-        <!-- Success Icon -->
         <div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center">
           <img :src="mailIcon" alt="Mail Icon" class="w-20 h-20" />
         </div>
@@ -38,9 +33,7 @@
     </div>
   </div>
 
-  <!-- Step 1 & 2: Onboarding Layout -->
   <OnboardingLayout v-else :current-step="currentStep" :total-steps="2">
-    <!-- Step 1: Company Info -->
     <div v-if="currentStep === 1">
       <h2 class="text-h2 font-bold text-gray-900 mb-2 font-poppins">
         Beritahu Kami Tentang Perusahaan Anda
@@ -71,7 +64,7 @@
             type="button"
             class="flex items-center gap-2 text-primary-500 font-semibold font-poppins hover:underline"
           >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"  >
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Kembali
@@ -98,7 +91,6 @@
       </p>
     </div>
 
-    <!-- Step 2: Admin Info -->
     <div v-if="currentStep === 2">
       <h2 class="text-h2 font-bold text-gray-900 mb-2 font-poppins">
         Informasi Penanggung Jawab
@@ -107,7 +99,7 @@
         Data ini akan digunakan sebagai akun utama (admin) untuk mengelola VisitorKu.
       </p>
 
-      <form @submit.prevent="nextStep" class="space-y-5">
+      <form @submit.prevent="submitRegister" class="space-y-5">
         <Input
           v-model="form.adminName"
           label="Nama Lengkap"
@@ -167,26 +159,36 @@
           </span>
         </div>
 
+        <div v-if="apiError" class="p-3 mt-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg font-poppins text-center">
+          {{ apiError }}
+        </div>
+
         <div class="flex items-center justify-between pt-2">
           <button
             type="button"
-            class="flex items-center gap-2 text-primary-500 font-semibold font-poppins hover:underline"
+            class="flex items-center gap-2 text-primary-500 font-semibold font-poppins hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
             @click="prevStep"
+            :disabled="isLoading"
           >
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" back />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
             </svg>
             Kembali
           </button>
+          
           <button
             type="submit"
-            :disabled="!form.agreeTerms"
+            :disabled="!form.agreeTerms || isLoading || !!passwordError"
             :class="[
-              'px-6 py-3 text-body-3 rounded-4xl font-poppins font-semibold transition-colors duration-200',
-              form.agreeTerms ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
+              'px-6 py-3 text-body-3 rounded-4xl font-poppins font-semibold transition-colors duration-200 flex items-center gap-2',
+              (form.agreeTerms && !isLoading && !passwordError) ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
             ]"
           >
-            Daftarkan Akun Perusahaan
+            <svg v-if="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            {{ isLoading ? 'Memproses...' : 'Daftarkan Akun Perusahaan' }}
           </button>
         </div>
       </form>
@@ -208,16 +210,20 @@ import { OnboardingLayout } from '../../components/layout'
 import { Button, Input, Textarea, Toggle, Checkbox, PasswordInput } from '../../components/common'
 import mailIcon from '../../assets/images/mail-icon.png'
 
+// IMPORT DARI AUTH SERVICE, BUKAN API LAGI
+import { registerUser } from '../../services/authService.js' // Sesuaikan titik folder jika perlu
+
 const router = useRouter()
 
 const currentStep = ref(1)
 const isFormFocused = ref(false)
 
+const isLoading = ref(false)
+const apiError = ref('')
+
 const form = ref({
-  // Step 1
   companyName: '',
   companyAddress: '',
-  // Step 2
   adminName: '',
   adminEmail: '',
   adminPhone: '',
@@ -232,7 +238,6 @@ const step1IsValid = computed(() => {
   return form.value.companyName.trim() !== '' && form.value.companyAddress.trim() !== ''
 })
 
-// Watch for same address toggle
 watch(() => form.value.sameAddress, (val) => {
   if (val) {
     form.value.adminAddress = form.value.companyAddress
@@ -247,12 +252,7 @@ const passwordError = computed(() => {
 })
 
 const nextStep = () => {
-  if (currentStep.value < 3) {
-    if (currentStep.value === 2) {
-      // Validate before final submit
-      if (!form.value.agreeTerms) return
-      if (form.value.password !== form.value.confirmPassword) return
-    }
+  if (currentStep.value === 1 && step1IsValid.value) {
     currentStep.value++
   }
 }
@@ -260,10 +260,59 @@ const nextStep = () => {
 const prevStep = () => {
   if (currentStep.value > 1) {
     currentStep.value--
+    apiError.value = '' 
   }
 }
 
 const goToDashboard = () => {
   router.push('/dashboard')
+}
+
+const submitRegister = async () => {
+  if (!form.value.agreeTerms) return;
+  if (form.value.password !== form.value.confirmPassword) return;
+
+  isLoading.value = true;
+  apiError.value = '';
+
+  try {
+    const regis = {
+      by_event: "website",
+      company_name: form.value.companyName,
+      company_address: form.value.companyAddress,
+      name: form.value.adminName,
+      email: form.value.adminEmail,
+      password: form.value.password,
+      c_password: form.value.confirmPassword,
+      phone_number: form.value.adminPhone,
+      address: form.value.adminAddress
+    };
+
+    // PANGGIL FUNGSI DARI AUTHSERVICE.JS
+    await registerUser(regis);
+
+    // Jika sukses
+    currentStep.value = 3;
+
+  } catch (error) {
+    console.error("Error Registrasi:", error);
+    
+    // Karena authService.js melempar error Axios, kita tangkap di sini
+    if (error.response) {
+      if (error.response.status === 401) {
+        apiError.value = '401 Unauthorized: Cek konfigurasi backend Anda.';
+      } else if (error.response.data && error.response.data.message) {
+        apiError.value = error.response.data.message;
+      } else {
+        apiError.value = `Gagal mendaftar (Status Server: ${error.response.status})`;
+      }
+    } else if (error.request) {
+      apiError.value = 'Gagal terhubung ke server. Pastikan Backend Server sudah menyala.';
+    } else {
+      apiError.value = 'Terjadi kesalahan sistem.';
+    }
+  } finally {
+    isLoading.value = false;
+  }
 }
 </script>

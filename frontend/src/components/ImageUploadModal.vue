@@ -43,7 +43,7 @@
         >
           <!-- Preview Image -->
           <div v-if="previewUrl" class="mb-4">
-            <img :src="previewUrl" alt="Preview" class="max-h-[200px] mx-auto rounded-lg shadow-md object-contain" />
+            <img :src="previewUrl" alt="Preview" class="max-h-50 mx-auto rounded-lg shadow-md object-contain" />
           </div>
 
           <!-- Empty State Icon -->

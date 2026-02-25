@@ -1,15 +1,6 @@
 <script setup>
-/**
- * ============================================================
- * Halaman Tujuan Kunjungan
- * ============================================================
- * Kelola data divisi dan penanggung jawab yang dapat dipilih oleh pengunjung
- */
 
-// Import Layout Components
 import Sidebar from '@/components/Sidebar.vue';
-
-// Import Reusable Components
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
@@ -17,27 +8,31 @@ import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import FormTambahTujuan from '@/components/cabang/FormTambahTujuan.vue';
 
-// Import assets (gambar, icon)
+import { ref, onMounted } from 'vue';
+
+import { 
+  getCategories, 
+  getBranches, 
+  createCategory, 
+  updateCategory, 
+  deleteCategory 
+} from '@/services/tujuanService.js';
+
+// Import assets 
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
 import adminprofile from '@/assets/adminprofile.png';
 import notfound from '@/assets/notfound.svg';
 
-// Import Vue Composables
-import { ref } from 'vue';
-
-/**
- * Reactive Data
- */
-
-// Data untuk pencarian
 const searchQuery = ref('');
-
-// Data tujuan kunjungan (kosong untuk empty state)
 const tujuanData = ref([]);
+const branchesData = ref([]); // <--- TAMBAHKAN INI WADAH UNTUK DATA CABANG
+const rawDataTujuan = ref([]); // Menyimpan data mentah untuk fitur Edit
+const isEditMode = ref(false); // Penanda Edit atau Tambah
+const editId = ref(null);      // ID data yang sedang diedit
+const selectedData = ref(null); // Data yang dikirim ke form untuk pre-fill
 
-// Definisi kolom tabel - BERBEDA dari Cabang
 const tableColumns = [
   { key: 'divisi', label: 'Nama Divisi / Ruangan', sortable: true },
   { key: 'pic', label: 'Nama PIC', sortable: true },
@@ -46,84 +41,157 @@ const tableColumns = [
   { key: 'aksi', label: 'Aksi', sortable: false },
 ];
 
-// Status loading
 const isLoading = ref(false);
-
-// State untuk Modal
 const showModal = ref(false);
-
-// State untuk Toast
 const showToast = ref(false);
 
-/**
- * Methods/Functions
- */
+const fetchDataTujuan = async () => {
+  isLoading.value = true;
+  try {
+    // Tembak API menggunakan authService
+    const [resCategory, resBranch] = await Promise.all([
+      getCategories(),
+      getBranches() 
+    ]);
 
-// Fungsi ketika tombol "Tambah Tujuan" diklik - BUKA MODAL
-const handleTambahTujuan = () => {
-  showModal.value = true;
+    const categories = resCategory.data?.results || resCategory.data?.data || resCategory.data || [];
+    const branches = resBranch.data?.results || resBranch.data?.data || resBranch.data || [];
+
+    rawDataTujuan.value = categories; 
+    branchesData.value = branches; // <--- TAMBAHKAN BARIS INI
+
+    if (Array.isArray(categories)) {
+      tujuanData.value = categories.map(cat => {
+        const matchedBranch = branches.find(b => b.id === cat.branch_id);
+        return {
+          id: cat.id, 
+          divisi: cat.division || '-',
+          pic: cat.category || '-', 
+          jabatan: cat.position || '-',
+          cabang: matchedBranch ? matchedBranch.name : (cat.branch_id || '-') 
+        };
+      });
+    }
+  } catch (error) {
+    console.error('Gagal memuat data tabel:', error);
+  } finally {
+    isLoading.value = false;
+  }
 };
 
-// Fungsi untuk menutup modal
+onMounted(() => {
+  fetchDataTujuan();
+});
+
+/**
+ * ==========================================
+ * FUNGSI UI (TUTUP MODAL & TOAST & SORT)
+ * ==========================================
+ */
 const handleCloseModal = () => {
   showModal.value = false;
 };
 
-// Fungsi ketika form di-submit
-const handleSubmitTujuan = (formData) => {
-  console.log('Data tujuan baru:', formData);
-  
-  // Tambahkan ke array tujuanData (simulasi)
-  tujuanData.value.push({
-    divisi: formData.divisi,
-    pic: formData.namaPIC,
-    jabatan: formData.jabatan,
-    cabang: formData.cabang
-  });
-  
-  // Tutup modal setelah submit
-  showModal.value = false;
-  
-  // Tampilkan toast notification
-  showToast.value = true;
-  
-  // Nanti bisa ditambahkan API call untuk menyimpan ke backend
-  // await api.createTujuan(formData);
-};
-
-// Fungsi untuk menutup toast
 const handleCloseToast = () => {
   showToast.value = false;
 };
 
-// Fungsi untuk sorting tabel
 const handleSort = (columnKey) => {
   console.log('Sort by:', columnKey);
 };
 
-// Fungsi untuk edit tujuan
-const handleEditTujuan = (row) => {
-  console.log('Edit tujuan:', row);
-  // Nanti bisa buka modal edit dengan data yang sudah terisi
+const handleTambahTujuan = () => {
+  isEditMode.value = false;
+  editId.value = null;
+  selectedData.value = null; // Pastikan form kosong
+  showModal.value = true;
 };
 
-// Fungsi untuk hapus tujuan
-const handleDeleteTujuan = (row) => {
-  console.log('Hapus tujuan:', row);
-  // Nanti bisa tampilkan konfirmasi hapus
-  const index = tujuanData.value.findIndex(item => item.divisi === row.divisi);
-  if (index > -1) {
-    tujuanData.value.splice(index, 1);
+const handleEditTujuan = (row) => {
+  const rawData = rawDataTujuan.value.find(item => item.id === row.id);
+  
+  if (rawData) {
+    isEditMode.value = true;
+    editId.value = row.id;
+
+    selectedData.value = {
+      cabang: rawData.branch_id,
+      divisi: rawData.division,
+      namaPIC: rawData.category, 
+      jabatan: rawData.position,
+      email: rawData.email_notification,
+      phoneNumber: rawData.phone_number_notification
+    };
+
+    showModal.value = true;
   }
+};
+
+const handleDeleteTujuan = async (row) => {
+  const isConfirmed = confirm(`Apakah Anda yakin ingin menghapus Tujuan Kunjungan untuk PIC: ${row.pic}?`);
+
+  if (isConfirmed) {
+    try {
+      isLoading.value = true;
+      // Gunakan authService untuk hapus
+      await deleteCategory(row.id);
+      
+      alert('Data berhasil dihapus!');
+      fetchDataTujuan();
+    } catch (error) {
+      console.error('Gagal menghapus data:', error);
+      alert(error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+};
+
+const companyProfile = ref({
+  name: '',
+  logoUrl: ''
+});
+
+const handleSubmitTujuan = async (formData) => {
+  try {
+    isLoading.value = true; 
+
+    const payloadCategory = {
+      category: formData.namaPIC, 
+      branch_id: formData.cabang, 
+      send_notification: true, 
+      email_notification: formData.email,
+      phone_number_notification: formData.phoneNumber,
+      division: formData.divisi,
+      position: formData.jabatan
+    };
+
+    if (isEditMode.value) {
+      // Edit menggunakan authService
+      await updateCategory(editId.value, payloadCategory);
+    } else {
+      // Tambah menggunakan authService
+      await createCategory(payloadCategory);
+    }
+
+    showModal.value = false;
+    showToast.value = true; 
+    
+    fetchDataTujuan(); 
+
+  } catch (error) {
+    console.log('Detail Penolakan Backend:', error.response?.data);
+    alert(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.');
+  } finally {
+    isLoading.value = false; 
+  } 
 };
 </script>
 
 <template>
   <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
     
-    <!-- ============ TOPBAR (Header) ============ -->
-    <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-[56px] flex items-center justify-between px-6 overflow-hidden">
-      <!-- Background pattern -->
+    <header class="relative bg-linear-to-r from-[#F7941D] to-[#F9A825] h-14 flex items-center justify-between px-6 overflow-hidden">
       <div 
         class="absolute inset-0" 
         :style="{ 
@@ -135,24 +203,26 @@ const handleDeleteTujuan = (row) => {
         }"
       ></div>
       
-      <!-- Left: Logo -->
       <div class="relative z-10 flex items-center gap-2">
-        <img :src="visitorkulogo" alt="Visitorku" class="h-7" />
+        <router-link to="/dashboard" class="cursor-pointer hover:opacity-80 transition-opacity">
+          <img :src="visitorkulogo" alt="Visitorku" class="h-7" />
+        </router-link>
       </div>
       
-      <!-- Right: Admin section -->
       <div class="relative z-10 flex items-center gap-4">
         <button class="p-1.5 rounded-full hover:bg-white/20 transition">
           <img :src="globeIcon" alt="Language" class="w-5 h-5" />
         </button>
         
         <div class="flex items-center gap-2.5 cursor-pointer">
-          <span class="text-white text-[14px] font-medium">Admin</span>
+          <span class="text-white text-[14px] font-medium">{{ companyProfile.name || 'Admin' }}</span>
+          
           <img 
-            :src="adminprofile"
-            alt="Admin" 
+            :src="companyProfile.logoUrl || adminprofile"
+            alt="Profile" 
             class="w-9 h-9 rounded-full object-cover border-2 border-white/50" 
           />
+          
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="text-white">
             <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
@@ -160,29 +230,19 @@ const handleDeleteTujuan = (row) => {
       </div>
     </header>
 
-    <!-- ============ MAIN CONTAINER (Sidebar + Content) ============ -->
     <div class="flex flex-1 items-stretch">
-      
-      <!-- Sidebar -->
       <Sidebar />
       
-      <!-- ============ CONTENT AREA ============ -->
       <main class="flex-1 bg-[#F4F6F8] p-4">
-        
-        <!-- CARD WRAPPER UTAMA -->
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
-          
-          <!-- Card Inner Content -->
           <div class="p-6 flex-1 flex flex-col">
             
-            <!-- Header Content -->
             <div class="flex items-start justify-between mb-6">
               <div>
                 <h1 class="text-2xl font-semibold text-gray-800 mb-1">Tujuan Kunjungan</h1>
                 <p class="text-sm text-gray-500">Kelola daftar divisi dan penanggung jawab yang dapat dipilih oleh pengunjung.</p>
               </div>
               
-              <!-- Tombol Tambah Tujuan -->
               <button 
                 @click="handleTambahTujuan"
                 class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] 
@@ -194,7 +254,6 @@ const handleDeleteTujuan = (row) => {
               </button>
             </div>
             
-            <!-- Search Input + Filter Button -->
             <div class="mb-6 flex items-center gap-3">
               <div class="max-w-md flex-1">
                 <SearchInput 
@@ -203,7 +262,6 @@ const handleDeleteTujuan = (row) => {
                 />
               </div>
               
-              <!-- Button Filter Lainnya -->
               <button 
                 class="flex items-center gap-2 px-4 py-2.5 border-2 border-gray-300 
                        text-gray-600 rounded-lg font-medium text-sm 
@@ -217,7 +275,6 @@ const handleDeleteTujuan = (row) => {
               </button>
             </div>
             
-            <!-- Data Table -->
             <div class="flex-1 overflow-hidden">
               <DataTable 
                 :columns="tableColumns"
@@ -227,13 +284,12 @@ const handleDeleteTujuan = (row) => {
                 @edit="handleEditTujuan"
                 @delete="handleDeleteTujuan"
               >
-                <!-- Custom empty state -->
                 <template #empty>
                   <EmptyState 
                     :icon="notfound"
-                    title="Cabang belum tersedia"
-                    description="Tambahkan cabang terlebih dahulu untuk memulai tujuan kunjungan."
-                    buttonText="+ Tambah Cabang"
+                    title="Tujuan belum tersedia"
+                    description="Tambahkan tujuan terlebih dahulu untuk memulai tujuan kunjungan."
+                    buttonText="+ Tambah Tujuan"
                     @action="handleTambahTujuan"
                   />
                 </template>
@@ -242,43 +298,34 @@ const handleDeleteTujuan = (row) => {
             
           </div>
           
-          <!-- Pagination -->
           <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
-            <span>Menampilkan 10 dari 150 data</span>
+            <span>Menampilkan data</span>
             <div class="flex items-center gap-2">
               <button class="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">Pertama</button>
               <button class="w-8 h-8 flex items-center justify-center bg-[#F7941D] text-white rounded-lg font-medium">1</button>
-              <button class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">2</button>
-              <button class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">3</button>
-              <span class="px-2">...</span>
-              <button class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">98</button>
-              <button class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">99</button>
-              <button class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">100</button>
               <button class="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">Terakhir</button>
             </div>
           </div>
           
         </div>
-        
       </main>
     </div>
     
-    <!-- ============ MODAL TAMBAH TUJUAN ============ -->
-    <!-- Modal sementara tanpa form (form belum dibuat) -->
     <Modal 
       :show="showModal"
-      title="Tambah Tujuan Kunjungan"
-      description="Masukan informasi divisi dan penanggung jawab yang dapat dipilih oleh pengunjung."
+      :title="isEditMode ? 'Edit Tujuan Kunjungan' : 'Tambah Tujuan Kunjungan'"
+      :description="isEditMode ? 'Ubah informasi divisi dan penanggung jawab.' : 'Masukan informasi divisi dan penanggung jawab yang dapat dipilih oleh pengunjung.'"
       width="half"
       @close="handleCloseModal"
     >
-      <!-- Form Tambah Tujuan -->
       <FormTambahTujuan 
+        v-if="showModal"
+        :initial-data="selectedData"
+        :branches="branchesData" 
         @submit="handleSubmitTujuan"
         @cancel="handleCloseModal"
       />
       
-      <!-- Footer -->
       <template #footer>
         <div class="flex items-center justify-end gap-3">
           <button 
@@ -296,17 +343,17 @@ const handleDeleteTujuan = (row) => {
             class="px-5 py-2.5 text-sm font-medium text-white 
                    bg-[#F7941D] rounded-lg
                    hover:bg-[#E8850E] transition-colors"
+            :disabled="isLoading"
           >
-            Simpan Tujuan
+            {{ isLoading ? 'Menyimpan...' : 'Simpan Tujuan' }}
           </button>
         </div>
       </template>
     </Modal>
     
-    <!-- Toast Notification -->
     <Toast 
       :show="showToast"
-      message="Tujuan Kunjungan berhasil ditambahkan"
+      message="Tujuan Kunjungan berhasil disimpan"
       @close="handleCloseToast"
     />
     

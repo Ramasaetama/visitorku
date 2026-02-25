@@ -1,75 +1,59 @@
 <script setup>
-/**
- * FormTambahTujuan Component
- * Form untuk menambahkan tujuan kunjungan baru (divisi & PIC)
- * 
- * Events:
- * - submit: Dipanggil ketika form di-submit dengan data tujuan
- * - cancel: Dipanggil ketika user membatalkan
- */
-import { ref, reactive } from 'vue';
+import { ref, watch } from 'vue';
+
+// Data Catch
+const props = defineProps({
+  initialData: {
+    type: Object,
+    default: null
+  },
+  branches: {
+    type: Array,
+    default: () => []
+  }
+});
 
 const emit = defineEmits(['submit', 'cancel']);
 
-// Form data menggunakan reactive
-const formData = reactive({
+const formData = ref({
   cabang: '',
   divisi: '',
   namaPIC: '',
   jabatan: '',
   email: '',
-  phone: ''
+  phoneNumber: ''
 });
 
-// Loading state untuk submit button
-const isSubmitting = ref(false);
+watch(
+  () => props.initialData,
+  (newData) => {
+    console.log("DATA DARI TOMBOL EDIT:", newData); 
 
-// Dummy data cabang untuk dropdown (nanti bisa dari API)
-const cabangOptions = ref([
-  { value: '', label: 'Pilih Cabang' },
-  { value: 'jakarta', label: 'Kantor Pusat Jakarta' },
-  { value: 'bandung', label: 'Kantor Cabang Bandung' },
-  { value: 'surabaya', label: 'Kantor Cabang Surabaya' },
-]);
+    if (newData) {
+      formData.value.cabang = newData.cabang || '';
+      formData.value.divisi = newData.divisi || '';
+      formData.value.namaPIC = newData.namaPIC || '';
+      formData.value.jabatan = newData.jabatan || '';
+      formData.value.email = newData.email || '';
+      formData.value.phoneNumber = newData.phoneNumber || '';
+    } else {
+      formData.value = { cabang: '', divisi: '', namaPIC: '', jabatan: '', email: '', phoneNumber: '' };
+    }
+  },
+  { immediate: true, deep: true } 
+);
 
-// Reset form
-const resetForm = () => {
-  formData.cabang = '';
-  formData.divisi = '';
-  formData.namaPIC = '';
-  formData.jabatan = '';
-  formData.email = '';
-  formData.phone = '';
+const submitForm = () => {
+  emit('submit', formData.value);
 };
 
-// Handle submit
-const handleSubmit = async () => {
-  isSubmitting.value = true;
-  
-  try {
-    // Emit data ke parent component
-    emit('submit', { ...formData });
-    
-    // Reset form setelah submit
-    resetForm();
-  } finally {
-    isSubmitting.value = false;
-  }
-};
-
-// Handle cancel
-const handleCancel = () => {
-  resetForm();
+const cancelForm = () => {
   emit('cancel');
 };
-
-// Expose resetForm untuk dipanggil dari parent jika diperlukan
-defineExpose({ resetForm });
 </script>
 
 <template>
-  <form id="formTambahTujuan" @submit.prevent="handleSubmit" class="space-y-5">
-    
+  <form id="formTambahTujuan" @submit.prevent="submitForm" class="space-y-5">
     <!-- Cabang -->
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -84,13 +68,17 @@ defineExpose({ resetForm });
                transition-colors"
       >
         <option value="" disabled>Pilih Cabang</option>
-        <option value="jakarta">Kantor Pusat Jakarta</option>
-        <option value="bandung">Kantor Cabang Bandung</option>
-        <option value="surabaya">Kantor Cabang Surabaya</option>
+        <option 
+          v-for="branch in branches" 
+          :key="branch.id" 
+          :value="branch.id"
+        >
+          {{ branch.name }}
+        </option>
       </select>
     </div>
     
-    <!-- Divisi/Ruangan -->
+    <!-- Divisi -->
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-2">
         Divisi/Ruangan<span class="text-red-500">*</span>
@@ -165,7 +153,7 @@ defineExpose({ resetForm });
         Phone Number<span class="text-red-500">*</span>
       </label>
       <input 
-        v-model="formData.phone"
+        v-model="formData.phoneNumber"
         type="tel"
         required
         placeholder="Contoh: 0812 3456 7890"
@@ -174,9 +162,6 @@ defineExpose({ resetForm });
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
       />
-    </div>
-    
-    <!-- TOMBOL DIPINDAH KE FOOTER SLOT MODAL -->
-    
+    </div>    
   </form>
 </template>
