@@ -208,6 +208,7 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../../components/layout'
 import { Button, Input, Textarea, Toggle, Checkbox, PasswordInput } from '../../components/common'
+import authService from '../../services/authService'
 import mailIcon from '../../assets/images/mail-icon.png'
 
 // IMPORT DARI AUTH SERVICE, BUKAN API LAGI
@@ -217,6 +218,8 @@ const router = useRouter()
 
 const currentStep = ref(1)
 const isFormFocused = ref(false)
+const isSubmitting = ref(false)
+const errorMessage = ref('')
 
 const isLoading = ref(false)
 const apiError = ref('')
@@ -259,13 +262,14 @@ const nextStep = () => {
 
 const prevStep = () => {
   if (currentStep.value > 1) {
+    errorMessage.value = ''
     currentStep.value--
     apiError.value = '' 
   }
 }
 
 const goToDashboard = () => {
-  router.push('/dashboard')
+  router.push('/login')
 }
 
 const submitRegister = async () => {
