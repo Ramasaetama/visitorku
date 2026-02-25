@@ -191,10 +191,8 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../components/layout'
 import { Input, PasswordInput } from '../components/common'
-import authService from '../services/authService'
-
 // Import fungsi login-nya dari service yang sudah dibuat
-import { loginUser } from '../services/authService' 
+import { loginUser } from '@/services/authService';
 
 const router = useRouter()
 

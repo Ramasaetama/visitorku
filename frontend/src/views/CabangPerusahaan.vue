@@ -12,6 +12,7 @@ import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
 import adminprofile from '@/assets/adminprofile.png';
 import notfound from '@/assets/notfound.svg';
+import Topbar from '@/components/Topbar.vue';
 
 import { ref, onMounted } from 'vue';
 import { getAllBranches, createBranch, deleteBranch } from '@/services/cabangService';
@@ -136,44 +137,7 @@ const handleDeleteCabang = async (row) => {
   <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
     
     <!-- TOPBAR -->
-    <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-[56px] flex items-center justify-between px-6 overflow-hidden">
-      <!-- Background pattern -->
-      <div 
-        class="absolute inset-0" 
-        :style="{ 
-          backgroundImage: `url(${patternBg})`, 
-          backgroundRepeat: 'repeat-x', 
-          backgroundSize: 'auto 100%',
-          backgroundPosition: 'center',
-          opacity: 0.5
-        }"
-      ></div>
-      
-      <!-- Left: Logo -->
-      <div class="relative z-10 flex items-center gap-2">
-        <img :src="visitorkulogo" alt="Visitorku" class="h-7" />
-      </div>
-      
-      <!-- Right: Admin section -->
-      <div class="relative z-10 flex items-center gap-4">
-        <button class="p-1.5 rounded-full hover:bg-white/20 transition">
-          <img :src="globeIcon" alt="Language" class="w-5 h-5" />
-        </button>
-        
-        <div class="flex items-center gap-2.5 cursor-pointer">
-          <span class="text-white text-[14px] font-medium">Admin</span>
-          <img 
-            :src="adminprofile"
-            alt="Admin" 
-            class="w-9 h-9 rounded-full object-cover border-2 border-white/50" 
-          />
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="text-white">
-            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-      </div>
-    </header>
-
+    <Topbar />
    
     <div class="flex flex-1 items-stretch">
       <Sidebar />
