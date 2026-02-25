@@ -107,6 +107,14 @@
         Data ini akan digunakan sebagai akun utama (admin) untuk mengelola VisitorKu.
       </p>
 
+      <!-- Error Message -->
+        <div v-if="errorMessage" class="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+          <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p class="text-sm text-red-600 font-poppins">{{ errorMessage }}</p>
+        </div>
+
       <form @submit.prevent="nextStep" class="space-y-5">
         <Input
           v-model="form.adminName"
@@ -180,13 +188,17 @@
           </button>
           <button
             type="submit"
-            :disabled="!form.agreeTerms"
+            :disabled="!form.agreeTerms || isSubmitting"
             :class="[
-              'px-6 py-3 text-body-3 rounded-4xl font-poppins font-semibold transition-colors duration-200',
-              form.agreeTerms ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
+              'px-6 py-3 text-body-3 rounded-4xl font-poppins font-semibold transition-colors duration-200 flex items-center gap-2',
+              (form.agreeTerms && !isSubmitting) ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
             ]"
           >
-            Daftarkan Akun Perusahaan
+            <svg v-if="isSubmitting" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+            </svg>
+            {{ isSubmitting ? 'Mendaftarkan...' : 'Daftarkan Akun Perusahaan' }}
           </button>
         </div>
       </form>
@@ -206,12 +218,15 @@ import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../../components/layout'
 import { Button, Input, Textarea, Toggle, Checkbox, PasswordInput } from '../../components/common'
+import authService from '../../services/authService'
 import mailIcon from '../../assets/images/mail-icon.png'
 
 const router = useRouter()
 
 const currentStep = ref(1)
 const isFormFocused = ref(false)
+const isSubmitting = ref(false)
+const errorMessage = ref('')
 
 const form = ref({
   // Step 1
@@ -246,24 +261,73 @@ const passwordError = computed(() => {
   return ''
 })
 
-const nextStep = () => {
-  if (currentStep.value < 3) {
-    if (currentStep.value === 2) {
-      // Validate before final submit
-      if (!form.value.agreeTerms) return
-      if (form.value.password !== form.value.confirmPassword) return
+const nextStep = async () => {
+  if (currentStep.value === 1) {
+    // Step 1 → Step 2: just advance
+    currentStep.value = 2
+    return
+  }
+
+  if (currentStep.value === 2) {
+    // Step 2 → call register API
+    if (!form.value.agreeTerms) return
+    if (form.value.password !== form.value.confirmPassword) return
+
+    isSubmitting.value = true
+    errorMessage.value = ''
+
+    try {
+      const payload = {
+        by_event: '',
+        company_name: form.value.companyName,
+        company_address: form.value.companyAddress,
+        name: form.value.adminName,
+        email: form.value.adminEmail,
+        phone_number: form.value.adminPhone.replace(/[\s\-()]/g, ''),
+        address: form.value.adminAddress,
+        password: form.value.password,
+        c_password: form.value.confirmPassword,
+      }
+
+      const response = await authService.register(payload)
+
+      // API returns { data: { ...user, token }, message }
+      if (response.data && response.data.token) {
+        authService.saveToken(response.data.token)
+        authService.saveUser(response.data)
+      }
+
+      // Advance to success step
+      currentStep.value = 3
+    } catch (error) {
+      if (error.response) {
+        const data = error.response.data
+        // Handle { item_name, message } format
+        if (data.message) {
+          errorMessage.value = data.message
+        } else if (data.errors) {
+          const firstError = Object.values(data.errors)[0]
+          errorMessage.value = Array.isArray(firstError) ? firstError[0] : firstError
+        } else {
+          errorMessage.value = 'Registrasi gagal. Silakan coba lagi.'
+        }
+      } else {
+        errorMessage.value = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.'
+      }
+    } finally {
+      isSubmitting.value = false
     }
-    currentStep.value++
   }
 }
 
 const prevStep = () => {
   if (currentStep.value > 1) {
+    errorMessage.value = ''
     currentStep.value--
   }
 }
 
 const goToDashboard = () => {
-  router.push('/dashboard')
+  router.push('/login')
 }
 </script>

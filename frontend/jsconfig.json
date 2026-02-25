@@ -4,6 +4,7 @@
         "moduleResolution": "Bundler",
         "target": "ESNext",
         "jsx": "preserve",
+        "isolatedModules": true,
         "baseUrl": ".",
         "paths": {
             "@/*": [

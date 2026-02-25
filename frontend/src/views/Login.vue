@@ -41,6 +41,14 @@
         Kelola data pengunjung, pantau aktivitas kunjungan, dan akses laporan perusahaan Anda secara terpusat.
       </p>
 
+      <!-- Error Message -->
+      <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
+        <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-sm text-red-600 font-poppins">{{ errorMessage }}</p>
+      </div>
+
       <form @submit.prevent="handleLogin" class="space-y-6">
         <Input
           v-model="form.email"
@@ -58,20 +66,28 @@
         />
 
         <div class="flex justify-end">
-          <a href="#" class="text-body-3 text-primary-500 hover:underline font-medium">
+          <button 
+            type="button" 
+            @click="showForgotPassword = true" 
+            class="text-body-3 text-primary-500 hover:underline font-medium cursor-pointer bg-transparent border-none"
+          >
             Lupa password
-          </a>
+          </button>
         </div>
 
         <button
           type="submit"
-          :disabled="!formIsValid"
+          :disabled="!formIsValid || isSubmitting"
           :class="[
-            'w-full px-6 py-4 text-body-2 rounded-4xl font-poppins font-semibold transition-colors duration-200',
-            formIsValid ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
+            'w-full px-6 py-4 text-body-2 rounded-4xl font-poppins font-semibold transition-colors duration-200 flex items-center justify-center gap-2',
+            (formIsValid && !isSubmitting) ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
           ]"
         >
-          Masuk Ke Dashboard
+          <svg v-if="isSubmitting" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+          </svg>
+          {{ isSubmitting ? 'Memproses...' : 'Masuk Ke Dashboard' }}
         </button>
       </form>
 
@@ -97,6 +113,84 @@
       </div>
     </template>
   </OnboardingLayout>
+
+  <!-- Forgot Password Modal -->
+  <Teleport to="body">
+    <div v-if="showForgotPassword" class="fixed inset-0 z-50 flex items-center justify-center">
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-black/50" @click="closeForgotPassword"></div>
+      
+      <!-- Modal Content -->
+      <div class="relative bg-white rounded-2xl shadow-xl p-8 max-w-md w-full mx-4 z-10">
+        <!-- Close button -->
+        <button 
+          @click="closeForgotPassword" 
+          class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer"
+        >
+          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <!-- Success State -->
+        <div v-if="forgotPasswordSuccess" class="text-center">
+          <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+            <svg class="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2 font-poppins">Email Terkirim!</h3>
+          <p class="text-sm text-gray-600 mb-6 font-poppins">
+            Kami telah mengirimkan instruksi reset password ke email Anda. Silakan periksa inbox atau folder spam.
+          </p>
+          <button 
+            @click="closeForgotPassword" 
+            class="w-full px-6 py-3 bg-[#EE9D0F] text-white rounded-4xl font-poppins font-semibold hover:bg-[#d68d0e] transition-colors cursor-pointer border-none"
+          >
+            Kembali ke Login
+          </button>
+        </div>
+
+        <!-- Form State -->
+        <div v-else>
+          <h3 class="text-lg font-bold text-gray-900 mb-2 font-poppins">Lupa Password?</h3>
+          <p class="text-sm text-gray-600 mb-6 font-poppins">
+            Masukkan alamat email yang terdaftar dan kami akan mengirimkan instruksi untuk mereset password Anda.
+          </p>
+
+          <!-- Error -->
+          <div v-if="forgotPasswordError" class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+            <p class="text-sm text-red-600 font-poppins">{{ forgotPasswordError }}</p>
+          </div>
+
+          <form @submit.prevent="handleForgotPassword" class="space-y-4">
+            <Input
+              v-model="forgotPasswordEmail"
+              label="Alamat Email"
+              type="email"
+              placeholder="Contoh: andi@perusahaan.com"
+              required
+            />
+
+            <button
+              type="submit"
+              :disabled="!forgotPasswordEmail.trim() || isSendingReset"
+              :class="[
+                'w-full px-6 py-3 text-body-2 rounded-4xl font-poppins font-semibold transition-colors duration-200 flex items-center justify-center gap-2 border-none',
+                (forgotPasswordEmail.trim() && !isSendingReset) ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
+              ]"
+            >
+              <svg v-if="isSendingReset" class="animate-spin w-5 h-5" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+              {{ isSendingReset ? 'Mengirim...' : 'Kirim Reset Password' }}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
@@ -104,10 +198,20 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../components/layout'
 import { Input, PasswordInput } from '../components/common'
+import authService from '../services/authService'
 
 const router = useRouter()
 
 const isLoading = ref(false)
+const isSubmitting = ref(false)
+const errorMessage = ref('')
+
+// Forgot password state
+const showForgotPassword = ref(false)
+const forgotPasswordEmail = ref('')
+const forgotPasswordError = ref('')
+const forgotPasswordSuccess = ref(false)
+const isSendingReset = ref(false)
 
 const form = ref({
   email: '',
@@ -118,13 +222,78 @@ const formIsValid = computed(() => {
   return form.value.email.trim() !== '' && form.value.password.trim() !== ''
 })
 
-const handleLogin = () => {
-  isLoading.value = true
-  
-  // Simulate login process
-  setTimeout(() => {
-    isLoading.value = false
-    router.push('/dashboard')
-  }, 2000)
+const handleLogin = async () => {
+  isSubmitting.value = true
+  errorMessage.value = ''
+
+  try {
+    const response = await authService.login(form.value.email, form.value.password)
+
+    // API returns { data: { id, name, email, ..., token }, message }
+    const userData = response.data
+    if (userData && userData.token) {
+      authService.saveToken(userData.token)
+      authService.saveUser(userData)
+    }
+
+    // Show loading state briefly then redirect
+    isLoading.value = true
+    setTimeout(() => {
+      isLoading.value = false
+      router.push('/dashboard')
+    }, 1000)
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data
+      if (error.response.status === 401) {
+        errorMessage.value = 'Email atau password salah. Silakan coba lagi.'
+      } else if (error.response.status === 422 && data.errors) {
+        const firstError = Object.values(data.errors)[0]
+        errorMessage.value = Array.isArray(firstError) ? firstError[0] : firstError
+      } else if (error.response.status === 403) {
+        errorMessage.value = 'Akun Anda telah dinonaktifkan. Hubungi administrator.'
+      } else {
+        errorMessage.value = data.message || 'Login gagal. Silakan coba lagi.'
+      }
+    } else {
+      errorMessage.value = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.'
+    }
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const handleForgotPassword = async () => {
+  isSendingReset.value = true
+  forgotPasswordError.value = ''
+
+  try {
+    await authService.resetPassword(forgotPasswordEmail.value)
+    forgotPasswordSuccess.value = true
+  } catch (error) {
+    if (error.response) {
+      const data = error.response.data
+      if (error.response.status === 404) {
+        forgotPasswordError.value = 'Email tidak ditemukan. Pastikan email yang Anda masukkan sudah terdaftar.'
+      } else if (error.response.status === 422 && data.errors) {
+        const firstError = Object.values(data.errors)[0]
+        forgotPasswordError.value = Array.isArray(firstError) ? firstError[0] : firstError
+      } else {
+        forgotPasswordError.value = data.message || 'Gagal mengirim reset password. Silakan coba lagi.'
+      }
+    } else {
+      forgotPasswordError.value = 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda.'
+    }
+  } finally {
+    isSendingReset.value = false
+  }
+}
+
+const closeForgotPassword = () => {
+  showForgotPassword.value = false
+  forgotPasswordEmail.value = ''
+  forgotPasswordError.value = ''
+  forgotPasswordSuccess.value = false
 }
 </script>
+

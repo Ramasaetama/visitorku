@@ -34,7 +34,10 @@ import notfound from '@/assets/notfound.svg';
  * STEP 2: Import Vue Composables
  * - ref untuk reactive data
  */
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+
+// Import Branch Service untuk API calls
+import { getAllBranches, createBranch, deleteBranch } from '@/services/branchService';
 
 /**
  * STEP 3: Definisikan reactive data
@@ -57,6 +60,39 @@ const tableColumns = [
 
 // Status loading
 const isLoading = ref(false);
+
+// Toast message (bisa success atau error)
+const toastMessage = ref('Cabang berhasil ditambahkan');
+
+/**
+ * Fetch semua cabang dari API
+ * Map field API (name, address, contact) ke field DataTable (nama, alamat, kontak)
+ */
+const fetchBranches = async () => {
+  isLoading.value = true;
+  try {
+    const response = await getAllBranches({ page: 1, size: 100 });
+    // Map API response ke format DataTable
+    const items = response.data || response;
+    cabangData.value = (Array.isArray(items) ? items : []).map(branch => ({
+      id: branch.id,
+      nama: branch.name,
+      alamat: branch.address,
+      kontak: branch.contact,
+    }));
+  } catch (error) {
+    console.error('Gagal memuat data cabang:', error);
+    toastMessage.value = 'Gagal memuat data cabang';
+    showToast.value = true;
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// Fetch data saat komponen dimount
+onMounted(() => {
+  fetchBranches();
+});
 
 /**
  * STEP 4: State untuk Modal
@@ -83,24 +119,29 @@ const handleCloseModal = () => {
 };
 
 // Fungsi ketika form di-submit
-const handleSubmitCabang = (formData) => {
-  console.log('Data cabang baru:', formData);
-  
-  // Tambahkan ke array cabangData (simulasi)
-  cabangData.value.push({
-    nama: formData.namaCabang,
-    alamat: formData.alamatCabang,
-    kontak: formData.kontakCabang
-  });
-  
-  // Tutup modal setelah submit
-  showModal.value = false;
-  
-  // Tampilkan toast notification
-  showToast.value = true;
-  
-  // Nanti bisa ditambahkan API call untuk menyimpan ke backend
-  // await api.createCabang(formData);
+const handleSubmitCabang = async (formData) => {
+  try {
+    // Map field form ke field API
+    await createBranch({
+      name: formData.namaCabang,
+      address: formData.alamatCabang,
+      contact: formData.kontakCabang,
+    });
+
+    // Tutup modal setelah submit
+    showModal.value = false;
+
+    // Tampilkan toast notification sukses
+    toastMessage.value = 'Cabang berhasil ditambahkan';
+    showToast.value = true;
+
+    // Refresh data dari API
+    await fetchBranches();
+  } catch (error) {
+    console.error('Gagal menambahkan cabang:', error);
+    toastMessage.value = 'Gagal menambahkan cabang';
+    showToast.value = true;
+  }
 };
 
 // Fungsi untuk menutup toast
@@ -120,12 +161,22 @@ const handleEditCabang = (row) => {
 };
 
 // Fungsi untuk hapus cabang
-const handleDeleteCabang = (row) => {
-  console.log('Hapus cabang:', row);
-  // Nanti bisa tampilkan konfirmasi hapus
-  const index = cabangData.value.findIndex(item => item.nama === row.nama);
-  if (index > -1) {
-    cabangData.value.splice(index, 1);
+const handleDeleteCabang = async (row) => {
+  if (!confirm('Apakah Anda yakin ingin menghapus cabang ini?')) return;
+
+  try {
+    await deleteBranch(row.id);
+
+    // Tampilkan toast notification sukses
+    toastMessage.value = 'Cabang berhasil dihapus';
+    showToast.value = true;
+
+    // Refresh data dari API
+    await fetchBranches();
+  } catch (error) {
+    console.error('Gagal menghapus cabang:', error);
+    toastMessage.value = 'Gagal menghapus cabang';
+    showToast.value = true;
   }
 };
 </script>
@@ -318,7 +369,7 @@ const handleDeleteCabang = (row) => {
     <!-- Toast Notification -->
     <Toast 
       :show="showToast"
-      message="Cabang berhasil ditambahkan"
+      :message="toastMessage"
       @close="handleCloseToast"
     />
     
