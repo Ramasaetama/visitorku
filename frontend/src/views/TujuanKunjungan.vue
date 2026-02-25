@@ -1,6 +1,15 @@
 <script setup>
+/**
+ * ============================================================
+ * Halaman Tujuan Kunjungan
+ * ============================================================
+ * Kelola data divisi dan penanggung jawab yang dapat dipilih oleh pengunjung
+ */
 
+// Import Layout Components
 import Sidebar from '@/components/Sidebar.vue';
+
+// Import Reusable Components
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
@@ -8,26 +17,33 @@ import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import FormTambahTujuan from '@/components/cabang/FormTambahTujuan.vue';
 
+// Import Vue Composables & API Services
 import { ref, onMounted } from 'vue';
 
+// Import API Services (Sesuaikan dengan path service Anda jika ada yang diubah)
 import { 
   getCategories, 
   getBranches, 
   createCategory, 
   updateCategory, 
   deleteCategory 
-} from '@/services/tujuanService.js';
+} from '@/services/tujuanService';
 
-// Import assets 
+// Import assets (gambar, icon)
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
 import adminprofile from '@/assets/adminprofile.png';
 import notfound from '@/assets/notfound.svg';
 
+/**
+ * ==========================================
+ * STATE & VARIABEL
+ * ==========================================
+ */
 const searchQuery = ref('');
 const tujuanData = ref([]);
-const branchesData = ref([]); // <--- TAMBAHKAN INI WADAH UNTUK DATA CABANG
+const branchesData = ref([]); // Menyimpan data cabang untuk dikirim ke Form
 const rawDataTujuan = ref([]); // Menyimpan data mentah untuk fitur Edit
 const isEditMode = ref(false); // Penanda Edit atau Tambah
 const editId = ref(null);      // ID data yang sedang diedit
@@ -44,11 +60,22 @@ const tableColumns = [
 const isLoading = ref(false);
 const showModal = ref(false);
 const showToast = ref(false);
+const toastMessage = ref(''); // Wadah untuk pesan notifikasi dinamis
 
+// Dummy profile sementara untuk mencegah error blank page
+const companyProfile = ref({
+  name: '',
+  logoUrl: ''
+});
+
+/**
+ * ==========================================
+ * FUNGSI TARIK DATA (GET & JOIN)
+ * ==========================================
+ */
 const fetchDataTujuan = async () => {
   isLoading.value = true;
   try {
-    // Tembak API menggunakan authService
     const [resCategory, resBranch] = await Promise.all([
       getCategories(),
       getBranches() 
@@ -58,7 +85,7 @@ const fetchDataTujuan = async () => {
     const branches = resBranch.data?.results || resBranch.data?.data || resBranch.data || [];
 
     rawDataTujuan.value = categories; 
-    branchesData.value = branches; // <--- TAMBAHKAN BARIS INI
+    branchesData.value = branches; // Simpan daftar cabang untuk Dropdown Form
 
     if (Array.isArray(categories)) {
       tujuanData.value = categories.map(cat => {
@@ -100,6 +127,13 @@ const handleSort = (columnKey) => {
   console.log('Sort by:', columnKey);
 };
 
+/**
+ * ==========================================
+ * FUNGSI AKSI (TAMBAH, EDIT, HAPUS, SUBMIT)
+ * ==========================================
+ */
+
+// 1. Klik Tombol Tambah
 const handleTambahTujuan = () => {
   isEditMode.value = false;
   editId.value = null;
@@ -107,6 +141,7 @@ const handleTambahTujuan = () => {
   showModal.value = true;
 };
 
+// 2. Klik Tombol Edit
 const handleEditTujuan = (row) => {
   const rawData = rawDataTujuan.value.find(item => item.id === row.id);
   
@@ -127,31 +162,34 @@ const handleEditTujuan = (row) => {
   }
 };
 
+// 3. Klik Tombol Hapus
+// 3. Klik Tombol Hapus
+// 3. Klik Tombol Hapus
 const handleDeleteTujuan = async (row) => {
   const isConfirmed = confirm(`Apakah Anda yakin ingin menghapus Tujuan Kunjungan untuk PIC: ${row.pic}?`);
 
   if (isConfirmed) {
     try {
       isLoading.value = true;
-      // Gunakan authService untuk hapus
       await deleteCategory(row.id);
       
-      alert('Data berhasil dihapus!');
-      fetchDataTujuan();
+      // MUNCULKAN TOAST SUKSES HAPUS
+      toastMessage.value = 'Tujuan Kunjungan berhasil dihapus!';
+      showToast.value = true;
+      
+      fetchDataTujuan(); // Refresh tabel
     } catch (error) {
       console.error('Gagal menghapus data:', error);
-      alert(error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.');
+      // MUNCULKAN TOAST GAGAL HAPUS
+      toastMessage.value = error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.';
+      showToast.value = true;
     } finally {
       isLoading.value = false;
     }
   }
 };
 
-const companyProfile = ref({
-  name: '',
-  logoUrl: ''
-});
-
+// 4. Proses Submit (POST / PUT)
 const handleSubmitTujuan = async (formData) => {
   try {
     isLoading.value = true; 
@@ -167,21 +205,24 @@ const handleSubmitTujuan = async (formData) => {
     };
 
     if (isEditMode.value) {
-      // Edit menggunakan authService
+      // Edit 
       await updateCategory(editId.value, payloadCategory);
+      toastMessage.value = 'Tujuan Kunjungan berhasil diperbarui!';
     } else {
-      // Tambah menggunakan authService
+      // Tambah 
       await createCategory(payloadCategory);
+      toastMessage.value = 'Tujuan Kunjungan berhasil ditambahkan!';
     }
 
     showModal.value = false;
-    showToast.value = true; 
+    showToast.value = true; // Munculkan toast setelah proses berhasil
     
-    fetchDataTujuan(); 
+    fetchDataTujuan(); // Refresh tabel
 
   } catch (error) {
     console.log('Detail Penolakan Backend:', error.response?.data);
-    alert(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.');
+    toastMessage.value = error.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.';
+    showToast.value = true;
   } finally {
     isLoading.value = false; 
   } 
@@ -353,7 +394,7 @@ const handleSubmitTujuan = async (formData) => {
     
     <Toast 
       :show="showToast"
-      message="Tujuan Kunjungan berhasil disimpan"
+      :message="toastMessage"
       @close="handleCloseToast"
     />
     
