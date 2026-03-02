@@ -15,7 +15,7 @@ import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 
 import { ref, onMounted } from 'vue';
-import { getAllBranches, createBranch, deleteBranch } from '@/services/cabangService';
+import { getAllBranches, createBranch, updateBranch, deleteBranch } from '@/services/cabangService';
 
 // Data untuk pencarian
 const searchQuery = ref('');
@@ -63,38 +63,55 @@ onMounted(() => {
 });
 
 const showModal = ref(false);
+const editingBranch = ref(null); // null = mode tambah, object = mode edit
 
 // State untuk Toast
 const showToast = ref(false);
 
 // Fungsi ketika tombol "Tambah Cabang" diklik - BUKA MODAL
 const handleTambahCabang = () => {
+  editingBranch.value = null;
   showModal.value = true;
 };
 
 // Fungsi untuk menutup modal
 const handleCloseModal = () => {
+  editingBranch.value = null;
   showModal.value = false;
 };
 
 // Fungsi ketika form di-submit
 const handleSubmitCabang = async (formData) => {
   try {
-    await createBranch({
-      name: formData.namaCabang,
-      address: formData.alamatCabang,
-      contact: formData.kontakCabang,
-    });
+    if (editingBranch.value) {
+      // Mode EDIT
+      await updateBranch(editingBranch.value.id, {
+        name: formData.namaCabang,
+        address: formData.alamatCabang,
+        contact: formData.kontakCabang,
+      });
+      toastMessage.value = 'Cabang berhasil diperbarui';
+    } else {
+      // Mode TAMBAH
+      await createBranch({
+        name: formData.namaCabang,
+        address: formData.alamatCabang,
+        contact: formData.kontakCabang,
+      });
+      toastMessage.value = 'Cabang berhasil ditambahkan';
+    }
 
     showModal.value = false;
-
-    toastMessage.value = 'Cabang berhasil ditambahkan';
+    editingBranch.value = null;
     showToast.value = true;
 
     await fetchBranches();
   } catch (error) {
-    console.error('Gagal menambahkan cabang:', error);
-    toastMessage.value = 'Gagal menambahkan cabang';
+    console.error('Gagal menyimpan cabang:', error);
+    console.error('Detail error dari backend:', error.response?.data);
+    
+    const backendMessage = error.response?.data?.message || error.response?.data?.error;
+    toastMessage.value = backendMessage || (editingBranch.value ? 'Gagal memperbarui cabang' : 'Gagal menambahkan cabang');
     showToast.value = true;
   }
 };
@@ -111,7 +128,13 @@ const handleSort = (columnKey) => {
 
 // Fungsi untuk edit cabang
 const handleEditCabang = (row) => {
-  console.log('Edit cabang:', row);
+  editingBranch.value = {
+    id: row.id,
+    namaCabang: row.nama,
+    alamatCabang: row.alamat,
+    kontakCabang: row.kontak,
+  };
+  showModal.value = true;
 };
 
 // Fungsi untuk hapus cabang
@@ -215,13 +238,14 @@ const handleDeleteCabang = async (row) => {
     <!-- MODAL TAMBAH CABANG -->
     <Modal 
       :show="showModal"
-      title="Tambah Cabang"
-      description="Masukan informasi cabang yang akan menerima pengunjung."
+      :title="editingBranch ? 'Edit Cabang' : 'Tambah Cabang'"
+      :description="editingBranch ? 'Ubah informasi cabang.' : 'Masukan informasi cabang yang akan menerima pengunjung.'"
       width="half"
       @close="handleCloseModal"
     >
 
     <FormTambahCabang 
+        :initialData="editingBranch"
         @submit="handleSubmitCabang"
         @cancel="handleCloseModal"
       />
@@ -245,7 +269,7 @@ const handleDeleteCabang = async (row) => {
                    bg-[#F7941D] rounded-lg
                    hover:bg-[#E8850E] transition-colors"
           >
-            Simpan Cabang
+            {{ editingBranch ? 'Perbarui Cabang' : 'Simpan Cabang' }}
           </button>
         </div>
       </template>

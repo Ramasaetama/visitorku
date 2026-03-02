@@ -1,22 +1,44 @@
 <script setup>
 /**
  * FormTambahCabang Component
- * Form untuk menambahkan cabang baru
+ * Form untuk menambahkan atau mengedit cabang
+ * 
+ * Props:
+ * - initialData: Object data cabang untuk mode edit (opsional)
+ *   { namaCabang, alamatCabang, kontakCabang }
  * 
  * Events:
  * - submit: Dipanggil ketika form di-submit dengan data cabang
  * - cancel: Dipanggil ketika user membatalkan
  */
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
+
+const props = defineProps({
+  initialData: {
+    type: Object,
+    default: null
+  }
+});
 
 const emit = defineEmits(['submit', 'cancel']);
 
 // Form data menggunakan reactive
 const formData = reactive({
-  namaCabang: '',
-  alamatCabang: '',
-  kontakCabang: ''
+  namaCabang: props.initialData?.namaCabang || '',
+  alamatCabang: props.initialData?.alamatCabang || '',
+  kontakCabang: props.initialData?.kontakCabang || ''
 });
+
+// Watch initialData untuk mengisi form saat mode edit
+watch(() => props.initialData, (newData) => {
+  if (newData) {
+    formData.namaCabang = newData.namaCabang || '';
+    formData.alamatCabang = newData.alamatCabang || '';
+    formData.kontakCabang = newData.kontakCabang || '';
+  } else {
+    resetForm();
+  }
+}, { deep: true });
 
 // Loading state untuk submit button
 const isSubmitting = ref(false);
