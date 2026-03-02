@@ -16,7 +16,6 @@
             </div>
 
             <div class="max-w-225 mx-auto w-full">
-
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                 <div class="lg:w-55 shrink-0">
                   <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Profil</h2>
@@ -27,11 +26,12 @@
                       <div @click="openUploadModal('logo')" class="w-20 h-20 rounded-full bg-linear-to-br from-[#F5A623] to-[#E8920D] shrink-0 relative overflow-hidden cursor-pointer group shadow-md">
                         <img v-if="companyProfile.logoUrl" :src="companyProfile.logoUrl" alt="Logo" class="absolute inset-0 w-full h-full object-cover" />
                         <div v-else class="absolute inset-0 flex items-center justify-center"><span class="text-[30px] font-bold text-white">GM</span></div>
-                        <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-white/40 flex items-center justify-center group-hover:bg-white/55 transition"><span class="text-[11px] font-semibold text-[#EE9D0F]">Ubah</span></div>
+                        <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-white/90 flex items-center justify-center group-hover:bg-white transition"><span class="text-[11px] font-semibold text-[#EE9D0F]">Ubah</span></div>
                       </div>
                       <div class="pt-1 space-y-0.5">
-                        <p class="text-[12px] text-gray-500">• Ukuran gambar yang direkomendasi: lebar 800px, tinggi 400px</p>
-                        <p class="text-[12px] text-gray-500">• Format gambar yang diterima : JPG,JPEG,PNG</p>
+                        <p class="text-[12px] text-gray-500/70 ">• Ukuran gambar yang direkomendasi: lebar 800px, tinggi 400px</p>
+                        <p class="text-[12px] text-gray-500/70">• Besar file maks.: 2.0MB</p>
+                        <p class="text-[12px] text-gray-500/70">• Format gambar yang diterima : JPG,JPEG,PNG</p>
                       </div>
                    </div>
                    <div>
@@ -182,7 +182,8 @@
                     {{ isSaving ? 'Menyimpan...' : 'Simpan Perubahan' }}
                   </button>
                 </div>
-                </div> </div>
+              </div> 
+            </div>
           </div>
         </div>
       </main>
@@ -274,27 +275,24 @@
     </Modal>
 
     <div v-if="showLoadingModal" class="fixed inset-0 z-60 flex items-center justify-center p-4 font-['Poppins']">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-175 p-12 flex flex-col items-center text-center">
-            
-            <div class="mb-8">
-                <img :src="nochathistory" alt="Loading Illustration" class="w-35 h-35 object-contain opacity-90 mx-auto" />
-            </div>
-
-            <div class="flex items-center gap-4 mb-8">
-                <svg class="animate-spin w-8 h-8 text-[#F7941D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <h3 class="text-[20px] font-semibold text-gray-800">Generate Token...</h3>
-            </div>
-
-            <div class="w-full px-8">
-                <div class="h-14 w-full bg-gray-100 rounded-lg animate-pulse mb-6"></div>
-                <div class="w-full space-y-3">
-                   <div class="h-3 w-3/4 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
-                   <div class="h-3 w-1/2 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
-                </div>
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-175 p-12 flex flex-col items-center text-center"> 
+          <div class="mb-8">
+            <img :src="nochathistory" alt="Loading Illustration" class="w-35 h-35 object-contain opacity-90 mx-auto" />
+          </div>
+          <div class="flex items-center gap-4 mb-8">
+            <svg class="animate-spin w-8 h-8 text-[#F7941D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <h3 class="text-[20px] font-semibold text-gray-800">Generate Token...</h3>
+          </div>
+          <div class="w-full px-8">
+            <div class="h-14 w-full bg-gray-100 rounded-lg animate-pulse mb-6"></div>
+              <div class="w-full space-y-3">
+                <div class="h-3 w-3/4 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
+                <div class="h-3 w-1/2 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
+              </div>
             </div>
         </div>
     </div>
@@ -346,10 +344,8 @@
                 <span class="font-bold text-gray-800">Penting:</span> API Access Token ini tidak akan ditampilkan kembali setelah modal ditutup. Jika Anda kehilangan token ini, Anda perlu membuat token baru.
             </p>
         </div>
-
       </div>
-    </div>
-    
+    </div>   
   </div>
 </template>
 
@@ -505,10 +501,8 @@ const saveProfile = async () => {
       phone_number: companyProfile.value.phone   // <--- TAMBAHKAN INI
     };
     
-    // 2. TEMBAK KE /admin/profile (Sesuai dengan asal datanya)
     await updateAdminProfile(payloadProfile);
 
-    // 3. UPDATE BAHASA & TIMEZONE (Ini tetap ke company)
     if (companyProfile.value.id) {
       const payloadLangTz = {
         language: companyProfile.value.language,
@@ -522,14 +516,11 @@ const saveProfile = async () => {
   } catch (error) {
     console.error('Gagal menyimpan profil:', error);
     
-    // TANGKAP DETAIL ERROR 422 DARI BACKEND
     const errorData = error.response?.data;
     
     if (error.response?.status === 422) {
       console.log("🔥 Detail Error Validasi (422):", errorData);
-      
-      // Biasanya Laravel/Backend menaruh detailnya di dalam 'errors' atau 'message'
-      const pesanValidasi = errorData.errors 
+        const pesanValidasi = errorData.errors 
         ? JSON.stringify(errorData.errors, null, 2) 
         : errorData.message;
         
@@ -648,8 +639,5 @@ const deleteToken = async (id, index) => {
 </script>
 
 <style scoped>
-
-textarea {
-  resize: vertical;
-}
+  textarea {resize: vertical;}
 </style>

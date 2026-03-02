@@ -178,11 +178,9 @@ const handleLogout = () => {
                   Logout
                 </button>
               </div>
-
             </div>
           </div>
         </transition>
-
       </div>
     </div>
   </header>

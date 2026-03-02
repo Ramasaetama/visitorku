@@ -107,7 +107,7 @@ export const getAdminProfile = async () => {
   }
 };
 
-// Ganti URL-nya ditambah /update-account
+// Update Nama, Alamat, dll
 export const updateAdminProfile = async (payload) => {
   try {
     // 👇 INI YANG BERUBAH 👇
