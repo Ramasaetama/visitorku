@@ -43,7 +43,7 @@
         >
           <!-- Preview Image -->
           <div v-if="previewUrl" class="mb-4">
-            <img :src="previewUrl" alt="Preview" class="max-h-[200px] mx-auto rounded-lg shadow-md object-contain" />
+            <img :src="previewUrl" alt="Preview" class="max-h-50 mx-auto rounded-lg shadow-md object-contain" />
           </div>
 
           <!-- Empty State Icon -->
@@ -185,7 +185,16 @@ const confirmUpload = () => {
       file: selectedFile.value,
       previewUrl: previewUrl.value
     });
-    closeModal();
+    // Don't revoke the URL - the parent needs it to display the image
+    // Just reset state without revoking
+    selectedFile.value = null;
+    previewUrl.value = null;
+    errorMessage.value = '';
+    isDragging.value = false;
+    if (fileInput.value) {
+      fileInput.value.value = '';
+    }
+    emit('close');
   }
 };
 

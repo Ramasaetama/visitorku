@@ -2,7 +2,7 @@
   <nav class="bg-white shadow-sm sticky top-0 z-50 font-poppins">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <!-- Logo -->
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
         <slot name="logo">
           <span class="text-title-2 font-bold text-primary-500">Visitorku</span>
         </slot>

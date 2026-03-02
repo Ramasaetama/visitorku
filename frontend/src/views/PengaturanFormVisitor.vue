@@ -12,6 +12,11 @@ import globeIcon from '@/assets/proicons_globe.svg'
 import adminprofile from '@/assets/adminprofile.png'
 import deleteIcon from '@/assets/delete.svg'
 
+import { getAdditionalData, updateAdditionalData } 
+  from '@/services/pengaturanFormService'
+
+import { onMounted } from 'vue'
+
 // ── State ──
 const showModal = ref(false)
 const showToast = ref(false)
@@ -27,6 +32,7 @@ const defaultFields = ref([
 
 // ── Custom Fields ──
 const customFields = ref([])
+const additionalDataId = ref(null)
 
 // ── Form Data ──
 const formData = ref({
@@ -59,27 +65,72 @@ const closeModal = () => {
   showModal.value = false
 }
 
-const createField = () => {
+const createField = async () => {
   if (!isFormValid.value) return
 
   const newField = {
-    id: Date.now(),
     name: formData.value.fieldName,
     type: formData.value.fieldType,
     placeholder: formData.value.placeholder,
     required: formData.value.required,
-    isDefault: false,
   }
 
-  customFields.value.push(newField)
-  showModal.value = false
-  toastMessage.value = `Create Field "${newField.name}"`
-  showToast.value = true
+  try {
+    const updatedFields = [...customFields.value, newField]
+
+    await updateAdditionalData(additionalDataId.value, {
+      forms: updatedFields
+    })
+
+    customFields.value = updatedFields
+
+    showModal.value = false
+    toastMessage.value = `Field "${newField.name}" berhasil disimpan`
+    showToast.value = true
+
+  } catch (error) {
+    console.error('Gagal update:', error)
+  }
+}
+const fetchAdditionalData = async () => {
+  try {
+    const response = await getAdditionalData()
+
+    const data = response.data.data || response.data
+
+    if (Array.isArray(data)) {
+      customFields.value = data
+      if (data.length > 0) {
+        additionalDataId.value = data[0].id
+      }
+    } else {
+      additionalDataId.value = data.id
+      customFields.value = data.forms || []
+    }
+
+  } catch (error) {
+    console.error('Gagal ambil data:', error)
+  }
 }
 
-const deleteField = (fieldId) => {
-  customFields.value = customFields.value.filter(f => f.id !== fieldId)
-  activeKebab.value = null
+onMounted(() => {
+  fetchAdditionalData()
+})
+
+const deleteField = async (fieldId) => {
+  try {
+    const updatedFields = customFields.value.filter(f => f.id !== fieldId)
+
+    await updateAdditionalData(additionalDataId.value, {
+      forms: updatedFields
+    })
+
+    customFields.value = updatedFields
+    activeKebab.value = null
+
+  } catch (error) {
+    console.error('Gagal delete:', error)
+  }
 }
 
 const toggleKebab = (fieldId) => {
@@ -97,34 +148,8 @@ const handleCloseToast = () => {
 
 <template>
   <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']" @click="closeKebab">
-    <!-- TOPBAR -->
-    <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-[56px] flex items-center justify-between px-6 overflow-hidden">
-      <div
-        class="absolute inset-0"
-        :style="{
-          backgroundImage: `url(${patternBg})`,
-          backgroundRepeat: 'repeat-x',
-          backgroundSize: 'auto 100%',
-          backgroundPosition: 'center',
-          opacity: 0.5,
-        }"
-      ></div>
-      <div class="relative z-10 flex items-center gap-2">
-        <img :src="visitorkulogo" alt="Visitorku" class="h-7" />
-      </div>
-      <div class="relative z-10 flex items-center gap-4">
-        <button class="p-1.5 rounded-full hover:bg-white/20 transition">
-          <img :src="globeIcon" alt="Language" class="w-5 h-5" />
-        </button>
-        <div class="flex items-center gap-2.5 cursor-pointer">
-          <span class="text-white text-[14px] font-medium">Admin</span>
-          <img :src="adminprofile" alt="Admin" class="w-9 h-9 rounded-full object-cover border-2 border-white/50" />
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" class="text-white">
-            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-          </svg>
-        </div>
-      </div>
-    </header>
+    
+    <Topbar />
 
     <!-- MAIN CONTAINER -->
     <div class="flex flex-1 items-stretch">
