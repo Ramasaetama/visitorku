@@ -96,3 +96,13 @@ export const deleteApiKey = async (apiKeyId) => {
     throw error;
   }
 };
+
+// Fungsi untuk mengambil data Admin
+export const getAdminProfile = async () => {
+  try {
+    const response = await api.get('/admin/profile');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

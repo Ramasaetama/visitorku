@@ -1,32 +1,47 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+// IMPORT FUNGSI API GET PROFILE
+import { getAdminProfile } from '@/services/profileService'; 
 
-// Sesuaikan path import dengan struktur folder Anda
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
 import adminprofile from '@/assets/adminprofile.png';
 
 const router = useRouter();
-
-// State untuk dropdown
 const isDropdownOpen = ref(false);
 
-// State untuk data profil (Nanti bisa diganti dengan data dari API)
 const profileData = ref({
-  name: 'testing',
-  email: 'hoyoviy159@esyline.com',
-  phone: '808080808',
+  name: 'Loading...',
+  email: '-',
+  phone: '-',
   logoUrl: null
 });
 
-// Fungsi toggle dropdown
+const fetchProfileData = async () => {
+  try {
+    const response = await getAdminProfile(); 
+    
+    const data = response.data || response;
+    
+    console.log("🔥 Data DARI /admin/profile:", data); 
+
+    profileData.value = {
+      name: data.name || data.fullname || 'Admin',
+      email: data.email || data.user_email || 'Email tidak tersedia',
+      phone: data.phone || data.phone_number || 'Nomer Telepon Tidak Tersedia',
+      logoUrl: data.avatar || data.profile_picture || null
+    };
+  } catch (error) {
+    console.error('Gagal memuat data profil di Topbar:', error);
+  }
+};
+
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 
-// Fungsi tutup dropdown kalau user klik di luar kotak
 const closeDropdown = (e) => {
   if (!e.target.closest('.profile-section')) {
     isDropdownOpen.value = false;
@@ -35,14 +50,13 @@ const closeDropdown = (e) => {
 
 onMounted(() => {
   document.addEventListener('click', closeDropdown);
-  // Di sini Anda bisa menambahkan fungsi fetchProfile() dari API
+  fetchProfileData();
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', closeDropdown);
 });
 
-// Fungsi Logout
 const handleLogout = () => {
   if(confirm('Apakah Anda yakin ingin keluar?')) {
     localStorage.removeItem('token');
@@ -52,7 +66,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-14 flex items-center justify-between px-6 shadow-sm">
+  <header class="relative bg-linear-to-r from-[#F7941D] to-[#F9A825] h-14 flex items-center justify-between px-6 shadow-sm">
     
     <div 
       class="absolute inset-0 pointer-events-none" 
@@ -107,7 +121,7 @@ const handleLogout = () => {
       >
         <div 
           v-if="isDropdownOpen"
-          class="absolute right-6 top-[60px] w-72 bg-white rounded-xl shadow-lg border border-gray-100 p-5 z-50"
+          class="absolute right-6 top-15 w-72 bg-white rounded-xl shadow-lg border border-gray-100 p-5 z-50"
         >
           <div class="flex flex-col items-center text-center">
             
@@ -144,11 +158,9 @@ const handleLogout = () => {
                 Logout
               </button>
             </div>
-
           </div>
         </div>
       </transition>
-      
     </div>
   </header>
 </template>

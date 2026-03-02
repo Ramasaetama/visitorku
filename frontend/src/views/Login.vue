@@ -110,12 +110,9 @@
   <!-- Forgot Password Modal -->
   <Teleport to="body">
     <div v-if="showForgotPassword" class="fixed inset-0 z-50 flex items-center justify-center">
-      <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/50" @click="closeForgotPassword"></div>
       
-      <!-- Modal Content -->
       <div class="relative bg-white rounded-2xl shadow-xl p-8 max-w-md w-full mx-4 z-10">
-        <!-- Close button -->
         <button 
           @click="closeForgotPassword" 
           class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 bg-transparent border-none cursor-pointer"
@@ -191,7 +188,6 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../components/layout'
 import { Input, PasswordInput } from '../components/common'
-// Import fungsi login-nya dari service yang sudah dibuat
 import { loginUser } from '@/services/authService';
 
 const router = useRouter()
@@ -200,7 +196,6 @@ const isLoading = ref(false)
 const isSubmitting = ref(false)
 const errorMessage = ref('')
 
-// Forgot password state
 const showForgotPassword = ref(false)
 const forgotPasswordEmail = ref('')
 const forgotPasswordError = ref('')
@@ -223,15 +218,12 @@ const handleLogin = async () => {
   try {
     const response = await loginUser(form.value.email, form.value.password)
     
-    // PERBAIKAN: Ambil token dari response.data
     const token = response.data?.token;
 
     if (token) {
-      // Simpan token ke Local Storage
       localStorage.setItem('token', token);
       console.log('Login Sukses:', response);
 
-      // Arahkan ke dashboard
       router.push('/dashboard');
     } else {
       alert('Login berhasil, tetapi token tidak ditemukan dari server.');

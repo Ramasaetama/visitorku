@@ -1,5 +1,4 @@
 import api from './api';
-// KUMPULAN API UNTUK TUJUAN KUNJUNGAN 
 // Ambil semua Kategori (Tujuan)
 export const getCategories = () => {
   return api.get('/admin/category');

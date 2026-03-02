@@ -118,7 +118,7 @@
                   </button>
                 </div>
                 
-                <div v-if="!existingToken" class="text-center py-12 px-6 bg-linear-to-b from-gray-50 to-white rounded-xl border border-dashed border-gray-200">
+                <div v-if="existingTokens.length === 0" class="text-center py-12 px-6 bg-linear-to-b from-gray-50 to-white rounded-xl border border-dashed border-gray-200">
                   <div class="flex justify-center mb-4">
                     <img :src="nochathistory" alt="API Icon" class="w-50 h-50 object-contain opacity-80" />
                   </div>
@@ -131,51 +131,45 @@
                   </button>
                 </div>
 
-                <div v-else class="mt-4">
-                  <div class="flex justify-between items-start mb-3">
-                    <h3 class="text-[15px] font-bold text-gray-900">{{ existingToken.name }}</h3>
-                    <div class="relative">
-                      <button @click="showTokenMenu = !showTokenMenu" class="text-gray-400 hover:text-gray-600 p-1 border border-transparent hover:border-gray-200 rounded transition-all">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
-                      </button>
-
-                      <div v-if="showTokenMenu" class="absolute right-0 mt-1 bg-white border border-gray-100 rounded-lg shadow-lg z-10 py-1 overflow-hidden min-w-fit">
-                        <button @click="deleteToken" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors whitespace-nowrap">
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                          Hapus Token
+                <div v-else class="mt-4 max-h-[450px] overflow-y-auto pr-2 space-y-6">
+                  <div v-for="(token, index) in existingTokens" :key="token.id" class="border border-gray-100 p-6 rounded-2xl bg-white shadow-sm relative">
+                    <div class="flex justify-between items-start mb-3">
+                      <h3 class="text-[15px] font-bold text-gray-900">{{ token.name }}</h3>
+                      
+                      <div class="relative">
+                        <button @click="toggleTokenMenu(index)" class="text-gray-400 hover:text-gray-600 p-1 border border-transparent hover:border-gray-200 rounded transition-all">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" /></svg>
                         </button>
+
+                        <div v-if="activeMenuIndex === index" class="absolute right-0 mt-1 bg-white border border-gray-100 rounded-lg shadow-lg z-10 py-1 overflow-hidden min-w-fit">
+                          <button @click="deleteToken(token.id, index)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors whitespace-nowrap">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                            Hapus Token
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div class="bg-[#F4F7FF] rounded-lg px-5 py-4 mb-6 text-[13px] text-gray-700 font-mono break-all leading-relaxed">
-                    {{ existingToken.token }}
-                  </div>
-
-                  <div class="mb-8">
-                    <p class="text-[12px] text-gray-400 mb-1">Scope</p>
-                    <div v-if="existingToken.scopes.length > 0">
-                       <span class="text-[14px] font-bold text-gray-900">
-                         {{ existingToken.scopes.join(', ') }}
-                       </span>
+                    <div class="bg-[#F4F7FF] rounded-lg px-5 py-4 mb-6 text-[13px] text-gray-700 font-mono break-all leading-relaxed">
+                      {{ token.token }}
                     </div>
-                     <p v-else class="text-[14px] font-bold text-gray-900">-</p>
+
+                    <div class="mb-8">
+                      <p class="text-[12px] text-gray-400 mb-1">Scope</p>
+                      <div v-if="token.scopes && token.scopes.length > 0">
+                         <span class="text-[14px] font-bold text-gray-900">
+                           {{ token.scopes.join(', ') }}
+                         </span>
+                      </div>
+                       <p v-else class="text-[14px] font-bold text-gray-900">-</p>
+                    </div>
+
+                    <div class="inline-block bg-[#F9FAFB] px-3 py-1.5 rounded-md text-[12px] text-gray-500">
+                       Dibuat oleh <span class="font-bold text-gray-800">Admin</span> pada {{ token.createdAt }}
+                     </div>
                   </div>
-
-                  <div class="inline-block bg-[#F9FAFB] px-3 py-1.5 rounded-md text-[12px] text-gray-500">
-                     Dibuat oleh <span class="font-bold text-gray-800">Admin</span> {{ existingToken.createdAt }}
-                   </div>
-                   
-                   <hr class="border-gray-100 mt-8" />
                 </div>
-
               </div>
-              <div class="flex justify-end pb-4">
-                <button @click="saveProfile" class="px-8 py-3 bg-[#D8D5D3] hover:bg-[#c5c2c0] text-[#B3ADA9] rounded-xl text-[14px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md">
-                  Simpan Perubahan
-                </button>
-              </div>
-
             </div>
           </div>
         </div>
@@ -253,7 +247,6 @@
             </div>
           </div>
         </div>
-
       </div>
 
       <template #footer>
@@ -349,11 +342,11 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'; // Tambahkan onMounted
+import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone,generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';
+import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';
 import Topbar from '@/components/Topbar.vue';
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
@@ -374,8 +367,8 @@ const companyProfile = ref({
   apiToken: null
 });
 
-const isLoadingData = ref(true); // State loading untuk mengambil data
-const isSaving = ref(false); // State loading saat klik simpan
+const isLoadingData = ref(true);
+const isSaving = ref(false);
 
 const showUploadModal = ref(false);
 const uploadType = ref('logo'); 
@@ -385,7 +378,13 @@ const showLoadingModal = ref(false);
 const showSuccessModal = ref(false);
 const generatedToken = ref('');
 const isCopied = ref(false);
-const existingToken = ref(null);
+
+const existingTokens = ref([]); 
+const activeMenuIndex = ref(null);
+
+const toggleTokenMenu = (index) => {
+  activeMenuIndex.value = activeMenuIndex.value === index ? null : index;
+};
 
 const tokenForm = ref({
   name: '',
@@ -486,34 +485,27 @@ const modalDescription = computed(() => {
   }
 });
 
-// ==========================================
-// 1. FUNGSI UNTUK MENGAMBIL DATA (GET API)
-// ==========================================
-
+// FUNGSI UNTUK MENGAMBIL DATA (GET API)
 const fetchProfileData = async () => {
   isLoadingData.value = true;
   try {
     const response = await getProfile();
     const dataDariServer = response.data;
 
-    // TANGKAP ID PERUSAHAAN (Sangat penting untuk endpoint update bahasa)
     companyProfile.value.id = dataDariServer.company_id || dataDariServer.id || '';
-
-    // Tangkap data lainnya seperti biasa
     companyProfile.value.name = dataDariServer.name || dataDariServer.company_name || '';
     companyProfile.value.address = dataDariServer.address || '';
     companyProfile.value.logoUrl = dataDariServer.picture_url || dataDariServer.logo || null; 
     companyProfile.value.headerBg = dataDariServer.background_url || dataDariServer.background || headerbg;
     companyProfile.value.brandColor = dataDariServer.brand_color || '#EE9D0F';
     
-    // TANGKAP BAHASA & TIMEZONE
     if (dataDariServer.language) {
       companyProfile.value.language = dataDariServer.language;
-      localStorage.setItem('app_lang', dataDariServer.language); // Sinkronkan
+      localStorage.setItem('app_lang', dataDariServer.language);
     }
     if (dataDariServer.timezone) {
       companyProfile.value.timezone = dataDariServer.timezone;
-      localStorage.setItem('app_tz', dataDariServer.timezone); // Sinkronkan
+      localStorage.setItem('app_tz', dataDariServer.timezone);
     }
     
   } catch (error) {
@@ -523,9 +515,6 @@ const fetchProfileData = async () => {
   }
 };
 
-// ==========================================
-// 1. FUNGSI PEMBANTU (Taruh di atas)
-// ==========================================
 const parseScopes = (settingDataString) => {
   try {
     if (!settingDataString) return [];
@@ -543,68 +532,54 @@ const parseScopes = (settingDataString) => {
   }
 };
 
-// ==========================================
-// 2. FUNGSI UTAMA (Taruh di bawah fungsi pembantu)
-// ==========================================
+// FUNGSI FETCH TOKEN (ARRAY)
 const fetchApiKeyData = async () => {
   try {
     const response = await getCompanyApiKey();
     const tokenList = response.data.results;
 
     if (Array.isArray(tokenList) && tokenList.length > 0) {
-      const tokenData = tokenList[0];
-
-      existingToken.value = {
+      // Masukkan SEMUA token dari server ke dalam array
+      existingTokens.value = tokenList.map(tokenData => ({
         id: tokenData.id,
         name: tokenData.name || 'API Key',
         token: tokenData.key || '********************************',
-        scopes: parseScopes(tokenData.setting_data), // <--- Sekarang Vue sudah kenal siapa parseScopes
+        scopes: parseScopes(tokenData.setting_data),
         createdAt: tokenData.created_at 
             ? new Date(tokenData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) 
             : 'Sudah Dibuat'
-      };
-      
+      }));
     } else {
-      existingToken.value = null; 
+      existingTokens.value = []; 
     }
 
   } catch (error) {
     console.error('Gagal memuat token saat refresh:', error);
-    existingToken.value = null;
+    existingTokens.value = [];
   }
 };
 
-// JALANKAN OTOMATIS SAAT HALAMAN DIBUKA
 onMounted(() => {
   fetchProfileData();
   fetchApiKeyData();
 });
 
-// ==========================================
 // FUNGSI UNTUK MENYIMPAN DATA (PUT API)
-// ==========================================
 const saveProfile = async () => {
   isSaving.value = true;
   try {
-    // 1. Payload untuk API Update Profil Utama (Nama & Alamat)
     const payloadProfile = {
       name: companyProfile.value.name,
       address: companyProfile.value.address,
-      // brand_color: companyProfile.value.brandColor,
     };
     
-    // Tembak API Update Profil Utama
     await updateProfile(payloadProfile);
 
-    // 2. Payload untuk API Update Bahasa & Timezone
-    // (Hanya dijalankan jika ID perusahaan berhasil didapatkan)
     if (companyProfile.value.id) {
       const payloadLangTz = {
         language: companyProfile.value.language,
         timezone: companyProfile.value.timezone
       };
-      
-      // Tembak API Update Bahasa menggunakan ID
       await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
     }
     
@@ -612,17 +587,13 @@ const saveProfile = async () => {
     
   } catch (error) {
     console.error('Gagal menyimpan profil:', error);
-    const pesanError = error.response?.data?.message || 'Terjadi kesalahan saat menyimpan perubahan.';
-    alert(pesanError);
+    alert(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
   } finally {
     isSaving.value = false;
   }
 };
 
-
-// ==========================================
-// FUNGSI TOKEN & LAINNYA (TETAP SAMA)
-// ==========================================
+// FUNGSI GENERATE TOKEN
 const openTokenForm = () => {
   tokenForm.value.name = ''; 
   availableScopes.value.forEach(scope => {
@@ -657,74 +628,40 @@ const processGenerate = async () => {
   showLoadingModal.value = true;
 
   try {
-    // 1. Siapkan wadah untuk setting_data
     const formattedSettingData = [];
 
-    // 2. Looping data scopes (Branch, Category, dll) dari checkbox Anda
     availableScopes.value.forEach(scope => {
-      // Cari permission apa saja yang dicentang (Get, Post, Put, Delete)
       const checkedMethods = scope.permissions
         .filter(perm => perm.checked)
-        .map(perm => perm.label.toUpperCase()); // Ubah jadi huruf besar (GET, POST, dll)
+        .map(perm => perm.label.toUpperCase()); 
 
-      // Jika ada minimal 1 method yang dicentang, masukkan ke array
       if (checkedMethods.length > 0) {
         formattedSettingData.push({
           method: checkedMethods,
-          // Asumsi url_point disesuaikan dengan id scope. 
-          // (Tanyakan ke Backend untuk URL pastinya, misalnya /integration/branch)
           url_point: `/integration/${scope.id}` 
         });
       }
     });
 
-    // 3. Gabungkan menjadi payload utuh sesuai permintaan Swagger
     const payload = {
       name: tokenForm.value.name,
       setting_data: formattedSettingData
     };
 
-    // 4. Tembak API-nya
     const response = await generateAPItoken(payload);
-
-    console.log('Isi balasan dari server:', response.data);
-
-    // 5. Tangkap Token yang dikembalikan server dari properti 'key'
-      generatedToken.value = response.data.key; 
+    generatedToken.value = response.data.key; 
     
-    // Reset state & tampilkan modal sukses
     isCopied.value = false;
     showLoadingModal.value = false;
     showSuccessModal.value = true;
     
-    // Simpan ke tampilan existing token di layar
-    existingToken.value = {
-        id: response.data.id, // <--- SANGAT PENTING: Kita simpan ID-nya untuk fitur Delete nanti!
+    existingTokens.value.unshift({
+        id: response.data.id, 
         name: response.data.name,
-        token: response.data.key, // Tampilkan token dari 'key'
+        token: response.data.key,
         scopes: availableScopes.value.filter(s => s.checked).map(s => s.label),
         createdAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) 
-    };
-
-    // Fungsi untuk menerjemahkan setting_data dari server menjadi array scope
-    const parseScopes = (settingDataString) => {
-      try {
-        if (!settingDataString) return [];
-        
-        // Ubah teks string dari server menjadi format JSON (Array/Object)
-        const parsedData = typeof settingDataString === 'string' ? JSON.parse(settingDataString) : settingDataString;
-        
-        // Ambil bagian belakang dari URL (misal: "/integration/branch" -> "Branch")
-        return parsedData.map(item => {
-          const parts = item.url_point.split('/');
-          const scopeName = parts[parts.length - 1]; 
-          return scopeName.charAt(0).toUpperCase() + scopeName.slice(1); // Kapital huruf pertama
-        });
-      } catch (error) {
-        console.error('Gagal membaca scope:', error);
-        return [];
-      }
-    };
+    });
 
   } catch (error) {
     showLoadingModal.value = false;
@@ -749,7 +686,6 @@ const openUploadModal = (type) => {
 };
 
 const handleImageConfirm = async (data) => {
-  // 1. JIKA YANG DI-UPLOAD ADALAH LOGO
   if (uploadType.value === 'logo') {
     companyProfile.value.logoUrl = data.previewUrl;
     
@@ -762,34 +698,21 @@ const handleImageConfirm = async (data) => {
         alert('Terjadi kesalahan saat mengunggah logo.');
       }
     }
-  } 
-  
-  // 2. JIKA YANG DI-UPLOAD ADALAH HEADER/BACKGROUND
-  else if (uploadType.value === 'header') {
-    // Tampilkan gambar langsung di layar (preview)
+  } else if (uploadType.value === 'header') {
     companyProfile.value.headerBg = data.previewUrl;
     
-    // Proses upload file aslinya ke server
     if (data.file) {
       try {
-        console.log('Sedang mengunggah background header...');
         await uploadCompanyBackground(data.file);
-        
         alert('Background header berhasil diperbarui di server!');
-        
       } catch (error) {
         console.error('Gagal mengunggah background:', error);
         alert('Terjadi kesalahan saat mengunggah background.');
       }
-    } else {
-      console.warn("File gambar asli tidak ditemukan dari modal upload.");
     }
   }
 };
 
-// ==========================================
-// FUNGSI AUTO-SAVE BAHASA & TIMEZONE
-// ==========================================
 const autoSaveLangTz = async () => {
   if (!companyProfile.value.id) return;
 
@@ -799,41 +722,31 @@ const autoSaveLangTz = async () => {
       timezone: companyProfile.value.timezone
     };
     
-    // 1. SIMPAN KE LOCAL STORAGE (Agar langsung ingat saat di-refresh)
     localStorage.setItem('app_lang', companyProfile.value.language);
     localStorage.setItem('app_tz', companyProfile.value.timezone);
     
-    // 2. TEMBAK KE DATABASE BACKEND
     await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
-    
-    console.log('Bahasa & Timezone berhasil disimpan ke DB & Local Storage!');
-    
   } catch (error) {
     console.error('Gagal menyimpan bahasa/timezone:', error);
   }
 };
 
-// Tambahkan variabel untuk membuka/tutup menu
-const showTokenMenu = ref(false);
-
-// Fungsi untuk menghapus token
-const deleteToken = async () => {
+// FUNGSI HAPUS TOKEN
+const deleteToken = async (id, index) => {
   const isConfirmed = confirm('Apakah Anda yakin ingin menghapus API Token ini? Token yang dihapus tidak dapat dipulihkan.');
   
   if (isConfirmed) {
     try {
-      // Pastikan kita memiliki ID tokennya (yang sudah kita simpan dari proses GET/POST)
-      if (!existingToken.value || !existingToken.value.id) {
+      if (!id) {
         alert('ID Token tidak valid atau tidak ditemukan.');
         return;
       }
 
-      // 1. Tembak API Delete ke server menggunakan ID tersebut
-      await deleteApiKey(existingToken.value.id);
+      await deleteApiKey(id);
 
-      // 2. Jika berhasil, kosongkan tampilan di layar (kembali ke ilustrasi awal)
-      existingToken.value = null;
-      showTokenMenu.value = false; // Tutup menu dropdown
+      existingTokens.value.splice(index, 1);
+      
+      activeMenuIndex.value = null; 
       
       alert('API Token berhasil dihapus dari server!');
       
