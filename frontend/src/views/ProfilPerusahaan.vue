@@ -346,14 +346,11 @@ import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';
+// IMPORT KEDUA ENDPOINT
+import { getAdminProfile, getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';
 import Topbar from '@/components/Topbar.vue';
-import visitorkulogo from '@/assets/visitorku.png';
-import patternBg from '@/assets/Frame 7.svg';
-import globeIcon from '@/assets/proicons_globe.svg';
-import adminprofile from '@/assets/adminprofile.png';
-import nochathistory from '@/assets/NoChatHistory.svg';
 import headerbg from '@/assets/Header.svg';
+import nochathistory from '@/assets/NoChatHistory.svg';
 
 const companyProfile = ref({
   id: '', 
@@ -392,124 +389,52 @@ const tokenForm = ref({
 });
 
 const availableScopes = ref([
-  {
-    id: 'branch',
-    label: 'Branch',
-    desc: 'Digunakan untuk mengelola data cabang perusahaan',
-    isOpen: false,
-    isSensitive: true, 
-    checked: false,
-    permissions: [
-      { id: 'get', label: 'Get', desc: 'Get all branch', checked: false },
-      { id: 'post', label: 'Post', desc: 'Add branch', checked: false },
-      { id: 'put', label: 'Put', desc: 'Update branch', checked: false },
-      { id: 'delete', label: 'Delete', desc: 'Delete branch', checked: false },
-    ]
-  },
-  {
-    id: 'category',
-    label: 'Category',
-    desc: 'Digunakan untuk membaca kategori kunjungan',
-    isOpen: false,
-    checked: false,
-    permissions: [
-      { id: 'get', label: 'Get', desc: 'Get all category', checked: false },
-      { id: 'post', label: 'Post', desc: 'Add category', checked: false },
-      { id: 'put', label: 'Put', desc: 'Update category', checked: false },
-      { id: 'delete', label: 'Delete', desc: 'Delete category', checked: false },
-    ]
-  },
-  {
-    id: 'event',
-    label: 'Event',
-    desc: 'Digunakan untuk proses check-in & check-out',
-    isOpen: false,
-    checked: false,
-    permissions: [
-      { id: 'get', label: 'Get', desc: 'Get all event', checked: false },
-      { id: 'post', label: 'Post', desc: 'Add event', checked: false },
-      { id: 'put', label: 'Put', desc: 'Update event', checked: false },
-      { id: 'delete', label: 'Delete', desc: 'Delete event', checked: false },
-    ]
-  },
-  {
-    id: 'signage',
-    label: 'Signage',
-    desc: 'Digunakan untuk mengelola konten signage',
-    isOpen: false,
-    checked: false,
-    permissions: [
-      { id: 'get', label: 'Get', desc: 'Get all signage', checked: false },
-      { id: 'post', label: 'Post', desc: 'Add signage', checked: false },
-      { id: 'put', label: 'Put', desc: 'Update signage', checked: false },
-      { id: 'delete', label: 'Delete', desc: 'Delete signage', checked: false },
-    ]
-  },
-  {
-    id: 'visit',
-    label: 'Visit',
-    desc: 'Digunakan untuk mengambil data kunjungan',
-    isOpen: false,
-    checked: false,
-    permissions: [
-      { id: 'get', label: 'Get', desc: 'Get all visit', checked: false },
-      { id: 'post', label: 'Post', desc: 'Add visit', checked: false },
-      { id: 'put', label: 'Put', desc: 'Update visit', checked: false },
-      { id: 'delete', label: 'Delete', desc: 'Delete visit', checked: false },
-    ]
-  },
-  {
-    id: 'visitor',
-    label: 'Visitor',
-    desc: 'Digunakan untuk mengambil data pengunjung',
-    isOpen: false,
-    checked: false,
-    permissions: [
-      { id: 'get', label: 'Get', desc: 'Get all visitor', checked: false },
-      { id: 'post', label: 'Post', desc: 'Add visitor', checked: false },
-      { id: 'put', label: 'Put', desc: 'Update visitor', checked: false },
-      { id: 'delete', label: 'Delete', desc: 'Delete visitor', checked: false },
-    ]
-  }
+  { id: 'branch', label: 'Branch', desc: 'Digunakan untuk mengelola data cabang perusahaan', isOpen: false, isSensitive: true, checked: false, permissions: [ { id: 'get', label: 'Get', desc: 'Get all branch', checked: false }, { id: 'post', label: 'Post', desc: 'Add branch', checked: false }, { id: 'put', label: 'Put', desc: 'Update branch', checked: false }, { id: 'delete', label: 'Delete', desc: 'Delete branch', checked: false }, ] },
+  { id: 'category', label: 'Category', desc: 'Digunakan untuk membaca kategori kunjungan', isOpen: false, checked: false, permissions: [ { id: 'get', label: 'Get', desc: 'Get all category', checked: false }, { id: 'post', label: 'Post', desc: 'Add category', checked: false }, { id: 'put', label: 'Put', desc: 'Update category', checked: false }, { id: 'delete', label: 'Delete', desc: 'Delete category', checked: false }, ] },
+  { id: 'event', label: 'Event', desc: 'Digunakan untuk proses check-in & check-out', isOpen: false, checked: false, permissions: [ { id: 'get', label: 'Get', desc: 'Get all event', checked: false }, { id: 'post', label: 'Post', desc: 'Add event', checked: false }, { id: 'put', label: 'Put', desc: 'Update event', checked: false }, { id: 'delete', label: 'Delete', desc: 'Delete event', checked: false }, ] },
+  { id: 'signage', label: 'Signage', desc: 'Digunakan untuk mengelola konten signage', isOpen: false, checked: false, permissions: [ { id: 'get', label: 'Get', desc: 'Get all signage', checked: false }, { id: 'post', label: 'Post', desc: 'Add signage', checked: false }, { id: 'put', label: 'Put', desc: 'Update signage', checked: false }, { id: 'delete', label: 'Delete', desc: 'Delete signage', checked: false }, ] },
+  { id: 'visit', label: 'Visit', desc: 'Digunakan untuk mengambil data kunjungan', isOpen: false, checked: false, permissions: [ { id: 'get', label: 'Get', desc: 'Get all visit', checked: false }, { id: 'post', label: 'Post', desc: 'Add visit', checked: false }, { id: 'put', label: 'Put', desc: 'Update visit', checked: false }, { id: 'delete', label: 'Delete', desc: 'Delete visit', checked: false }, ] },
+  { id: 'visitor', label: 'Visitor', desc: 'Digunakan untuk mengambil data pengunjung', isOpen: false, checked: false, permissions: [ { id: 'get', label: 'Get', desc: 'Get all visitor', checked: false }, { id: 'post', label: 'Post', desc: 'Add visitor', checked: false }, { id: 'put', label: 'Put', desc: 'Update visitor', checked: false }, { id: 'delete', label: 'Delete', desc: 'Delete visitor', checked: false }, ] }
 ]);
 
-const modalTitle = computed(() => {
-  return uploadType.value === 'logo' ? 'Ubah Logo' : 'Sesuaikan Header';
-});
+const modalTitle = computed(() => { return uploadType.value === 'logo' ? 'Ubah Logo' : 'Sesuaikan Header'; });
+const modalDescription = computed(() => { return uploadType.value === 'logo' ? 'Format yang diterima: <span class="font-medium text-[#EE9D0F]">JPG</span> • <span class="font-medium text-[#EE9D0F]">JPEG</span> • <span class="font-medium text-[#EE9D0F]">PNG</span> (Maks 2MB)' : 'Dimensi yang disarankan: <span class="font-medium text-[#EE9D0F]">1920 x 240px</span>, format PNG transparan, maksimal 2 MB'; });
 
-const modalDescription = computed(() => {
-  if (uploadType.value === 'logo') {
-    return 'Format yang diterima: <span class="font-medium text-[#EE9D0F]">JPG</span> • <span class="font-medium text-[#EE9D0F]">JPEG</span> • <span class="font-medium text-[#EE9D0F]">PNG</span> (Maks 2MB)';
-  } else {
-    return 'Dimensi yang disarankan: <span class="font-medium text-[#EE9D0F]">1920 x 240px</span>, format PNG transparan, maksimal 2 MB';
-  }
-});
-
-// FUNGSI UNTUK MENGAMBIL DATA (GET API)
+// ==========================================
+// FETCH GABUNGAN (PROFILE & COMPANY)
+// ==========================================
 const fetchProfileData = async () => {
   isLoadingData.value = true;
   try {
-    const response = await getProfile();
-    const dataDariServer = response.data;
+    const [adminRes, companyRes] = await Promise.all([
+      getAdminProfile(),
+      getProfile()
+    ]);
 
-    companyProfile.value.id = dataDariServer.company_id || dataDariServer.id || '';
-    companyProfile.value.name = dataDariServer.name || dataDariServer.company_name || '';
-    companyProfile.value.address = dataDariServer.address || '';
-    companyProfile.value.logoUrl = dataDariServer.picture_url || dataDariServer.logo || null; 
-    companyProfile.value.headerBg = dataDariServer.background_url || dataDariServer.background || headerbg;
-    companyProfile.value.brandColor = dataDariServer.brand_color || '#EE9D0F';
+    const adminData = adminRes.data || adminRes;
+    const companyData = companyRes.data || companyRes;
+
+    // DARI /admin/profile (Nama & Alamat)
+    companyProfile.value.name = adminData.name || adminData.company_name || '';
+    companyProfile.value.address = adminData.address || '';
+
+    // DARI /admin/company (Sisanya)
+    companyProfile.value.id = companyData.company_id || companyData.id || '';
+    companyProfile.value.logoUrl = companyData.picture_url || companyData.logo || null; 
+    companyProfile.value.headerBg = companyData.background_url || companyData.background || headerbg;
+    companyProfile.value.brandColor = companyData.brand_color || '#EE9D0F';
     
-    if (dataDariServer.language) {
-      companyProfile.value.language = dataDariServer.language;
-      localStorage.setItem('app_lang', dataDariServer.language);
+    if (companyData.language) {
+      companyProfile.value.language = companyData.language;
+      localStorage.setItem('app_lang', companyData.language);
     }
-    if (dataDariServer.timezone) {
-      companyProfile.value.timezone = dataDariServer.timezone;
-      localStorage.setItem('app_tz', dataDariServer.timezone);
+    if (companyData.timezone) {
+      companyProfile.value.timezone = companyData.timezone;
+      localStorage.setItem('app_tz', companyData.timezone);
     }
     
   } catch (error) {
-    console.error('Gagal memuat profil:', error);
+    console.error('Gagal memuat data gabungan profil:', error);
   } finally {
     isLoadingData.value = false;
   }
@@ -518,43 +443,34 @@ const fetchProfileData = async () => {
 const parseScopes = (settingDataString) => {
   try {
     if (!settingDataString) return [];
-    
     const parsedData = typeof settingDataString === 'string' ? JSON.parse(settingDataString) : settingDataString;
-    
     return parsedData.map(item => {
       const parts = item.url_point.split('/');
       const scopeName = parts[parts.length - 1]; 
       return scopeName.charAt(0).toUpperCase() + scopeName.slice(1); 
     });
   } catch (error) {
-    console.error('Gagal membaca scope:', error);
     return [];
   }
 };
 
-// FUNGSI FETCH TOKEN (ARRAY)
 const fetchApiKeyData = async () => {
   try {
     const response = await getCompanyApiKey();
     const tokenList = response.data.results;
 
     if (Array.isArray(tokenList) && tokenList.length > 0) {
-      // Masukkan SEMUA token dari server ke dalam array
       existingTokens.value = tokenList.map(tokenData => ({
         id: tokenData.id,
         name: tokenData.name || 'API Key',
         token: tokenData.key || '********************************',
         scopes: parseScopes(tokenData.setting_data),
-        createdAt: tokenData.created_at 
-            ? new Date(tokenData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) 
-            : 'Sudah Dibuat'
+        createdAt: tokenData.created_at ? new Date(tokenData.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : 'Sudah Dibuat'
       }));
     } else {
       existingTokens.value = []; 
     }
-
   } catch (error) {
-    console.error('Gagal memuat token saat refresh:', error);
     existingTokens.value = [];
   }
 };
@@ -564,7 +480,6 @@ onMounted(() => {
   fetchApiKeyData();
 });
 
-// FUNGSI UNTUK MENYIMPAN DATA (PUT API)
 const saveProfile = async () => {
   isSaving.value = true;
   try {
@@ -584,16 +499,13 @@ const saveProfile = async () => {
     }
     
     alert('Seluruh perubahan profil berhasil disimpan!');
-    
   } catch (error) {
-    console.error('Gagal menyimpan profil:', error);
     alert(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
   } finally {
     isSaving.value = false;
   }
 };
 
-// FUNGSI GENERATE TOKEN
 const openTokenForm = () => {
   tokenForm.value.name = ''; 
   availableScopes.value.forEach(scope => {
@@ -603,51 +515,26 @@ const openTokenForm = () => {
   showFormModal.value = true;
 };
 
-const toggleScope = (index) => {
-  availableScopes.value[index].isOpen = !availableScopes.value[index].isOpen;
-};
-
-const handleParentCheckbox = (index) => {
-  const scope = availableScopes.value[index];
-  scope.permissions.forEach(perm => perm.checked = scope.checked);
-};
-
-const handleChildCheckbox = (index) => {
-  const scope = availableScopes.value[index];
-  const allChecked = scope.permissions.every(perm => perm.checked);
-  scope.checked = allChecked;
-};
+const toggleScope = (index) => { availableScopes.value[index].isOpen = !availableScopes.value[index].isOpen; };
+const handleParentCheckbox = (index) => { const scope = availableScopes.value[index]; scope.permissions.forEach(perm => perm.checked = scope.checked); };
+const handleChildCheckbox = (index) => { const scope = availableScopes.value[index]; const allChecked = scope.permissions.every(perm => perm.checked); scope.checked = allChecked; };
 
 const processGenerate = async () => {
-  if (!tokenForm.value.name) {
-    alert('Nama token wajib diisi!');
-    return;
-  }
+  if (!tokenForm.value.name) { alert('Nama token wajib diisi!'); return; }
   
   showFormModal.value = false;
   showLoadingModal.value = true;
 
   try {
     const formattedSettingData = [];
-
     availableScopes.value.forEach(scope => {
-      const checkedMethods = scope.permissions
-        .filter(perm => perm.checked)
-        .map(perm => perm.label.toUpperCase()); 
-
+      const checkedMethods = scope.permissions.filter(perm => perm.checked).map(perm => perm.label.toUpperCase()); 
       if (checkedMethods.length > 0) {
-        formattedSettingData.push({
-          method: checkedMethods,
-          url_point: `/integration/${scope.id}` 
-        });
+        formattedSettingData.push({ method: checkedMethods, url_point: `/integration/${scope.id}` });
       }
     });
 
-    const payload = {
-      name: tokenForm.value.name,
-      setting_data: formattedSettingData
-    };
-
+    const payload = { name: tokenForm.value.name, setting_data: formattedSettingData };
     const response = await generateAPItoken(payload);
     generatedToken.value = response.data.key; 
     
@@ -662,10 +549,8 @@ const processGenerate = async () => {
         scopes: availableScopes.value.filter(s => s.checked).map(s => s.label),
         createdAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) 
     });
-
   } catch (error) {
     showLoadingModal.value = false;
-    console.error('Gagal generate token:', error);
     alert(error.response?.data?.message || 'Terjadi kesalahan saat membuat API Token');
   }
 };
@@ -675,83 +560,51 @@ const copyToken = async () => {
     await navigator.clipboard.writeText(generatedToken.value);
     isCopied.value = true;
     setTimeout(() => { isCopied.value = false; }, 2000);
-  } catch (err) {
-    console.error('Failed to copy: ', err);
-  }
+  } catch (err) {}
 };
 
-const openUploadModal = (type) => {
-  uploadType.value = type;
-  showUploadModal.value = true;
-};
+const openUploadModal = (type) => { uploadType.value = type; showUploadModal.value = true; };
 
 const handleImageConfirm = async (data) => {
   if (uploadType.value === 'logo') {
     companyProfile.value.logoUrl = data.previewUrl;
-    
     if (data.file) {
       try {
         await uploadCompanyLogo(data.file);
         alert('Logo berhasil diperbarui di server!');
-      } catch (error) {
-        console.error('Gagal mengunggah logo:', error);
-        alert('Terjadi kesalahan saat mengunggah logo.');
-      }
+      } catch (error) { alert('Terjadi kesalahan saat mengunggah logo.'); }
     }
   } else if (uploadType.value === 'header') {
     companyProfile.value.headerBg = data.previewUrl;
-    
     if (data.file) {
       try {
         await uploadCompanyBackground(data.file);
         alert('Background header berhasil diperbarui di server!');
-      } catch (error) {
-        console.error('Gagal mengunggah background:', error);
-        alert('Terjadi kesalahan saat mengunggah background.');
-      }
+      } catch (error) { alert('Terjadi kesalahan saat mengunggah background.'); }
     }
   }
 };
 
 const autoSaveLangTz = async () => {
   if (!companyProfile.value.id) return;
-
   try {
-    const payloadLangTz = {
-      language: companyProfile.value.language,
-      timezone: companyProfile.value.timezone
-    };
-    
+    const payloadLangTz = { language: companyProfile.value.language, timezone: companyProfile.value.timezone };
     localStorage.setItem('app_lang', companyProfile.value.language);
     localStorage.setItem('app_tz', companyProfile.value.timezone);
-    
     await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
-  } catch (error) {
-    console.error('Gagal menyimpan bahasa/timezone:', error);
-  }
+  } catch (error) {}
 };
 
-// FUNGSI HAPUS TOKEN
 const deleteToken = async (id, index) => {
   const isConfirmed = confirm('Apakah Anda yakin ingin menghapus API Token ini? Token yang dihapus tidak dapat dipulihkan.');
-  
   if (isConfirmed) {
     try {
-      if (!id) {
-        alert('ID Token tidak valid atau tidak ditemukan.');
-        return;
-      }
-
+      if (!id) { alert('ID Token tidak valid.'); return; }
       await deleteApiKey(id);
-
       existingTokens.value.splice(index, 1);
-      
       activeMenuIndex.value = null; 
-      
       alert('API Token berhasil dihapus dari server!');
-      
     } catch (error) {
-      console.error('Gagal menghapus token:', error);
       alert(error.response?.data?.message || 'Terjadi kesalahan saat mencoba menghapus token.');
     }
   }
