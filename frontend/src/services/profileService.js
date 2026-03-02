@@ -10,9 +10,9 @@ export const getProfile = async () => {
 };
 
 // Fungsi put Data Profil Perusahaan
-export const updateProfile = async (payload) => {
+export const updateProfile = async (id, payload) => {
   try {
-    const response = await api.put('/admin/company/{id}', payload);  
+    const response = await api.put(`/admin/company/${id}`, payload);  
     return response.data;
   } catch (error) {
     throw error;
@@ -101,6 +101,17 @@ export const deleteApiKey = async (apiKeyId) => {
 export const getAdminProfile = async () => {
   try {
     const response = await api.get('/admin/profile');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Ganti URL-nya ditambah /update-account
+export const updateAdminProfile = async (payload) => {
+  try {
+    // 👇 INI YANG BERUBAH 👇
+    const response = await api.put('/admin/profile/update-account', payload);  
     return response.data;
   } catch (error) {
     throw error;

@@ -168,9 +168,21 @@
                        Dibuat oleh <span class="font-bold text-gray-800">Admin</span> pada {{ token.createdAt }}
                      </div>
                   </div>
+                </div> <div class="flex justify-end pt-8 pb-4 border-t border-gray-100 mt-10">
+                  <button 
+                    @click="saveProfile" 
+                    :disabled="isSaving"
+                    class="px-8 py-3.5 bg-[#EE9D0F] hover:bg-[#d6850d] text-white rounded-xl text-[14px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <svg v-if="isSaving" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    
+                    {{ isSaving ? 'Menyimpan...' : 'Simpan Perubahan' }}
+                  </button>
                 </div>
-              </div>
-            </div>
+                </div> </div>
           </div>
         </div>
       </main>
@@ -347,8 +359,7 @@ import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
 // IMPORT KEDUA ENDPOINT
-import { getAdminProfile, getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';
-import Topbar from '@/components/Topbar.vue';
+import { getAdminProfile, getProfile, updateProfile, updateAdminProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
 
@@ -356,6 +367,8 @@ const companyProfile = ref({
   id: '', 
   name: '',
   address: '',
+  email: '', 
+  phone: '', 
   brandColor: '#EE9D0F',
   headerBg: headerbg,
   logoUrl: null, 
@@ -417,6 +430,8 @@ const fetchProfileData = async () => {
     // DARI /admin/profile (Nama & Alamat)
     companyProfile.value.name = adminData.name || adminData.company_name || '';
     companyProfile.value.address = adminData.address || '';
+    companyProfile.value.email = adminData.email || adminData.user_email || '';       // <--- TAMBAHKAN INI
+    companyProfile.value.phone = adminData.phone_number || adminData.phone || '';     // <--- TAMBAHKAN INI
 
     // DARI /admin/company (Sisanya)
     companyProfile.value.id = companyData.company_id || companyData.id || '';
@@ -486,10 +501,14 @@ const saveProfile = async () => {
     const payloadProfile = {
       name: companyProfile.value.name,
       address: companyProfile.value.address,
+      email: companyProfile.value.email,         // <--- TAMBAHKAN INI
+      phone_number: companyProfile.value.phone   // <--- TAMBAHKAN INI
     };
     
-    await updateProfile(payloadProfile);
+    // 2. TEMBAK KE /admin/profile (Sesuai dengan asal datanya)
+    await updateAdminProfile(payloadProfile);
 
+    // 3. UPDATE BAHASA & TIMEZONE (Ini tetap ke company)
     if (companyProfile.value.id) {
       const payloadLangTz = {
         language: companyProfile.value.language,
@@ -499,8 +518,25 @@ const saveProfile = async () => {
     }
     
     alert('Seluruh perubahan profil berhasil disimpan!');
+    
   } catch (error) {
-    alert(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
+    console.error('Gagal menyimpan profil:', error);
+    
+    // TANGKAP DETAIL ERROR 422 DARI BACKEND
+    const errorData = error.response?.data;
+    
+    if (error.response?.status === 422) {
+      console.log("🔥 Detail Error Validasi (422):", errorData);
+      
+      // Biasanya Laravel/Backend menaruh detailnya di dalam 'errors' atau 'message'
+      const pesanValidasi = errorData.errors 
+        ? JSON.stringify(errorData.errors, null, 2) 
+        : errorData.message;
+        
+      alert("Gagal Disimpan! Backend menolak karena:\n\n" + pesanValidasi);
+    } else {
+      alert(errorData?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
+    }
   } finally {
     isSaving.value = false;
   }
