@@ -12,6 +12,11 @@ import globeIcon from '@/assets/proicons_globe.svg'
 import adminprofile from '@/assets/adminprofile.png'
 import deleteIcon from '@/assets/delete.svg'
 
+import { getAdditionalData, updateAdditionalData } 
+  from '@/services/pengaturanFormService'
+
+import { onMounted } from 'vue'
+
 // ── State ──
 const showModal = ref(false)
 const showToast = ref(false)
@@ -27,6 +32,7 @@ const defaultFields = ref([
 
 // ── Custom Fields ──
 const customFields = ref([])
+const additionalDataId = ref(null)
 
 // ── Form Data ──
 const formData = ref({
@@ -59,27 +65,72 @@ const closeModal = () => {
   showModal.value = false
 }
 
-const createField = () => {
+const createField = async () => {
   if (!isFormValid.value) return
 
   const newField = {
-    id: Date.now(),
     name: formData.value.fieldName,
     type: formData.value.fieldType,
     placeholder: formData.value.placeholder,
     required: formData.value.required,
-    isDefault: false,
   }
 
-  customFields.value.push(newField)
-  showModal.value = false
-  toastMessage.value = `Create Field "${newField.name}"`
-  showToast.value = true
+  try {
+    const updatedFields = [...customFields.value, newField]
+
+    await updateAdditionalData(additionalDataId.value, {
+      forms: updatedFields
+    })
+
+    customFields.value = updatedFields
+
+    showModal.value = false
+    toastMessage.value = `Field "${newField.name}" berhasil disimpan`
+    showToast.value = true
+
+  } catch (error) {
+    console.error('Gagal update:', error)
+  }
+}
+const fetchAdditionalData = async () => {
+  try {
+    const response = await getAdditionalData()
+
+    const data = response.data.data || response.data
+
+    if (Array.isArray(data)) {
+      customFields.value = data
+      if (data.length > 0) {
+        additionalDataId.value = data[0].id
+      }
+    } else {
+      additionalDataId.value = data.id
+      customFields.value = data.forms || []
+    }
+
+  } catch (error) {
+    console.error('Gagal ambil data:', error)
+  }
 }
 
-const deleteField = (fieldId) => {
-  customFields.value = customFields.value.filter(f => f.id !== fieldId)
-  activeKebab.value = null
+onMounted(() => {
+  fetchAdditionalData()
+})
+
+const deleteField = async (fieldId) => {
+  try {
+    const updatedFields = customFields.value.filter(f => f.id !== fieldId)
+
+    await updateAdditionalData(additionalDataId.value, {
+      forms: updatedFields
+    })
+
+    customFields.value = updatedFields
+    activeKebab.value = null
+
+  } catch (error) {
+    console.error('Gagal delete:', error)
+  }
 }
 
 const toggleKebab = (fieldId) => {
@@ -97,6 +148,7 @@ const handleCloseToast = () => {
 
 <template>
   <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']" @click="closeKebab">
+      
     <!-- TOPBAR -->
     <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-[56px] flex items-center justify-between px-6 overflow-hidden">
       <div
@@ -127,6 +179,8 @@ const handleCloseToast = () => {
         </div>
       </div>
     </header>
+
+    
 
     <!-- MAIN CONTAINER -->
     <div class="flex flex-1 items-stretch">
