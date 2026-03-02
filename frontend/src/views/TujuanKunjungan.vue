@@ -18,7 +18,7 @@ import Toast from '@/components/common/Toast.vue';
 import FormTambahTujuan from '@/components/cabang/FormTambahTujuan.vue';
 
 // Import Vue Composables & API Services
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 
 // Import API Services (Sesuaikan dengan path service Anda jika ada yang diubah)
 import { 
@@ -116,7 +116,10 @@ onMounted(() => {
  * FUNGSI UI (TUTUP MODAL & TOAST & SORT)
  * ==========================================
  */
-const handleCloseModal = () => {
+ const sortKey = ref('');
+ const sortOrder = ref('asc');
+
+ const handleCloseModal = () => {
   showModal.value = false;
 };
 
@@ -125,8 +128,28 @@ const handleCloseToast = () => {
 };
 
 const handleSort = (columnKey) => {
-  console.log('Sort by:', columnKey);
+  if (sortKey.value === columnKey) {
+    // Kolom yang sama → toggle asc/desc
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    // Kolom baru → mulai dari asc
+    sortKey.value = columnKey;
+    sortOrder.value = 'asc';
+  }
 };
+
+// Data yang sudah diurutkan berdasarkan sortKey & sortOrder
+const sortedData = computed(() => {
+  if (!sortKey.value) return tujuanData.value;
+
+  return [...tujuanData.value].sort((a, b) => {
+    const valA = a[sortKey.value] ?? '';
+    const valB = b[sortKey.value] ?? '';
+
+    const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
+    return sortOrder.value === 'asc' ? cmp : -cmp;
+  });
+});
 
 /**
  * ==========================================
@@ -283,8 +306,10 @@ const handleSubmitTujuan = async (formData) => {
             <div class="flex-1 overflow-hidden">
               <DataTable 
                 :columns="tableColumns"
-                :data="tujuanData"
+                :data="sortedData"
                 :loading="isLoading"
+                :sort-key="sortKey"
+                :sort-order="sortOrder"
                 @sort="handleSort"
                 @edit="handleEditTujuan"
                 @delete="handleDeleteTujuan"

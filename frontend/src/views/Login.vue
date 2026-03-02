@@ -202,6 +202,13 @@ const forgotPasswordError = ref('')
 const forgotPasswordSuccess = ref(false)
 const isSendingReset = ref(false)
 
+const closeForgotPassword = () => {
+  showForgotPassword.value = false
+  forgotPasswordEmail.value = ''
+  forgotPasswordError.value = ''
+  forgotPasswordSuccess.value = false
+}
+
 const form = ref({
   email: '',
   password: '',
