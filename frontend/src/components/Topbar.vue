@@ -71,8 +71,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="relative bg-gradient-to-r from-[#F7941D] to-[#F9A825] h-14 flex items-center justify-between px-6 shadow-sm">
-    
+  <header class="sticky top-0 z-50 bg-linear-to-r from-[#F7941D] to-[#F9A825] h-14 flex items-center justify-between px-6 shadow-sm">    
     <div 
       class="absolute inset-0 pointer-events-none" 
       :style="{ 
@@ -132,7 +131,7 @@ const handleLogout = () => {
         >
           <div 
             v-if="isDropdownOpen"
-            class="absolute right-0 top-[45px] w-72 bg-white rounded-xl shadow-lg border border-gray-100 p-5 z-50 cursor-default"
+            class="absolute right-0 top-11.25 w-72 bg-white rounded-xl shadow-lg border border-gray-100 p-5 z-50 cursor-default"
             @click.stop
           >
             <div class="flex flex-col items-center text-center">
