@@ -84,7 +84,7 @@
                   <p class="text-[13px] text-gray-500 leading-relaxed">Atur bahasa &amp; wilayah</p>
                 </div>
                 <div class="flex-1 space-y-5">
-                  <div>
+                  <div>                        <p class="text-[12px] text-gray-500">• Besar file maks.: 2.0MB</p>
                     <label class="block text-[13px] font-medium text-gray-700 mb-2">Bahasa</label>
                     <div class="relative">
                       <select v-model="companyProfile.language" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
@@ -354,8 +354,8 @@ import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-// IMPORT KEDUA ENDPOINT
-import { getAdminProfile, getProfile, updateProfile, updateAdminProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';import Topbar from '@/components/Topbar.vue';
+import { getAdminProfile, getProfile, updateProfile, updateAdminProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';
+import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
 
