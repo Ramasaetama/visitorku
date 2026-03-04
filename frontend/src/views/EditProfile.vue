@@ -68,7 +68,6 @@ const activeTab = ref('account');
 const isLoading = ref(true);
 const profileData = ref({});
 
-// Definisi Tabs beserta ikon SVG sederhananya
 const tabs = [
   { id: 'account', label: 'Account', icon: 'svg' }, 
   { id: 'picture', label: 'Profile picture', icon: 'svg' },
@@ -79,7 +78,6 @@ const fetchData = async () => {
   isLoading.value = true;
   try {
     const response = await getAdminProfile();
-    // Normalisasi data dari Backend
     profileData.value = response.data?.data || response.data || response;
   } catch (error) {
     console.error("Gagal memuat profil admin:", error);
@@ -89,8 +87,8 @@ const fetchData = async () => {
 };
 
 const onDataSaved = async () => {
-  await fetchData(); // Refresh data di kotak putih EditProfile
-  window.dispatchEvent(new Event('profile-updated')); // Teriakan ke seluruh web agar Topbar ikut refresh!
+  await fetchData(); 
+  window.dispatchEvent(new Event('profile-updated')); 
 };
 
 onMounted(() => {
