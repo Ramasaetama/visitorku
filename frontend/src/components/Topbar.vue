@@ -46,15 +46,17 @@ const closeDropdown = (e) => {
 onMounted(() => {
   document.addEventListener('click', closeDropdown);
   fetchProfileData();
+  window.addEventListener('profile-updated', fetchProfileData);
 });
 
 onUnmounted(() => {
   document.removeEventListener('click', closeDropdown);
+  window.removeEventListener('profile-updated', fetchProfileData);
 });
 
 const handleLogout = () => {
   if(confirm('Apakah Anda yakin ingin keluar?')) {
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token'); 
     router.push('/login');
   }
 };

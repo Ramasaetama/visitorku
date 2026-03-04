@@ -228,7 +228,7 @@ const handleLogin = async () => {
     const token = response.data?.token;
 
     if (token) {
-      localStorage.setItem('token', token);
+      sessionStorage.setItem('token', token);
       console.log('Login Sukses:', response);
 
       router.push('/dashboard');

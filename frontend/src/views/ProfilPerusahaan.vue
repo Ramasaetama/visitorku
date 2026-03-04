@@ -131,7 +131,7 @@
                   </button>
                 </div>
 
-                <div v-else class="mt-4 max-h-[450px] overflow-y-auto pr-2 space-y-6">
+                <div v-else class="mt-4 max-h-112.5 overflow-y-auto pr-2 space-y-6">
                   <div v-for="(token, index) in existingTokens" :key="token.id" class="border border-gray-100 p-6 rounded-2xl bg-white shadow-sm relative">
                     <div class="flex justify-between items-start mb-3">
                       <h3 class="text-[15px] font-bold text-gray-900">{{ token.name }}</h3>

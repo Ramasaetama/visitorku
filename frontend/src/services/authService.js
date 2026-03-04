@@ -1,24 +1,29 @@
 import api from './api';
 
 export const saveToken = (token) => {
-  localStorage.setItem('token', token)
+  // UBAH: localStorage -> sessionStorage
+  sessionStorage.setItem('token', token)
 }
 
 export const getToken = () => {
-  return localStorage.getItem('token')
+  // UBAH: localStorage -> sessionStorage
+  return sessionStorage.getItem('token')
 }
 
 export const removeToken = () => {
-  localStorage.removeItem('token')
-  localStorage.removeItem('auth_user')
+  // UBAH: localStorage -> sessionStorage
+  sessionStorage.removeItem('token')
+  sessionStorage.removeItem('auth_user')
 }
 
 export const saveUser = (user) => {
-  localStorage.setItem('auth_user', JSON.stringify(user))
+  // UBAH: localStorage -> sessionStorage
+  sessionStorage.setItem('auth_user', JSON.stringify(user))
 }
 
 export const getUser = () => {
-  const user = localStorage.getItem('auth_user')
+  // UBAH: localStorage -> sessionStorage
+  const user = sessionStorage.getItem('auth_user')
   return user ? JSON.parse(user) : null
 }
 

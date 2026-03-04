@@ -35,13 +35,13 @@
             <AccountTab 
               v-if="activeTab === 'account'" 
               :profileData="profileData" 
-              @refresh="fetchData" 
+              @refresh="onDataSaved" 
             />
             
             <ProfilePictureTab 
               v-if="activeTab === 'picture'" 
               :profileData="profileData" 
-              @refresh="fetchData" 
+              @refresh="onDataSaved" 
             />
             
             <PasswordTab 
@@ -86,6 +86,11 @@ const fetchData = async () => {
   } finally {
     isLoading.value = false;
   }
+};
+
+const onDataSaved = async () => {
+  await fetchData(); // Refresh data di kotak putih EditProfile
+  window.dispatchEvent(new Event('profile-updated')); // Teriakan ke seluruh web agar Topbar ikut refresh!
 };
 
 onMounted(() => {

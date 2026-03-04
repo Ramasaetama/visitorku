@@ -5,7 +5,7 @@ import Modal from '@/components/common/Modal.vue'
 import Input from '@/components/common/Input.vue'
 import Toggle from '@/components/common/Toggle.vue'
 import Toast from '@/components/common/Toast.vue'
-
+import Topbar from '@/components/Topbar.vue'
 import visitorkulogo from '@/assets/visitorku.png'
 import patternBg from '@/assets/Frame 7.svg'
 import globeIcon from '@/assets/proicons_globe.svg'
@@ -215,7 +215,7 @@ const handleCloseToast = () => {
                         <!-- Kebab Dropdown -->
                         <div
                           v-if="activeKebab === field.id"
-                          class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                          class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30"
                         >
                           <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                             Edit
@@ -257,7 +257,7 @@ const handleCloseToast = () => {
                             <!-- Kebab Dropdown -->
                             <div
                               v-if="activeKebab === field.id"
-                              class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                              class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30"
                             >
                               <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                                 Edit
