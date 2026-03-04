@@ -1,22 +1,26 @@
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
-// Waktu AutoLogout
-export function useAutoLogout(timeoutMinutes = 15) {
+export function useAutoLogout(timeoutMinutes = 0.1) {
   const router = useRouter();
+  const route = useRoute();
   let timeoutId = null;
 
   const logoutUser = () => {
-    alert('Sesi Anda telah habis karena tidak ada aktivitas. Silakan login kembali.');
-    
     localStorage.removeItem('token'); 
     localStorage.removeItem('app_lang');
     localStorage.removeItem('app_tz');
     
     router.push('/login');
+    // Pesan Alert
+    alert('Sesi Anda telah habis karena tidak ada aktivitas. Silakan login kembali.');
   };
 
   const resetTimer = () => {
     if (timeoutId) clearTimeout(timeoutId);
+    
+    if (route.path === '/login') {
+      return; 
+    }
     
     timeoutId = setTimeout(logoutUser, timeoutMinutes * 60 * 1000);
   };

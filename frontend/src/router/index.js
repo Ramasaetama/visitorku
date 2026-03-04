@@ -48,6 +48,13 @@ const routes = [
     component: () => import('../views/ProfilPerusahaan.vue'),
     meta: { requiresAuth: true },
   },
+  // Edit Profile
+  {
+    path: '/edit-profile',
+    name: 'EditProfile',
+    component: () => import('../views/EditProfile.vue'),
+    meta: { requiresAuth: true }, // Wajib login
+  },
   // Pengaturan Form Visitor / Custom Field
   {
     path: '/pengaturan-form',

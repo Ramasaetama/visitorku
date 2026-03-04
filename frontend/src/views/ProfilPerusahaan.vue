@@ -53,10 +53,10 @@
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-3 bg-[#FEF3E2] px-4 py-3 rounded-xl w-fit">
-                    <div class="w-10.5 h-10.5 rounded-full border border-gray-200 cursor-pointer relative overflow-hidden shrink-0" :style="{ backgroundColor: companyProfile.brandColor }" @click="$refs.colorInput.click()">
-                      <input ref="colorInput" v-model="companyProfile.brandColor" type="color" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
+                    <div class="w-10.5 h-10.5 rounded-full border border-gray-200 cursor-pointer relative overflow-hidden shrink-0" :style="{ backgroundColor: companyProfile.primaryColor }" @click="$refs.colorInput.click()">
+                      <input ref="colorInput" v-model="companyProfile.primaryColor" type="color" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
                     </div>
-                    <div><span class="text-[14px] font-mono text-gray-700 tracking-wider">{{ (companyProfile.brandColor || '#EE9D0F').replace('#', '').toUpperCase() }}</span></div>
+                    <div><span class="text-[14px] font-mono text-gray-700 tracking-wider">{{ (companyProfile.primaryColor || '#EE9D0F').replace('#', '').toUpperCase() }}</span></div>
                   </div>
                   <p class="text-[12px] text-gray-500 italic">Pastikan warna memiliki kontras yang cukup.</p>
                 </div>
@@ -84,7 +84,7 @@
                   <p class="text-[13px] text-gray-500 leading-relaxed">Atur bahasa &amp; wilayah</p>
                 </div>
                 <div class="flex-1 space-y-5">
-                  <div>                        <p class="text-[12px] text-gray-500">• Besar file maks.: 2.0MB</p>
+                  <div>                       
                     <label class="block text-[13px] font-medium text-gray-700 mb-2">Bahasa</label>
                     <div class="relative">
                       <select v-model="companyProfile.language" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
@@ -354,18 +354,17 @@ import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-import { getAdminProfile, getProfile, updateProfile, updateAdminProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';
+import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
 import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
 
+// Hapus email & phone karena itu milik Admin
 const companyProfile = ref({
   id: '', 
   name: '',
   address: '',
-  email: '', 
-  phone: '', 
-  brandColor: '#EE9D0F',
+  primaryColor: '',
   headerBg: headerbg,
   logoUrl: null, 
   language: localStorage.getItem('app_lang') || 'Indonesia',
@@ -410,30 +409,21 @@ const modalTitle = computed(() => { return uploadType.value === 'logo' ? 'Ubah L
 const modalDescription = computed(() => { return uploadType.value === 'logo' ? 'Format yang diterima: <span class="font-medium text-[#EE9D0F]">JPG</span> • <span class="font-medium text-[#EE9D0F]">JPEG</span> • <span class="font-medium text-[#EE9D0F]">PNG</span> (Maks 2MB)' : 'Dimensi yang disarankan: <span class="font-medium text-[#EE9D0F]">1920 x 240px</span>, format PNG transparan, maksimal 2 MB'; });
 
 // ==========================================
-// FETCH GABUNGAN (PROFILE & COMPANY)
+// MURNI MENGAMBIL DATA DARI COMPANY API
 // ==========================================
 const fetchProfileData = async () => {
   isLoadingData.value = true;
   try {
-    const [adminRes, companyRes] = await Promise.all([
-      getAdminProfile(),
-      getProfile()
-    ]);
+    // Cukup panggil getProfile saja, tidak perlu Promise.all ganda
+    const response = await getProfile();
+    const companyData = response.data || response;
 
-    const adminData = adminRes.data || adminRes;
-    const companyData = companyRes.data || companyRes;
-
-    // DARI /admin/profile (Nama & Alamat)
-    companyProfile.value.name = adminData.name || adminData.company_name || '';
-    companyProfile.value.address = adminData.address || '';
-    companyProfile.value.email = adminData.email || adminData.user_email || '';       // <--- TAMBAHKAN INI
-    companyProfile.value.phone = adminData.phone_number || adminData.phone || '';     // <--- TAMBAHKAN INI
-
-    // DARI /admin/company (Sisanya)
     companyProfile.value.id = companyData.company_id || companyData.id || '';
+    companyProfile.value.name = companyData.name || companyData.company_name || '';
+    companyProfile.value.address = companyData.address || '';
     companyProfile.value.logoUrl = companyData.picture_url || companyData.logo || null; 
     companyProfile.value.headerBg = companyData.background_url || companyData.background || headerbg;
-    companyProfile.value.brandColor = companyData.brand_color || '#EE9D0F';
+    companyProfile.value.primaryColor = companyData.brand_color || companyData.primary_color || '';
     
     if (companyData.language) {
       companyProfile.value.language = companyData.language;
@@ -445,7 +435,7 @@ const fetchProfileData = async () => {
     }
     
   } catch (error) {
-    console.error('Gagal memuat data gabungan profil:', error);
+    console.error('Gagal memuat profil perusahaan:', error);
   } finally {
     isLoadingData.value = false;
   }
@@ -468,7 +458,7 @@ const parseScopes = (settingDataString) => {
 const fetchApiKeyData = async () => {
   try {
     const response = await getCompanyApiKey();
-    const tokenList = response.data.results;
+    const tokenList = response.data;
 
     if (Array.isArray(tokenList) && tokenList.length > 0) {
       existingTokens.value = tokenList.map(tokenData => ({
@@ -494,36 +484,35 @@ onMounted(() => {
 const saveProfile = async () => {
   isSaving.value = true;
   try {
+    if (!companyProfile.value.id) {
+      alert('Gagal menyimpan: ID Perusahaan tidak ditemukan.');
+      isSaving.value = false;
+      return;
+    }
+
     const payloadProfile = {
       name: companyProfile.value.name,
       address: companyProfile.value.address,
-      email: companyProfile.value.email,         // <--- TAMBAHKAN INI
-      phone_number: companyProfile.value.phone   // <--- TAMBAHKAN INI
+      // Hapus pengiriman email & phone karena ini endpoint company
     };
     
-    await updateAdminProfile(payloadProfile);
+    // TEMBAK KE ENDPOINT COMPANY
+    await updateProfile(companyProfile.value.id, payloadProfile);
 
-    if (companyProfile.value.id) {
-      const payloadLangTz = {
-        language: companyProfile.value.language,
-        timezone: companyProfile.value.timezone
-      };
-      await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
-    }
+    const payloadLangTz = {
+      language: companyProfile.value.language,
+      timezone: companyProfile.value.timezone
+    };
+    await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
     
-    alert('Seluruh perubahan profil berhasil disimpan!');
+    alert('Seluruh perubahan profil perusahaan berhasil disimpan!');
     
   } catch (error) {
-    console.error('Gagal menyimpan profil:', error);
+    console.error('Gagal menyimpan profil perusahaan:', error);
     
     const errorData = error.response?.data;
-    
     if (error.response?.status === 422) {
-      console.log("🔥 Detail Error Validasi (422):", errorData);
-        const pesanValidasi = errorData.errors 
-        ? JSON.stringify(errorData.errors, null, 2) 
-        : errorData.message;
-        
+      const pesanValidasi = errorData.errors ? JSON.stringify(errorData.errors, null, 2) : errorData.message;
       alert("Gagal Disimpan! Backend menolak karena:\n\n" + pesanValidasi);
     } else {
       alert(errorData?.message || 'Terjadi kesalahan saat menyimpan perubahan.');

@@ -1,9 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-// IMPORT KEDUA ENDPOINT
-import { getAdminProfile, getProfile } from '@/services/profileService'; 
-
+import { getAdminProfile } from '@/services/adminProfileService';
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
@@ -15,28 +13,20 @@ const profileData = ref({
   name: 'Loading...',
   email: '-',
   phone: '-',
-  logoUrl: null
+  profilePict: null
 });
 
 const fetchProfileData = async () => {
   try {
-    // PANGGIL KEDUA API BARENGAN BIAR CEPAT
-    const [adminRes, companyRes] = await Promise.all([
-      getAdminProfile(),
-      getProfile()
-    ]);
-
-    const adminData = adminRes.data || adminRes;
-    const companyData = companyRes.data || companyRes;
+    const response = await getAdminProfile();
+    const adminData = response.data || response;
 
     profileData.value = {
-      // DARI /admin/profile
-      name: adminData.name || adminData.fullname || adminData.company_name || 'Admin',
+      name: adminData.name || adminData.fullname || 'Admin',
       email: adminData.email || adminData.user_email || 'Email tidak tersedia',
       phone: adminData.phone || adminData.phone_number || 'Nomer Telepon Tidak Tersedia',
       
-      // DARI /admin/company (pastikan properti dari backend benar)
-      logoUrl: companyData.picture_url || companyData.logo || null
+      profilePict: adminData.profile_picture || adminData.avatar || adminData.picture || null
     };
   } catch (error) {
     console.error('Gagal memuat data di Topbar:', error);
@@ -101,8 +91,8 @@ const handleLogout = () => {
         <span class="text-white text-[14px] font-medium">{{ profileData.name }}</span>
         
         <img 
-          v-if="profileData.logoUrl"
-          :src="profileData.logoUrl"
+          v-if="profileData.profilePict"
+          :src="profileData.profilePict"
           alt="Profile" 
           class="w-8 h-8 rounded-full object-cover border-2 border-white/50" 
         />
@@ -137,8 +127,8 @@ const handleLogout = () => {
             <div class="flex flex-col items-center text-center">
               
               <img 
-                v-if="profileData.logoUrl"
-                :src="profileData.logoUrl"
+                v-if="profileData.profilePict"
+                :src="profileData.profilePict"
                 alt="Profile Large" 
                 class="w-16 h-16 rounded-full object-cover mb-3 border border-gray-200" 
               />
@@ -163,7 +153,7 @@ const handleLogout = () => {
 
               <div class="flex items-center gap-3 w-full mt-5">
                 <button 
-                  @click="router.push('/profil-perusahaan'); isDropdownOpen = false;"
+                  @click="router.push('/edit-profile'); isDropdownOpen = false;"
                   class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm font-medium hover:bg-blue-50 transition"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>

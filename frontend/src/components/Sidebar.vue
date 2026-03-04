@@ -84,9 +84,7 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
 
 <template>
   <!-- Sidebar Container with gray background -->
-  <aside class="w-[260px] bg-[#F4F6F8] min-h-full flex flex-col p-4 gap-4 font-['Poppins']">
-    
-    <!-- Card 1: Main Menu + Master Data -->
+<aside class="w-[260px] bg-[#F4F6F8] flex flex-col p-4 gap-4 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">    <!-- Card 1: Main Menu + Master Data -->
     <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <!-- Main Menu Section -->
       <div class="mb-6">
@@ -202,7 +200,6 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
         </div>
       </div>
       
-      <!-- Upgrade Button - Outline Orange -->
       <button class="w-full border-2 border-[#F7941D] text-[#F7941D] text-[12px] font-semibold py-2.5 rounded-xl hover:bg-[#F7941D] hover:text-white transition-all">
         Upgrade Paket
       </button>
@@ -211,7 +208,16 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
 </template>
 
 <style scoped>
-.filter-orange {
-  filter: invert(56%) sepia(89%) saturate(1095%) hue-rotate(360deg) brightness(101%) contrast(96%);
-}
+  .filter-orange {
+    filter: invert(56%) sepia(89%) saturate(1095%) hue-rotate(360deg) brightness(101%) contrast(96%);
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 </style>
