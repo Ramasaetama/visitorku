@@ -10,5 +10,14 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
+  },
+  server: {
+    proxy: {
+      '/api-stg': {
+        target: 'https://visitorku.io',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
   }
 })

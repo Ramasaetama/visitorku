@@ -61,7 +61,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
 
-  // ── SuperAdmin Routes ── (akan ditambahkan besok)
+  // ── SuperAdmin Routes ── (repo terpisah)
 ]
 
 const router = createRouter({
