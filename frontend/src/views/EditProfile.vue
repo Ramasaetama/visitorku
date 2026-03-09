@@ -10,7 +10,7 @@
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 flex-1">
 
           <div class="flex items-center justify-between mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Edit Profile</h1>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-1">Edit Profile</h1>
             <div class="text-sm text-gray-500">
               <span class="hover:text-gray-700 cursor-pointer">Dashboard</span> &gt; <span class="text-[#F7941D]">Edit Profile</span>
             </div>
@@ -59,9 +59,9 @@
 import { ref, onMounted } from 'vue';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
-import AccountTab from '@/components/profile/AccountTab.vue';
-import ProfilePictureTab from '@/components/profile/ProfilePictureTab.vue';
-import PasswordTab from '@/components/profile/PasswordTab.vue';
+import AccountTab from '@/components/adminProfile/AccountTab.vue';
+import ProfilePictureTab from '@/components/adminProfile/ProfilePictureTab.vue';
+import PasswordTab from '@/components/adminProfile/PasswordTab.vue';
 import { getAdminProfile } from '@/services/adminProfileService';
 
 const activeTab = ref('account');

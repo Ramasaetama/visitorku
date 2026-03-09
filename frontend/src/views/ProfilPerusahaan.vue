@@ -354,6 +354,7 @@ import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
+import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; // Import fungsinya
 import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
 import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
@@ -612,16 +613,23 @@ const autoSaveLangTz = async () => {
 };
 
 const deleteToken = async (id, index) => {
-  const isConfirmed = confirm('Apakah Anda yakin ingin menghapus API Token ini? Token yang dihapus tidak dapat dipulihkan.');
+  if (!id) { 
+    showError('ID Token tidak valid.'); 
+    return; 
+  }
+
+  const isConfirmed = await confirmDelete('API Token');
+
   if (isConfirmed) {
     try {
-      if (!id) { alert('ID Token tidak valid.'); return; }
       await deleteApiKey(id);
       existingTokens.value.splice(index, 1);
       activeMenuIndex.value = null; 
-      alert('API Token berhasil dihapus dari server!');
+      
+      showSuccess('API Token berhasil dihapus dari server!');
+      
     } catch (error) {
-      alert(error.response?.data?.message || 'Terjadi kesalahan saat mencoba menghapus token.');
+      showError(error.response?.data?.message || 'Terjadi kesalahan saat mencoba menghapus token.');
     }
   }
 };

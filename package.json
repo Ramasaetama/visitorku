@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@remixicon/vue": "^4.9.0",
-    "swagger-ui": "^5.31.1"
+    "swagger-ui": "^5.17.10",
+    "vue-sweetalert2": "^5.0.11"
   }
 }
