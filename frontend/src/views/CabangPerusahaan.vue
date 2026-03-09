@@ -14,7 +14,7 @@ import adminprofile from '@/assets/adminprofile.png';
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; // Import fungsinya
 import { getAllBranches, createBranch, updateBranch, deleteBranch } from '@/services/cabangService';
 
@@ -24,13 +24,34 @@ const searchQuery = ref('');
 // Data cabang (kosong untuk empty state)
 const cabangData = ref([]);
 
+const appliedSearchQuery = ref('');
+
+const executeSearch = () => {
+  appliedSearchQuery.value = searchQuery.value;
+};
 // Definisi kolom tabel
 const tableColumns = [
   { key: 'nama', label: 'Nama Cabang', sortable: true },
   { key: 'alamat', label: 'Alamat Cabang', sortable: true },
-  { key: 'kontak', label: 'Kontak Cabang', sortable: true },
+  { key: 'kontak', label: 'Kontak Cabang', sortable: false },
   { key: 'aksi', label: 'Aksi', sortable: false },
 ];
+
+const filteredCabangData = computed(() => {
+  if (!appliedSearchQuery.value) {
+    return cabangData.value;
+  }
+  
+  const keyword = appliedSearchQuery.value.toLowerCase();
+  
+  return cabangData.value.filter(cabang => {
+    return (
+      (cabang.nama && cabang.nama.toLowerCase().includes(keyword)) ||
+      (cabang.alamat && cabang.alamat.toLowerCase().includes(keyword)) ||
+      (cabang.kontak && cabang.kontak.toLowerCase().includes(keyword))
+    );
+  });
+});
 
 // Status loading
 const isLoading = ref(false);
@@ -123,8 +144,18 @@ const handleCloseToast = () => {
 };
 
 // Fungsi untuk sorting tabel
+ const sortKey = ref('');
+ const sortOrder = ref('asc');
+
 const handleSort = (columnKey) => {
-  console.log('Sort by:', columnKey);
+  if (sortKey.value === columnKey) {
+    // Kolom yang sama → toggle asc/desc
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    // Kolom baru → mulai dari asc
+    sortKey.value = columnKey;
+    sortOrder.value = 'asc';
+  }
 };
 
 // Fungsi untuk edit cabang
@@ -137,6 +168,33 @@ const handleEditCabang = (row) => {
   };
   showModal.value = true;
 };
+
+const filteredData = computed(() => {
+  if (!appliedSearchQuery.value) {
+    return tujuanData.value;
+  }
+  
+  const keyword = appliedSearchQuery.value.toLowerCase();
+  
+  return tujuanData.value.filter(item => {
+    return (
+      (item.nama && item.namaCabang.toLowerCase().includes(keyword)) ||
+      (item.alamat && item.alamatCabang.toLowerCase().includes(keyword))
+    );
+  });
+});
+
+const sortedData = computed(() => {
+  if (!sortKey.value) return filteredCabangData.value; 
+
+  return [...filteredCabangData.value].sort((a, b) => { 
+    const valA = a[sortKey.value] ?? '';
+    const valB = b[sortKey.value] ?? '';
+
+    const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
+    return sortOrder.value === 'asc' ? cmp : -cmp;
+  });
+});
 
 // Fungsi untuk hapus cabang
 const handleDeleteCabang = async (row) => {
@@ -193,15 +251,17 @@ const handleDeleteCabang = async (row) => {
               <SearchInput 
                 v-model="searchQuery" 
                 placeholder="Cari Cabang" 
-              />
+                @keyup.enter="executeSearch"  />
             </div>
             
             <!-- Table wrapper tanpa border -->
             <div class="flex-1 overflow-hidden">
               <DataTable 
-                :columns="tableColumns"
-                :data="cabangData"
+                :columns="tableColumns"               
+                :data="sortedData" 
                 :loading="isLoading"
+                :sort-key="sortKey"
+                :sort-order="sortOrder"
                 @sort="handleSort"
                 @edit="handleEditCabang"
                 @delete="handleDeleteCabang"

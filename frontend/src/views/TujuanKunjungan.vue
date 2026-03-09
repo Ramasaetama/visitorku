@@ -64,6 +64,11 @@ const showModal = ref(false);
 const showToast = ref(false);
 const toastMessage = ref(''); // Wadah untuk pesan notifikasi dinamis
 
+const appliedSearchQuery = ref('');
+const executeSearch = () => {
+  appliedSearchQuery.value = searchQuery.value;
+};
+
 // Dummy profile sementara untuk mencegah error blank page
 const companyProfile = ref({
   name: '',
@@ -139,11 +144,28 @@ const handleSort = (columnKey) => {
   }
 };
 
-// Data yang sudah diurutkan berdasarkan sortKey & sortOrder
-const sortedData = computed(() => {
-  if (!sortKey.value) return tujuanData.value;
+const filteredData = computed(() => {
+  if (!appliedSearchQuery.value) {
+    return tujuanData.value;
+  }
+  
+  const keyword = appliedSearchQuery.value.toLowerCase();
+  
+  return tujuanData.value.filter(item => {
+    return (
+      (item.divisi && item.divisi.toLowerCase().includes(keyword)) ||
+      (item.pic && item.pic.toLowerCase().includes(keyword)) ||
+      (item.jabatan && item.jabatan.toLowerCase().includes(keyword)) ||
+      (item.cabang && item.cabang.toLowerCase().includes(keyword))
+    );
+  });
+});
 
-  return [...tujuanData.value].sort((a, b) => {
+const sortedData = computed(() => {
+  if (!sortKey.value) return filteredData.value; 
+
+  // SEBELUMNYA: return [...tujuanData.value].sort(...)
+  return [...filteredData.value].sort((a, b) => { 
     const valA = a[sortKey.value] ?? '';
     const valB = b[sortKey.value] ?? '';
 
@@ -283,7 +305,7 @@ const handleSubmitTujuan = async (formData) => {
                 <SearchInput 
                   v-model="searchQuery" 
                   placeholder="Cari berdasarkan nama PIC/Divisi" 
-                />
+                  @keyup.enter="executeSearch" />
               </div>
               
               <button 
