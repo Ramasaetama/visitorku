@@ -5,7 +5,7 @@ import Modal from '@/components/common/Modal.vue'
 import Input from '@/components/common/Input.vue'
 import Toggle from '@/components/common/Toggle.vue'
 import Toast from '@/components/common/Toast.vue'
-import Topbar from '@/components/Topbar.vue'
+
 import visitorkulogo from '@/assets/visitorku.png'
 import patternBg from '@/assets/Frame 7.svg'
 import globeIcon from '@/assets/proicons_globe.svg'
@@ -215,7 +215,7 @@ const handleCloseToast = () => {
                         <!-- Kebab Dropdown -->
                         <div
                           v-if="activeKebab === field.id"
-                          class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30"
+                          class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
                         >
                           <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                             Edit
@@ -238,45 +238,36 @@ const handleCloseToast = () => {
                       </td>
                     </tr>
 
-                    <tr v-for="field in customFields" :key="field.id" class="border-b border-gray-100 hover:bg-gray-50">
+                    <tr v-for="(field, index) in customFields" :key="'custom-' + index" class="border-b border-gray-100 hover:bg-gray-50">
                       <td class="py-3.5 px-4 text-sm text-gray-700">{{ field.name }}</td>
                       <td class="py-3.5 px-4 text-sm text-gray-500">{{ field.type }}</td>
                       <td class="py-3.5 px-4">
-                        <div class="flex items-center gap-1">
-                          <div class="relative">
-                            <button
-                              @click.stop="toggleKebab(field.id)"
-                              class="p-1 rounded hover:bg-gray-100 transition-colors"
-                            >
-                              <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="5" r="2" />
-                                <circle cx="12" cy="12" r="2" />
-                                <circle cx="12" cy="19" r="2" />
-                              </svg>
-                            </button>
-                            <!-- Kebab Dropdown -->
-                            <div
-                              v-if="activeKebab === field.id"
-                              class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30"
-                            >
-                              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                Edit
-                              </button>
-                              <button
-                                @click.stop="deleteField(field.id)"
-                                class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
+                        <div class="relative">
                           <button
-                            @click.stop="deleteField(field.id)"
-                            class="p-1 rounded hover:bg-red-50 transition-colors"
-                            title="Delete"
+                            @click.stop="toggleKebab('custom-' + index)"
+                            class="p-1 rounded hover:bg-gray-100 transition-colors"
                           >
-                            <img :src="deleteIcon" alt="Delete" class="w-5 h-5" />
+                            <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
+                              <circle cx="12" cy="5" r="2" />
+                              <circle cx="12" cy="12" r="2" />
+                              <circle cx="12" cy="19" r="2" />
+                            </svg>
                           </button>
+                          <!-- Kebab Dropdown -->
+                          <div
+                            v-if="activeKebab === 'custom-' + index"
+                            class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                          >
+                            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                              Edit
+                            </button>
+                            <button
+                              @click.stop="deleteField(field.id)"
+                              class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>

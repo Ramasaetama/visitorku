@@ -15,7 +15,6 @@ import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 
 import { ref, onMounted } from 'vue';
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; // Import fungsinya
 import { getAllBranches, createBranch, updateBranch, deleteBranch } from '@/services/cabangService';
 
 // Data untuk pencarian
@@ -140,22 +139,19 @@ const handleEditCabang = (row) => {
 
 // Fungsi untuk hapus cabang
 const handleDeleteCabang = async (row) => {
-  // Panggil helper SweetAlert yang tadi kita buat
-  const isConfirmed = await confirmDelete('Cabang Perusahaan');
+  if (!confirm('Apakah Anda yakin ingin menghapus cabang ini?')) return;
 
-  if (isConfirmed) {
-    try {
-      // Panggil API deleteBranch (bukan deleteApiKey)
-      await deleteBranch(row.id); 
-      
-      showSuccess('Cabang berhasil dihapus.');
-      
-      // Refresh tabel otomatis setelah berhasil dihapus
-      await fetchBranches(); 
-      
-    } catch (error) {
-      showError(error.response?.data?.message || 'Gagal menghapus cabang.');
-    }
+  try {
+    await deleteBranch(row.id);
+
+    toastMessage.value = 'Cabang berhasil dihapus';
+    showToast.value = true;
+
+    await fetchBranches();
+  } catch (error) {
+    console.error('Gagal menghapus cabang:', error);
+    toastMessage.value = 'Gagal menghapus cabang';
+    showToast.value = true;
   }
 };
 </script>

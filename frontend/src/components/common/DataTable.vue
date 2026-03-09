@@ -33,6 +33,10 @@ const props = defineProps({
   sortOrder: {
     type: String,
     default: 'asc' // 'asc' | 'desc'
+  },
+  headerColor: {
+    type: String,
+    default: '#FFEEE2'
   }
 });
 
@@ -121,10 +125,11 @@ const getCellClass = (key, index) => {
             v-for="(column, index) in columns" 
             :key="column.key"
             :class="[
-              'px-4 py-3 text-left text-sm font-semibold text-gray-700 bg-[#FFEEE2]',
+              'px-4 py-3 text-left text-sm font-semibold text-gray-700',
               // Styling untuk merge visual Alamat & Kontak Cabang
               getHeaderClass(column.key, index)
             ]"
+            :style="{ backgroundColor: headerColor }"
           >
             <!-- Container dengan justify-between untuk icon sorting rata kanan -->
             <div class="flex w-full items-center justify-between">

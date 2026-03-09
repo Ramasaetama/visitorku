@@ -20,7 +20,6 @@ import FormTambahTujuan from '@/components/cabang/FormTambahTujuan.vue';
 // Import Vue Composables & API Services
 import { ref, onMounted, computed } from 'vue';
 
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; // Import fungsinya
 // Import API Services (Sesuaikan dengan path service Anda jika ada yang diubah)
 import { 
   getCategories, 
@@ -188,21 +187,26 @@ const handleEditTujuan = (row) => {
 };
 
 // 3. Klik Tombol Hapus
+// 3. Klik Tombol Hapus
+// 3. Klik Tombol Hapus
 const handleDeleteTujuan = async (row) => {
-  const isConfirmed = await confirmDelete(`Tujuan Kunjungan untuk PIC: ${row.pic}`);
+  const isConfirmed = confirm(`Apakah Anda yakin ingin menghapus Tujuan Kunjungan untuk PIC: ${row.pic}?`);
 
   if (isConfirmed) {
     try {
       isLoading.value = true;
       await deleteCategory(row.id);
       
-      showSuccess('Tujuan Kunjungan berhasil dihapus!');
+      // MUNCULKAN TOAST SUKSES HAPUS
+      toastMessage.value = 'Tujuan Kunjungan berhasil dihapus!';
+      showToast.value = true;
       
-      fetchDataTujuan();
-      
+      fetchDataTujuan(); // Refresh tabel
     } catch (error) {
       console.error('Gagal menghapus data:', error);
-      showError(error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.');
+      // MUNCULKAN TOAST GAGAL HAPUS
+      toastMessage.value = error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.';
+      showToast.value = true;
     } finally {
       isLoading.value = false;
     }
