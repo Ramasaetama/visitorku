@@ -358,8 +358,11 @@ import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-// IMPORT KEDUA ENDPOINT
-import { getAdminProfile, getProfile, updateProfile, updateAdminProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';import Topbar from '@/components/Topbar.vue';
+// IMPORT DARI ADMIN PROFILE SERVICE
+import { getAdminProfile, updateAdminProfile } from '@/services/adminProfileService';
+// IMPORT DARI COMPANY PROFILE SERVICE
+import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey } from '@/services/companyProfileService';
+import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
 
