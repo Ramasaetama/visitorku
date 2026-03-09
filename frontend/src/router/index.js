@@ -13,13 +13,6 @@ const routes = [
     component: () => import('../views/onboarding/Register.vue'),
     meta: { guest: true },
   },
-  // Dashboard (placeholder)
-  {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('../views/Dashboard.vue'),
-    meta: { requiresAuth: true },
-  },
   // Login
   {
     path: '/login',
@@ -27,25 +20,30 @@ const routes = [
     component: () => import('../views/Login.vue'),
     meta: { guest: true },
   },
-  // Cabang Perusahaan
+
+  // ── Admin Routes ──
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('../views/admin/Dashboard.vue'),
+    meta: { requiresAuth: true },
+  },
   {
     path: '/cabang',
     name: 'CabangPerusahaan',
-    component: () => import('../views/CabangPerusahaan.vue'),
+    component: () => import('../views/admin/CabangPerusahaan.vue'),
     meta: { requiresAuth: true },
   },
-  // Tujuan Kunjungan
   {
     path: '/tujuan-kunjungan',
     name: 'TujuanKunjungan',
-    component: () => import('../views/TujuanKunjungan.vue'),
+    component: () => import('../views/admin/TujuanKunjungan.vue'),
     meta: { requiresAuth: true },
   },
-  // Profil Perusahaan
   {
     path: '/profil-perusahaan',
     name: 'ProfilPerusahaan',
-    component: () => import('../views/ProfilPerusahaan.vue'),
+    component: () => import('../views/admin/ProfilPerusahaan.vue'),
     meta: { requiresAuth: true },
   },
   // Edit Profile
@@ -53,15 +51,17 @@ const routes = [
     path: '/edit-profile',
     name: 'EditProfile',
     component: () => import('../views/EditProfile.vue'),
-    meta: { requiresAuth: true }, // Wajib login
+    meta: { requiresAuth: true },
   },
   // Pengaturan Form Visitor / Custom Field
   {
     path: '/pengaturan-form',
     name: 'PengaturanFormVisitor',
-    component: () => import('../views/PengaturanFormVisitor.vue'),
+    component: () => import('../views/admin/PengaturanFormVisitor.vue'),
     meta: { requiresAuth: true },
   },
+
+  // ── SuperAdmin Routes ── (akan ditambahkan besok)
 ]
 
 const router = createRouter({

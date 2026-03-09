@@ -20,6 +20,11 @@ export default {
           800: '#5F3F06',
           900: '#301F03',
         },
+        // Secondary Primary Colors (Blue)
+        secondary: {
+          500: '#23B9F2', // BASE
+          600: '#D3F1FC', // Header Table
+        },
         // Gray Colors
         gray: {
           25: '#FCFCFD',
@@ -40,6 +45,11 @@ export default {
         accent: '#FFC765',
         // Divider
         divider: '#D9D9D9',
+        // Secondary Primary Colors (Blue) - SuperAdmin
+        secondary: {
+          500: '#23B9F2', // BASE
+          600: '#D3F1FC', // Header Table
+        },
       },
       fontFamily: {
         // Primary font for headings and body

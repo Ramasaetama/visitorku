@@ -198,22 +198,19 @@ const sortedData = computed(() => {
 
 // Fungsi untuk hapus cabang
 const handleDeleteCabang = async (row) => {
-  // Panggil helper SweetAlert yang tadi kita buat
-  const isConfirmed = await confirmDelete('Cabang Perusahaan');
+  if (!confirm('Apakah Anda yakin ingin menghapus cabang ini?')) return;
 
-  if (isConfirmed) {
-    try {
-      // Panggil API deleteBranch (bukan deleteApiKey)
-      await deleteBranch(row.id); 
-      
-      showSuccess('Cabang berhasil dihapus.');
-      
-      // Refresh tabel otomatis setelah berhasil dihapus
-      await fetchBranches(); 
-      
-    } catch (error) {
-      showError(error.response?.data?.message || 'Gagal menghapus cabang.');
-    }
+  try {
+    await deleteBranch(row.id);
+
+    toastMessage.value = 'Cabang berhasil dihapus';
+    showToast.value = true;
+
+    await fetchBranches();
+  } catch (error) {
+    console.error('Gagal menghapus cabang:', error);
+    toastMessage.value = 'Gagal menghapus cabang';
+    showToast.value = true;
   }
 };
 </script>
