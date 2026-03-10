@@ -5,13 +5,14 @@ import Modal from '@/components/common/Modal.vue'
 import Input from '@/components/common/Input.vue'
 import Toggle from '@/components/common/Toggle.vue'
 import Toast from '@/components/common/Toast.vue'
-import Topbar from '@/components/Topbar.vue'
+import Topbar from '@/components/Topbar.vue';
 import visitorkulogo from '@/assets/visitorku.png'
 import patternBg from '@/assets/Frame 7.svg'
 import globeIcon from '@/assets/proicons_globe.svg'
 import adminprofile from '@/assets/adminprofile.png'
 import deleteIcon from '@/assets/delete.svg'
 
+import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import { getAdditionalData, updateAdditionalData } 
   from '@/services/pengaturanFormService'
 
@@ -55,43 +56,11 @@ const isFormValid = computed(() => {
   return formData.value.fieldName.trim() !== '' && formData.value.placeholder.trim() !== ''
 })
 
-// ── Methods ──
-const openModal = () => {
-  formData.value = { fieldName: '', fieldType: 'Text', placeholder: '', required: false }
-  showModal.value = true
-}
-
 const closeModal = () => {
   showModal.value = false
 }
 
-const createField = async () => {
-  if (!isFormValid.value) return
 
-  const newField = {
-    name: formData.value.fieldName,
-    type: formData.value.fieldType,
-    placeholder: formData.value.placeholder,
-    required: formData.value.required,
-  }
-
-  try {
-    const updatedFields = [...customFields.value, newField]
-
-    await updateAdditionalData(additionalDataId.value, {
-      forms: updatedFields
-    })
-
-    customFields.value = updatedFields
-
-    showModal.value = false
-    toastMessage.value = `Field "${newField.name}" berhasil disimpan`
-    showToast.value = true
-
-  } catch (error) {
-    console.error('Gagal update:', error)
-  }
-}
 const fetchAdditionalData = async () => {
   try {
     const response = await getAdditionalData()
@@ -117,22 +86,6 @@ onMounted(() => {
   fetchAdditionalData()
 })
 
-const deleteField = async (fieldId) => {
-  try {
-    const updatedFields = customFields.value.filter(f => f.id !== fieldId)
-
-    await updateAdditionalData(additionalDataId.value, {
-      forms: updatedFields
-    })
-
-    customFields.value = updatedFields
-    activeKebab.value = null
-
-  } catch (error) {
-    console.error('Gagal delete:', error)
-  }
-}
-
 const toggleKebab = (fieldId) => {
   activeKebab.value = activeKebab.value === fieldId ? null : fieldId
 }
@@ -144,6 +97,109 @@ const closeKebab = () => {
 const handleCloseToast = () => {
   showToast.value = false
 }
+
+// 1. Tambahkan state penanda index yang sedang diedit
+const editingFieldIndex = ref(null);
+
+// 2. Fungsi bantuan untuk mengubah "Nama Depan" menjadi "nama_depan" (sesuai req backend)
+const generateFieldSlug = (text) => {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');
+};
+
+// 3. Perbarui fungsi Buka Modal Tambah
+const openModal = () => {
+  formData.value = { fieldName: '', fieldType: 'Text', placeholder: '', required: false };
+  editingFieldIndex.value = null; // Pastikan mode Tambah
+  showModal.value = true;
+};
+
+// 4. Tambahkan fungsi Buka Modal Edit
+const handleEditForm = (index) => {
+  const fieldToEdit = customFields.value[index];
+  
+  formData.value = {
+    fieldName: fieldToEdit.name,
+    // Kembalikan huruf kapital pertama agar select option Vue tidak error
+    fieldType: fieldToEdit.type.charAt(0).toUpperCase() + fieldToEdit.type.slice(1), 
+    required: fieldToEdit.required || false,
+    placeholder: fieldToEdit.placeholder || ''
+  };
+  
+  editingFieldIndex.value = index; // Tandai bahwa ini mode Edit
+  showModal.value = true;
+};
+
+// 5. Fungsi Gabungan Simpan (Tambah & Edit)
+const saveField = async () => {
+  if (!isFormValid.value) return;
+
+  // Format data persis seperti yang diminta Backend
+  const newFieldData = {
+    field: generateFieldSlug(formData.value.fieldName), 
+    name: formData.value.fieldName,
+    type: formData.value.fieldType.toLowerCase(), // Backend minta huruf kecil (text, number, dll)
+    required: formData.value.required
+  };
+
+  try {
+    let updatedFields = [...customFields.value];
+
+    // Jika Edit, timpa datanya. Jika Tambah, taruh di paling bawah.
+    if (editingFieldIndex.value !== null) {
+      updatedFields[editingFieldIndex.value] = newFieldData;
+    } else {
+      updatedFields.push(newFieldData);
+    }
+
+    // Tembak API (PUT)
+    await updateAdditionalData(additionalDataId.value, { forms: updatedFields });
+
+    // Update tabel & tutup modal
+    customFields.value = updatedFields;
+    showModal.value = false;
+    
+    toastMessage.value = editingFieldIndex.value !== null 
+      ? `Field berhasil diperbarui` 
+      : `Field berhasil ditambahkan`;
+    showToast.value = true;
+    
+  } catch (error) {
+    console.error('Gagal menyimpan field:', error);
+  }
+};
+
+// 6. Perbarui Fungsi Hapus (Delete) dengan SweetAlert
+const deleteField = async (index) => {
+  // Panggil pop-up konfirmasi khas aplikasi Anda
+  const isConfirmed = await confirmDelete('Custom Field');
+  
+  if (isConfirmed) {
+    try {
+      // 1. Copy array lama
+      let updatedFields = [...customFields.value];
+      
+      // 2. Buang field di posisi index tersebut
+      updatedFields.splice(index, 1);
+
+      // 3. Tembak ke API (pastikan ID-nya tidak null)
+      if (!additionalDataId.value) {
+        throw new Error("ID Pengaturan Form belum tersedia.");
+      }
+
+      await updateAdditionalData(additionalDataId.value, { forms: updatedFields });
+
+      // 4. Update tabel di layar
+      customFields.value = updatedFields;
+      
+      // 5. Munculkan notifikasi sukses
+      showSuccess('Field berhasil dihapus!');
+
+    } catch (error) {
+      console.error('Gagal menghapus field:', error);
+      showError(error.response?.data?.message || 'Gagal menghapus field karena kesalahan sistem.');
+    }
+  }
+};
 </script>
 
 <template>
@@ -200,27 +256,18 @@ const handleCloseToast = () => {
                   <tr v-for="field in defaultFields" :key="field.id" class="border-b border-gray-100 hover:bg-gray-50">
                     <td class="py-3.5 px-4 text-sm text-gray-700">{{ field.name }}</td>
                     <td class="py-3.5 px-4 text-sm text-gray-500">{{ field.type }}</td>
+                    
                     <td class="py-3.5 px-4">
-                      <div class="relative">
+                      <div class="flex justify-center w-[72px]">
                         <button
-                          @click.stop="toggleKebab(field.id)"
-                          class="p-1 rounded hover:bg-gray-100 transition-colors"
+                          class="flex items-center justify-center w-8 h-8 rounded border border-[#F7941D] text-[#F7941D] hover:bg-orange-50 transition-colors"
                         >
-                          <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="5" r="2" />
-                            <circle cx="12" cy="12" r="2" />
-                            <circle cx="12" cy="19" r="2" />
+                          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="5" r="1.5" />
+                            <circle cx="12" cy="12" r="1.5" />
+                            <circle cx="12" cy="19" r="1.5" />
                           </svg>
                         </button>
-                        <!-- Kebab Dropdown -->
-                        <div
-                          v-if="activeKebab === field.id"
-                          class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30"
-                        >
-                          <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                            Edit
-                          </button>
-                        </div>
                       </div>
                     </td>
                   </tr>
@@ -238,44 +285,31 @@ const handleCloseToast = () => {
                       </td>
                     </tr>
 
-                    <tr v-for="field in customFields" :key="field.id" class="border-b border-gray-100 hover:bg-gray-50">
+                    <tr v-for="(field, index) in customFields" :key="'custom-' + index" class="border-b border-gray-100 hover:bg-gray-50">
                       <td class="py-3.5 px-4 text-sm text-gray-700">{{ field.name }}</td>
                       <td class="py-3.5 px-4 text-sm text-gray-500">{{ field.type }}</td>
+                      
                       <td class="py-3.5 px-4">
-                        <div class="flex items-center gap-1">
-                          <div class="relative">
-                            <button
-                              @click.stop="toggleKebab(field.id)"
-                              class="p-1 rounded hover:bg-gray-100 transition-colors"
-                            >
-                              <svg class="w-5 h-5 text-gray-400" viewBox="0 0 24 24" fill="currentColor">
-                                <circle cx="12" cy="5" r="2" />
-                                <circle cx="12" cy="12" r="2" />
-                                <circle cx="12" cy="19" r="2" />
-                              </svg>
-                            </button>
-                            <!-- Kebab Dropdown -->
-                            <div
-                              v-if="activeKebab === field.id"
-                              class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30"
-                            >
-                              <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
-                                Edit
-                              </button>
-                              <button
-                                @click.stop="deleteField(field.id)"
-                                class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
+                        <div class="flex items-center gap-2 w-18">
+                          
                           <button
-                            @click.stop="deleteField(field.id)"
-                            class="p-1 rounded hover:bg-red-50 transition-colors"
-                            title="Delete"
+                            @click.stop="handleEditForm(index)"
+                            class="flex items-center justify-center w-8 h-8 rounded border border-[#F7941D] text-[#F7941D] hover:bg-orange-50 transition-colors"
                           >
-                            <img :src="deleteIcon" alt="Delete" class="w-5 h-5" />
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                              <circle cx="12" cy="5" r="1.5" />
+                              <circle cx="12" cy="12" r="1.5" />
+                              <circle cx="12" cy="19" r="1.5" />
+                            </svg>
+                          </button>
+
+                          <button
+                            @click.stop="deleteField(index)"
+                            class="flex items-center justify-center w-8 h-8 rounded bg-[#DE5343] text-white hover:bg-[#C94233] transition-colors"
+                          >
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
                           </button>
                         </div>
                       </td>
@@ -304,8 +338,7 @@ const handleCloseToast = () => {
     <!-- CREATE FIELD MODAL -->
     <Modal
       :show="showModal"
-      title="Create Field"
-      width="half"
+      :title="editingFieldIndex !== null ? 'Edit Field' : 'Create Field'"  width="half"
       @close="closeModal"
     >
       <!-- General Section -->
@@ -376,9 +409,10 @@ const handleCloseToast = () => {
           >
             Cancel
           </button>
+          
           <button
             type="button"
-            @click="createField"
+            @click="saveField" 
             :disabled="!isFormValid"
             :class="[
               'px-5 py-2.5 text-sm font-medium rounded-lg transition-colors',
@@ -387,7 +421,7 @@ const handleCloseToast = () => {
                 : 'text-white bg-gray-300 cursor-not-allowed'
             ]"
           >
-            Create Field
+            {{ editingFieldIndex !== null ? 'Save Changes' : 'Create Field' }}
           </button>
         </div>
       </template>

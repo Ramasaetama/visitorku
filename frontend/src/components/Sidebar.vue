@@ -55,7 +55,7 @@ const masterDataItems = [
   { name: 'Cabang', icon: gitMergeIcon, path: '/cabang' },
   { name: 'Tujuan Kunjungan', icon: listIndefiniteIcon, path: '/tujuan-kunjungan' },
   { name: 'Pengaturan Form Visitor', icon: settingsIcon, path: '/pengaturan-form' },
-  { name: 'Manajemen Pengguna', icon: groupLineIcon, path: '/manajemen-pengguna' },
+  { name: 'Manajemen Pengguna', icon: groupLineIcon, path: '/edit-profile' },
   { name: 'Invoice', icon: fileTextIcon, path: '/invoice' },
 ];
 

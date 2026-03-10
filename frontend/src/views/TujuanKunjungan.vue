@@ -18,7 +18,7 @@ import Toast from '@/components/common/Toast.vue';
 import FormTambahTujuan from '@/components/cabang/FormTambahTujuan.vue';
 
 // Import Vue Composables & API Services
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; // Import fungsinya
 // Import API Services (Sesuaikan dengan path service Anda jika ada yang diubah)
@@ -68,6 +68,13 @@ const appliedSearchQuery = ref('');
 const executeSearch = () => {
   appliedSearchQuery.value = searchQuery.value;
 };
+watch(searchQuery, (nilaiBaru) => {
+  // Jika isi search bar dihapus sampai kosong string ('')
+  if (nilaiBaru === '') {
+    // Langsung jalankan pencarian (yang mana akan me-reset tabel)
+    executeSearch(); 
+  }
+});
 
 // Dummy profile sementara untuk mencegah error blank page
 const companyProfile = ref({
@@ -333,13 +340,23 @@ const handleSubmitTujuan = async (formData) => {
                 @delete="handleDeleteTujuan"
               >
                 <template #empty>
+                  
                   <EmptyState 
+                    v-if="tujuanData.length === 0"
                     :icon="notfound"
-                    title="Tujuan belum tersedia"
+                    title="Tujuan Belum Tersedia"
                     description="Tambahkan tujuan terlebih dahulu untuk memulai tujuan kunjungan."
-                    buttonText="+ Tambah Tujuan"
+                    buttonText="Tambah Tujuan"
                     @action="handleTambahTujuan"
                   />
+
+                  <EmptyState 
+                    v-else
+                    :icon="notfound"
+                    title="No Records to display"
+                    :description="`Tidak ada tujuan kunjungan yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                  />
+                  
                 </template>
               </DataTable>
             </div>

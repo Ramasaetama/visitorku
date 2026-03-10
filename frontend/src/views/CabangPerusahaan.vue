@@ -14,7 +14,7 @@ import adminprofile from '@/assets/adminprofile.png';
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; // Import fungsinya
 import { getAllBranches, createBranch, updateBranch, deleteBranch } from '@/services/cabangService';
 
@@ -29,6 +29,13 @@ const appliedSearchQuery = ref('');
 const executeSearch = () => {
   appliedSearchQuery.value = searchQuery.value;
 };
+watch(searchQuery, (nilaiBaru) => {
+  // Jika isi search bar dihapus sampai kosong string ('')
+  if (nilaiBaru === '') {
+    // Langsung jalankan pencarian (yang mana akan me-reset tabel)
+    executeSearch(); 
+  }
+});
 // Definisi kolom tabel
 const tableColumns = [
   { key: 'nama', label: 'Nama Cabang', sortable: true },
@@ -267,14 +274,23 @@ const handleDeleteCabang = async (row) => {
                 @delete="handleDeleteCabang"
               >
                 <template #empty>
+                  
                   <EmptyState 
+                    v-if="cabangData.length === 0"
                     :icon="notfound"
                     title="Data Cabang Belum Tersedia"
                     description="Tambahkan minimal satu cabang agar sistem dapat digunakan."
                     buttonText="Tambah Cabang"
                     @action="handleTambahCabang"
                   />
-                </template>
+
+                  <EmptyState 
+                    v-else
+                    :icon="notfound"
+                    title="No Records to display"
+                    :description="`Tidak ada cabang yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                  />
+                  </template>
               </DataTable>
             </div>
             
