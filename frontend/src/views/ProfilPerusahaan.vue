@@ -409,13 +409,9 @@ const availableScopes = ref([
 const modalTitle = computed(() => { return uploadType.value === 'logo' ? 'Ubah Logo' : 'Sesuaikan Header'; });
 const modalDescription = computed(() => { return uploadType.value === 'logo' ? 'Format yang diterima: <span class="font-medium text-[#EE9D0F]">JPG</span> • <span class="font-medium text-[#EE9D0F]">JPEG</span> • <span class="font-medium text-[#EE9D0F]">PNG</span> (Maks 2MB)' : 'Dimensi yang disarankan: <span class="font-medium text-[#EE9D0F]">1920 x 240px</span>, format PNG transparan, maksimal 2 MB'; });
 
-// ==========================================
-// MURNI MENGAMBIL DATA DARI COMPANY API
-// ==========================================
 const fetchProfileData = async () => {
   isLoadingData.value = true;
   try {
-    // Cukup panggil getProfile saja, tidak perlu Promise.all ganda
     const response = await getProfile();
     const companyData = response.data || response;
 
