@@ -1,7 +1,9 @@
 {
   "dependencies": {
     "@remixicon/vue": "^4.9.0",
+    "apexcharts": "^5.10.4",
     "swagger-ui": "^5.17.10",
-    "vue-sweetalert2": "^5.0.11"
+    "vue-sweetalert2": "^5.0.11",
+    "vue3-apexcharts": "^1.11.1"
   }
 }

@@ -227,8 +227,6 @@ const handleDeleteCabang = async (row) => {
 
 <template>
   <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    
-    <!-- TOPBAR -->
     <Topbar />
    
     <div class="flex flex-1 items-stretch">
