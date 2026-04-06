@@ -62,6 +62,20 @@ const routes = [
     component: () => import('../views/PengaturanFormVisitor.vue'),
     meta: { requiresAuth: true },
   },
+  // Data Kunjungan / Visit
+  {
+    path: '/data-kunjungan',
+    name: 'Visit',
+    component: () => import('../views/Visit.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Signage (Layar Informasi)
+  {
+    path: '/layar-informasi',
+    name: 'Signage',
+    component: () => import('../views/Signage.vue'),
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

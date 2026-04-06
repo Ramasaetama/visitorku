@@ -16,6 +16,10 @@ defineProps({
   modelValue: {
     type: String,
     default: ''
+  },
+  inputClass: {
+    type: String,
+    default: 'rounded-lg'
   }
 });
 
@@ -38,10 +42,13 @@ defineEmits(['update:modelValue']);
       :value="modelValue"
       @input="$emit('update:modelValue', $event.target.value)"
       :placeholder="placeholder"
-      class="w-full pl-12 pr-4 py-3 bg-white border border-gray-200 rounded-lg
-             text-sm text-gray-700 placeholder-gray-400
-             focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
-             transition-all duration-200"
+      :class="[
+        'w-full h-9 pl-12 pr-4 bg-white border border-gray-200',
+        'text-sm text-gray-700 placeholder-gray-400',
+        'focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]',
+        'transition-all duration-200',
+        inputClass
+      ]"
     />
   </div>
 </template>
