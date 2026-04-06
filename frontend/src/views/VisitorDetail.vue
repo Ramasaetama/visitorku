@@ -8,7 +8,7 @@ import { getVisitorDetail } from '@/services/visitorService';
 
 const route = useRoute();
 const router = useRouter();
-const visitorId = route.params.id; // Menangkap ID dari URL
+const visitorId = route.params.id; 
 
 // State Data
 const visitorInfo = ref({});
@@ -17,8 +17,8 @@ const isLoading = ref(true);
 
 // Definisi Kolom untuk DataTable
 const historyColumns = [
-  { key: 'category', label: 'Purpose', sortable: false },
-  { key: 'location', label: 'Location', sortable: false },
+  { key: 'category', label: 'Tujuan', sortable: false },
+  { key: 'location', label: 'Lokasi', sortable: false },
   { key: 'check_in', label: 'Check In', sortable: false },
   { key: 'check_out', label: 'Check Out', sortable: false },
 ];
@@ -87,7 +87,7 @@ onMounted(() => {
                 
                 <div class="flex flex-col gap-3">
                   <div>
-                    <p class="text-[13px] text-[#64748B] font-semibold">Full Name</p>
+                    <p class="text-[13px] text-[#64748B] font-semibold">Nama Lengkap</p>
                     <p class="text-[14px] font-medium text-[#1E293B] mt-0.5">{{ visitorInfo.name || '-' }}</p>
                   </div>
                   <div>
@@ -95,13 +95,13 @@ onMounted(() => {
                     <p class="text-[14px] font-medium text-[#1E293B] mt-0.5">{{ visitorInfo.email || '-' }}</p>
                   </div>
                   <div>
-                    <p class="text-[13px] text-[#64748B] font-semibold">Phone Number</p>
+                    <p class="text-[13px] text-[#64748B] font-semibold">No Telepon</p>
                     <p class="text-[14px] font-medium text-[#1E293B] mt-0.5">{{ visitorInfo.phone_number || '-' }}</p>
                   </div>
                 </div>
 
                 <div>
-                  <p class="text-[13px] text-[#64748B] font-semibold">Notes</p>
+                  <p class="text-[13px] text-[#64748B] font-semibold">Catatan</p>
                   <p class="text-[14px] font-medium text-[#1E293B] mt-0.5 whitespace-pre-wrap">{{ visitorInfo.notes || '-' }}</p>
                 </div>
 

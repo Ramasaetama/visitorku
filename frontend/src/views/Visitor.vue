@@ -8,12 +8,9 @@ import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import notfound from '@/assets/notfound.svg';
 
-// 👇 Pastikan import fungsi updateVisitorNotes
 import { getVisitor, updateVisitorNotes } from '@/services/visitorService';
 
-// ==========================================
-// 1. STATE & SEARCH
-// ==========================================
+// STATE & SEARCH
 const visitorData = ref([]); 
 const searchQuery = ref('');
 const appliedSearchQuery = ref('');
@@ -31,9 +28,7 @@ watch(searchQuery, (nilaiBaru) => {
   }
 });
 
-// ==========================================
-// 2. DEFINISI KOLOM TABEL VISITOR
-// ==========================================
+// DEFINISI KOLOM TABEL VISITOR
 const tableColumns = [
   { key: 'nama', label: 'Nama', sortable: true },
   { key: 'email', label: 'Email', sortable: true },
@@ -43,9 +38,7 @@ const tableColumns = [
   { key: 'aksi', label: 'Aksi', sortable: false },
 ];
 
-// ==========================================
-// 3. PAGINATION STATE (SERVER-SIDE)
-// ==========================================
+// PAGINATION
 const currentPage = ref(1);
 const itemsPerPage = ref(10); 
 const totalItems = ref(0); 
@@ -55,9 +48,7 @@ watch(itemsPerPage, () => {
   fetchVisitors();
 });
 
-// ==========================================
-// 4. FETCHING DATA DARI API
-// ==========================================
+// FETCHING DATA API
 const fetchVisitors = async () => {
   isLoading.value = true;
   try {
@@ -94,9 +85,7 @@ const fetchVisitors = async () => {
   }
 };
 
-// ==========================================
-// 5. SORTING LOGIC
-// ==========================================
+// SORTING LOGIC
 const sortKey = ref('');
 const sortOrder = ref('asc');
 
@@ -125,19 +114,16 @@ const sortedData = computed(() => {
   });
 });
 
-// ==========================================
-// 6. PAGINATION UI COMPUTED
-// ==========================================
+// PAGINATION UI 
 const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
 const startIndex = computed(() => totalItems.value === 0 ? 0 : ((currentPage.value - 1) * itemsPerPage.value) + 1);
 const endIndex = computed(() => Math.min(currentPage.value * itemsPerPage.value, totalItems.value));
 
 const visiblePages = computed(() => {
-  const maxVisible = 5; // Batas maksimal tombol angka yang tampil
+  const maxVisible = 5; 
   let start = Math.max(1, currentPage.value - 2);
   let end = start + maxVisible - 1;
 
-  // Jika mentok di halaman terakhir, geser start-nya ke kiri
   if (end > totalPages.value) {
     end = totalPages.value;
     start = Math.max(1, end - maxVisible + 1);
@@ -157,9 +143,8 @@ const goToPage = (page) => {
   }
 };
 
-// ==========================================
-// 7. MODAL NOTES LOGIC
-// ==========================================
+// MODAL NOTES LOGIC
+
 const showNotesModal = ref(false);
 const selectedVisitor = ref(null);
 const notesText = ref('');
@@ -167,13 +152,12 @@ const isSavingNotes = ref(false);
 
 const openNotesModal = (row) => {
   selectedVisitor.value = row;
-  notesText.value = row.notes || ''; // Isi textarea dengan data notes yang sudah ada (jika ada)
+  notesText.value = row.notes || ''; 
   showNotesModal.value = true;
 };
 
 const closeNotesModal = () => {
   showNotesModal.value = false;
-  // Delay reset data agar animasi tutup modal terlihat mulus
   setTimeout(() => {
     selectedVisitor.value = null;
     notesText.value = '';
@@ -185,12 +169,10 @@ const saveNotes = async () => {
   
   isSavingNotes.value = true;
   try {
-    // Kirim request ke backend { notes: 'isi teks' }
     console.log("Mengirim ke ID:", selectedVisitor.value.id);
     console.log("Isi payload:", { notes: notesText.value });
     await updateVisitorNotes(selectedVisitor.value.id, { notes: notesText.value });
     
-    // Update data di tabel lokal agar tidak perlu fetch API ulang
     const index = visitorData.value.findIndex(v => v.id === selectedVisitor.value.id);
     if (index !== -1) {
       visitorData.value[index].notes = notesText.value;
@@ -205,9 +187,7 @@ const saveNotes = async () => {
   }
 };
 
-// ==========================================
-// 8. ACTIONS
-// ==========================================
+// ACTIONS
 const handleReport = () => {
   console.log("Tombol Report diklik!");
 };
@@ -419,7 +399,6 @@ button:focus {
   box-shadow: none !important;
 }
 
-/* Sedikit animasi agar pop-up munculnya smooth */
 .animate-fade-in-up {
   animation: fadeInUp 0.2s ease-out forwards;
 }
