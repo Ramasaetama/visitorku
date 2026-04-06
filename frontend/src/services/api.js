@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://visitorku.io/api-stg', 
+  baseURL: '/api-stg', 
   headers: {
     'Content-Type': 'application/json',
   }

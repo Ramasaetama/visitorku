@@ -69,11 +69,38 @@ const routes = [
     component: () => import('../views/Visit.vue'),
     meta: { requiresAuth: true },
   },
+  // Signage - Create (multi-step)
+  {
+    path: '/layar-informasi/create',
+    name: 'SignageCreate',
+    component: () => import('../views/SignageCreate.vue'),
+    meta: { requiresAuth: true },
+  },
   // Signage (Layar Informasi)
   {
     path: '/layar-informasi',
     name: 'Signage',
     component: () => import('../views/Signage.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Signage Display (Public)
+  {
+    path: '/signage/:slug',
+    name: 'SignageDisplay',
+    component: () => import('../views/SignageDisplay.vue'),
+  },
+  // Data Visitor
+  {
+    path: '/data-visitor',
+    name: 'DataVisitor',
+    component: () => import('../views/Dashboard.vue'), // TODO: buat halaman DataVisitor
+    meta: { requiresAuth: true },
+  },
+  // Invoice
+  {
+    path: '/invoice',
+    name: 'Invoice',
+    component: () => import('../views/Dashboard.vue'), // TODO: buat halaman Invoice
     meta: { requiresAuth: true },
   },
 ]
