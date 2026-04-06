@@ -62,6 +62,13 @@ const routes = [
     component: () => import('../views/EditProfile.vue'),
     meta: { requiresAuth: true }, // Wajib login
   },
+  // Manajemen User
+  {
+    path: '/manajemen-pengguna',
+    name: 'User',
+    component: () => import('../views/User.vue'),
+    meta: { requiresAuth: true }, // Wajib login
+  },
   // Pengaturan Form Visitor / Custom Field
   {
     path: '/pengaturan-form',
