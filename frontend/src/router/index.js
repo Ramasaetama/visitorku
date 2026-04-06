@@ -20,6 +20,13 @@ const routes = [
     component: () => import('../views/Dashboard.vue'),
     meta: { requiresAuth: true },
   },
+  // Visitor
+  {
+    path: '/data-visitor', 
+    name: 'Visitor',
+    component: () => import('../views/Visitor.vue'),
+    meta: { requiresAuth: true }, 
+  },
   // Login
   {
     path: '/login',

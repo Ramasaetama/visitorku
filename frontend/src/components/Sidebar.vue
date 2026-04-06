@@ -23,12 +23,6 @@ const route = useRoute();
 // State untuk toggle Panduan Cepat secara manual (tombol X)
 const showQuickGuide = ref(true);
 
-/**
- * STEP 1: Computed Property untuk Menyembunyikan Panduan Cepat
- * 
- * Panduan Cepat hanya ditampilkan di halaman /dashboard
- * Di halaman lain seperti /cabang, Panduan Cepat akan disembunyikan
- */
 const shouldShowQuickGuide = computed(() => {
   // Daftar halaman yang menampilkan Panduan Cepat
   const pagesWithQuickGuide = ['/dashboard'];
@@ -59,14 +53,7 @@ const masterDataItems = [
   { name: 'Invoice', icon: fileTextIcon, path: '/invoice' },
 ];
 
-/**
- * STEP 2: Fungsi isActive yang Diperbaiki
- * 
- * Masalah sebelumnya: route.path.startsWith(path + '/') 
- * bisa menyebabkan false positive
- * 
- * Solusi: Cek exact match dengan route.path
- */
+
 const isActive = (path) => {
   // Exact match: hanya aktif jika path sama persis dengan route saat ini
   return route.path === path;
