@@ -1,17 +1,21 @@
 import api from './api';
 
-//get visitor saja
-export const getVisitor = () => {
-  return api.get('/admin/visitor');
+// get visitor dengan parameter
+export const getVisitor = (params) => {
+  return api.get('/admin/visitor', { params }); 
 };
 
-//get visitor latest
+// get visitor latest
 export const getLatestVisitor = () => {
   return api.get('/admin/visitor/latest');
 };
 
 //catatan
-export const updateCatatan = async (id, data) => {
-    const response = await api.put(`/admin/visitor/notes${id}`, data)
-    return response.data
-}
+export const updateVisitorNotes = (id, payload) => {
+  return api.put(`/admin/visitor/notes/${id}`, payload); 
+};
+
+//detail
+export const getVisitorDetail = (id) => {
+  return api.get(`/admin/visitor/${id}`);
+};

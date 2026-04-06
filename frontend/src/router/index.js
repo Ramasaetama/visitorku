@@ -83,6 +83,12 @@ const routes = [
     component: () => import('../views/Signage.vue'),
     meta: { requiresAuth: true },
   },
+  //detail
+  {
+  path: '/visitor/:id',
+  name: 'VisitorDetail',
+  component: () => import('@/views/VisitorDetail.vue')
+}
 ]
 
 const router = createRouter({

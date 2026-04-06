@@ -8,18 +8,21 @@ import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import notfound from '@/assets/notfound.svg';
 
-import { getVisitor } from '@/services/visitorService'; // Hanya panggil getVisitor untuk list utama
+// 👇 Pastikan import fungsi updateVisitorNotes
+import { getVisitor, updateVisitorNotes } from '@/services/visitorService';
 
 // ==========================================
 // 1. STATE & SEARCH
 // ==========================================
-const visitorData = ref([]); // State utama penyimpan data API
+const visitorData = ref([]); 
 const searchQuery = ref('');
 const appliedSearchQuery = ref('');
 const isLoading = ref(false);
 
 const executeSearch = () => {
   appliedSearchQuery.value = searchQuery.value;
+  currentPage.value = 1; 
+  fetchVisitors(); 
 };
 
 watch(searchQuery, (nilaiBaru) => {
@@ -41,55 +44,59 @@ const tableColumns = [
 ];
 
 // ==========================================
-// 3. FETCHING DATA DARI API
+// 3. PAGINATION STATE (SERVER-SIDE)
+// ==========================================
+const currentPage = ref(1);
+const itemsPerPage = ref(10); 
+const totalItems = ref(0); 
+
+watch(itemsPerPage, () => {
+  currentPage.value = 1;
+  fetchVisitors();
+});
+
+// ==========================================
+// 4. FETCHING DATA DARI API
 // ==========================================
 const fetchVisitors = async () => {
   isLoading.value = true;
   try {
-    const response = await getVisitor(); 
+    const response = await getVisitor({ 
+      page: currentPage.value, 
+      size: itemsPerPage.value,
+      search: appliedSearchQuery.value 
+    }); 
     
-    // Asumsi: Struktur API Anda mengembalikan data di dalam response.data.data atau response.data
-    const items = response?.data?.data || response?.data || response;
+    const respData = response?.data || response;
     
-    // Pemetaan (Mapping) Data API ke kolom tabel
-    // Sesuaikan keys (name, email, phone, dll) dengan struktur JSON Swagger Anda
-    if (Array.isArray(items)) {
-      visitorData.value = items.map((visitor) => ({
+    if (respData.data && Array.isArray(respData.data)) {
+      visitorData.value = respData.data.map((visitor) => ({
         id: visitor.id || '-',
-        nama: visitor.name || visitor.nama || '-', // Coba 'name' lalu 'nama'
+        nama: visitor.name || '-', 
         email: visitor.email || '-',
-        telepon: visitor.phone_number || visitor.phone_number || '-',
-        total_kunjungan: visitor.total_visit || visitor.total_kunjungan || 0,
-        kunjungan_terakhir: visitor.last_visit || visitor.kunjungan_terakhir || '-',
+        telepon: visitor.phone_number || '-', 
+        total_kunjungan: parseInt(visitor.total_visit) || 0,
+        kunjungan_terakhir: visitor.last_visit ? visitor.last_visit.split('T')[0] : '-',
+        notes: visitor.notes || '' // 👇 Simpan data notes untuk ditampilkan di Modal
       }));
+      
+      totalItems.value = respData.total || 0; 
     } else {
-      console.warn("Format data dari API tidak sesuai ekspektasi (bukan Array).");
       visitorData.value = [];
+      totalItems.value = 0;
     }
-
   } catch (error) {
     console.error("Gagal memuat data pengunjung:", error);
     visitorData.value = [];
+    totalItems.value = 0;
   } finally {
     isLoading.value = false;
   }
 };
 
-// FILTERING & SORTING LOGIC
-const filteredData = computed(() => {
-  if (!appliedSearchQuery.value) {
-    return visitorData.value;
-  }
-  const keyword = appliedSearchQuery.value.toLowerCase();
-  return visitorData.value.filter(item => {
-    return (
-      (item.nama && item.nama.toLowerCase().includes(keyword)) ||
-      (item.email && item.email.toLowerCase().includes(keyword)) ||
-      (item.telepon && item.telepon.toLowerCase().includes(keyword))
-    );
-  });
-});
-
+// ==========================================
+// 5. SORTING LOGIC
+// ==========================================
 const sortKey = ref('');
 const sortOrder = ref('asc');
 
@@ -103,28 +110,108 @@ const handleSort = (columnKey) => {
 };
 
 const sortedData = computed(() => {
-  if (!sortKey.value) return filteredData.value; 
+  if (!sortKey.value) return visitorData.value; 
 
-  return [...filteredData.value].sort((a, b) => { 
+  return [...visitorData.value].sort((a, b) => { 
     const valA = a[sortKey.value] ?? '';
     const valB = b[sortKey.value] ?? '';
     
-    // Logika sorting khusus angka (Total Kunjungan)
     if (sortKey.value === 'total_kunjungan') {
        return sortOrder.value === 'asc' ? valA - valB : valB - valA;
     }
 
-    // Default sorting untuk teks (String)
     const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
     return sortOrder.value === 'asc' ? cmp : -cmp;
   });
 });
 
+// ==========================================
+// 6. PAGINATION UI COMPUTED
+// ==========================================
+const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
+const startIndex = computed(() => totalItems.value === 0 ? 0 : ((currentPage.value - 1) * itemsPerPage.value) + 1);
+const endIndex = computed(() => Math.min(currentPage.value * itemsPerPage.value, totalItems.value));
+
+const visiblePages = computed(() => {
+  const maxVisible = 5; // Batas maksimal tombol angka yang tampil
+  let start = Math.max(1, currentPage.value - 2);
+  let end = start + maxVisible - 1;
+
+  // Jika mentok di halaman terakhir, geser start-nya ke kiri
+  if (end > totalPages.value) {
+    end = totalPages.value;
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  let pages = [];
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
+    currentPage.value = page;
+    fetchVisitors(); 
+  }
+};
+
+// ==========================================
+// 7. MODAL NOTES LOGIC
+// ==========================================
+const showNotesModal = ref(false);
+const selectedVisitor = ref(null);
+const notesText = ref('');
+const isSavingNotes = ref(false);
+
+const openNotesModal = (row) => {
+  selectedVisitor.value = row;
+  notesText.value = row.notes || ''; // Isi textarea dengan data notes yang sudah ada (jika ada)
+  showNotesModal.value = true;
+};
+
+const closeNotesModal = () => {
+  showNotesModal.value = false;
+  // Delay reset data agar animasi tutup modal terlihat mulus
+  setTimeout(() => {
+    selectedVisitor.value = null;
+    notesText.value = '';
+  }, 200);
+};
+
+const saveNotes = async () => {
+  if (!selectedVisitor.value) return;
+  
+  isSavingNotes.value = true;
+  try {
+    // Kirim request ke backend { notes: 'isi teks' }
+    console.log("Mengirim ke ID:", selectedVisitor.value.id);
+    console.log("Isi payload:", { notes: notesText.value });
+    await updateVisitorNotes(selectedVisitor.value.id, { notes: notesText.value });
+    
+    // Update data di tabel lokal agar tidak perlu fetch API ulang
+    const index = visitorData.value.findIndex(v => v.id === selectedVisitor.value.id);
+    if (index !== -1) {
+      visitorData.value[index].notes = notesText.value;
+    }
+    
+    closeNotesModal();
+  } catch (error) {
+    console.error("Gagal menyimpan notes:", error);
+    alert("Terjadi kesalahan saat menyimpan catatan.");
+  } finally {
+    isSavingNotes.value = false;
+  }
+};
+
+// ==========================================
+// 8. ACTIONS
+// ==========================================
 const handleReport = () => {
   console.log("Tombol Report diklik!");
 };
 
-// Panggil fungsi API saat halaman dimuat
 onMounted(() => {
   fetchVisitors();
 });
@@ -154,7 +241,7 @@ onMounted(() => {
                        text-[#38CA99] rounded-lg font-medium text-sm 
                        hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
               >
-                <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
                   <line x1="8" y1="15" x2="8" y2="12" />
                   <line x1="12" y1="15" x2="12" y2="9" />
@@ -162,13 +249,34 @@ onMounted(() => {
                 </svg>
                 Report
               </button>
-              </div>
+            </div>
             
-            <div class="mb-6 max-w-md">
-              <SearchInput 
-                v-model="searchQuery" 
-                placeholder="Cari Visitor" 
-                @keyup.enter="executeSearch"  />
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+              <div class="w-full sm:max-w-md">
+                <SearchInput 
+                  v-model="searchQuery" 
+                  placeholder="Cari Visitor" 
+                  @keyup.enter="executeSearch"  
+                />
+              </div>
+
+              <div class="relative shrink-0">
+                <select 
+                  v-model="itemsPerPage" 
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                >
+                  <option :value="5">5</option>
+                  <option :value="10">10</option>
+                  <option :value="25">25</option>
+                  <option :value="50">50</option>
+                  <option :value="100">100</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
             </div>
             
             <div class="flex-1 overflow-hidden">
@@ -182,10 +290,10 @@ onMounted(() => {
               >
                 <template #aksi="{ row }">
                   <div class="flex items-center gap-2">
-                    
                     <button 
-                      @click="console.log('Lihat Detail', row)"
-                      class="w-[34px] h-[34px] rounded-[10px] bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors focus:outline-none"
+                      @click="$router.push(`/visitor/${row.id}`)"
+                      class="w-[34px] h-[34px] rounded-[10px] bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors"
+                      style="outline: none !important; box-shadow: none !important; -webkit-tap-highlight-color: transparent;"
                       title="Lihat Detail"
                     >
                       <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -195,8 +303,9 @@ onMounted(() => {
                     </button>
 
                     <button 
-                      @click="console.log('Edit Data', row)"
-                      class="w-[34px] h-[34px] rounded-[10px] bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
+                      @click="openNotesModal(row)"
+                      class="w-[34px] h-[34px] rounded-[10px] bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors"
+                      style="outline: none !important; box-shadow: none !important; -webkit-tap-highlight-color: transparent;"
                       title="Catatan"
                     >
                       <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -204,9 +313,9 @@ onMounted(() => {
                         <path d="M20 4L12 12"></path>
                       </svg>
                     </button>
-
                   </div>
                 </template>
+                
                 <template #empty>
                   <EmptyState 
                     v-if="visitorData.length === 0"
@@ -229,18 +338,100 @@ onMounted(() => {
             
           </div>
           
-          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
-            <span>Menampilkan data visitor</span>
+          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B]">
+            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalItems }} records</span>
+            
+            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+              <button 
+                @click="goToPage(currentPage - 1)" 
+                :disabled="currentPage === 1"
+                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+              </button>
+              
+              <button 
+                v-for="page in visiblePages" 
+                :key="page"
+                @click="goToPage(page)"
+                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
+                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
+              >
+                {{ page }}
+              </button>
+
+              <button 
+                @click="goToPage(currentPage + 1)" 
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+              </button>
             </div>
+          </div>
+
         </div> 
       </main>
     </div>
-  </div>
+
+    <div v-if="showNotesModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-[550px] p-6 mx-4 relative animate-fade-in-up">
+        
+        <button @click="closeNotesModal" class="absolute top-5 right-5 text-gray-800 hover:text-gray-500 transition-colors focus:outline-none">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+
+        <h2 class="text-xl font-bold text-gray-900 mb-6">Notes, {{ selectedVisitor?.nama }}</h2>
+
+        <textarea
+          v-model="notesText"
+          rows="6"
+          placeholder="Enter Address Here..."
+          class="w-full border border-gray-300 rounded-lg p-3 text-gray-700 text-sm focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] resize-none"
+        ></textarea>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button
+            @click="closeNotesModal"
+            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors focus:outline-none"
+          >
+            Cancel
+          </button>
+          <button
+            @click="saveNotes"
+            :disabled="isSavingNotes"
+            class="px-6 py-2 bg-[#F7941D] text-white rounded-lg font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {{ isSavingNotes ? 'Loading...' : 'Submit' }}
+          </button>
+        </div>
+        
+      </div>
+    </div>
+    </div>
 </template>
 
 <style scoped>
 button:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* Sedikit animasi agar pop-up munculnya smooth */
+.animate-fade-in-up {
+  animation: fadeInUp 0.2s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 </style>
