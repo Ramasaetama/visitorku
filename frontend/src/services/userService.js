@@ -16,7 +16,6 @@ export const deleteUser = (id) => {
   return api.delete(`/admin/user/${id}`);
 };
 
-// Endpoint permission yang baru (sesuaikan dengan method di Swagger)
 export const updateUserPermission = (id, data) => {
-  return api.put(`/admin/user/permission`, data); // Atau sesuaikan path-nya jika butuh ID
+  return api.put(`/admin/user/permission`, data); 
 };

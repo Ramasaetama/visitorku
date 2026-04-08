@@ -63,7 +63,7 @@ const handleLogout = () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-linear-to-r from-[#F7941D] to-[#F9A825] h-14 flex items-center justify-between px-6 shadow-sm">    
+  <header class="sticky top-0 z-50 bg-linear-to-r from-[#EE9D0F] to-[#EE9D0F] h-19 flex items-center justify-between px-6 shadow-sm">    
     <div 
       class="absolute inset-0 pointer-events-none" 
       :style="{ 
@@ -77,7 +77,7 @@ const handleLogout = () => {
     
     <div class="relative z-10 flex items-center gap-2">
       <router-link to="/dashboard" class="cursor-pointer hover:opacity-80 transition-opacity">
-        <img :src="visitorkulogo" alt="Visitorku" class="h-6 object-contain" />
+        <img :src="visitorkulogo" alt="Visitorku" class="h-8.5 object-contain" />
       </router-link>
     </div>
     
@@ -90,13 +90,13 @@ const handleLogout = () => {
         class="profile-section flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity"
         @click="toggleDropdown"
       >
-        <span class="text-white text-[14px] font-medium">{{ profileData.name }}</span>
+        <span class="text-white text-[16px] font-medium">{{ profileData.name }}</span>
         
         <img 
           v-if="profileData.profilePict"
           :src="profileData.profilePict"
           alt="Profile" 
-          class="w-8 h-8 rounded-full object-cover border-2 border-white/50" 
+          class="w-10 h-10 rounded-full object-cover border-2 border-white/50" 
         />
         <div 
           v-else 
