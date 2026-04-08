@@ -20,13 +20,6 @@ const routes = [
     component: () => import('../views/Dashboard.vue'),
     meta: { requiresAuth: true },
   },
-  // Visitor
-  {
-    path: '/data-visitor', 
-    name: 'Visitor',
-    component: () => import('../views/Visitor.vue'),
-    meta: { requiresAuth: true }, 
-  },
   // Login
   {
     path: '/login',
@@ -39,6 +32,13 @@ const routes = [
     path: '/cabang',
     name: 'CabangPerusahaan',
     component: () => import('../views/CabangPerusahaan.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Manajemen Pengguna
+  {
+    path: '/manajemen-pengguna',
+    name: 'ManajemenPengguna',
+    component: () => import('../views/User.vue'),
     meta: { requiresAuth: true },
   },
   // Tujuan Kunjungan
@@ -62,13 +62,6 @@ const routes = [
     component: () => import('../views/EditProfile.vue'),
     meta: { requiresAuth: true }, // Wajib login
   },
-  // Manajemen User
-  {
-    path: '/manajemen-pengguna',
-    name: 'User',
-    component: () => import('../views/User.vue'),
-    meta: { requiresAuth: true }, // Wajib login
-  },
   // Pengaturan Form Visitor / Custom Field
   {
     path: '/pengaturan-form',
@@ -83,6 +76,13 @@ const routes = [
     component: () => import('../views/Visit.vue'),
     meta: { requiresAuth: true },
   },
+  // Signage - Create (multi-step)
+  {
+    path: '/layar-informasi/create',
+    name: 'SignageCreate',
+    component: () => import('../views/SignageCreate.vue'),
+    meta: { requiresAuth: true },
+  },
   // Signage (Layar Informasi)
   {
     path: '/layar-informasi',
@@ -90,12 +90,26 @@ const routes = [
     component: () => import('../views/Signage.vue'),
     meta: { requiresAuth: true },
   },
-  //detail
+  // Signage Display (Public)
   {
-  path: '/visitor/:id',
-  name: 'VisitorDetail',
-  component: () => import('@/views/VisitorDetail.vue')
-}
+    path: '/signage/:slug',
+    name: 'SignageDisplay',
+    component: () => import('../views/SignageDisplay.vue'),
+  },
+  // Data Visitor
+  {
+    path: '/data-visitor',
+    name: 'DataVisitor',
+    component: () => import('../views/Visitor.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Invoice
+  {
+    path: '/invoice',
+    name: 'Invoice',
+    component: () => import('../views/Dashboard.vue'), // TODO: buat halaman Invoice
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({

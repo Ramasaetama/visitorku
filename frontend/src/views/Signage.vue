@@ -1,10 +1,10 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
-import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
 import notfound from '@/assets/notfound.svg';
@@ -13,10 +13,10 @@ import deleteIcon from '@/assets/delete.svg';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import {
   getAllSignages,
-  createSignage,
-  updateSignage,
   deleteSignage,
 } from '@/services/signageService';
+
+const router = useRouter();
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const signageData    = ref([]);
@@ -121,57 +121,14 @@ watch(searchQuery, (val) => {
 });
 watch(perPage, () => { currentPage.value = 1; });
 
-// ─── Modal (Create / Edit) ───────────────────────────────────────────────────
-const showModal      = ref(false);
-const editingSignage = ref(null);
-const formName       = ref('');
-const formUrl        = ref('');
-const isSubmitting   = ref(false);
-
+// ─── Create / Edit ───────────────────────────────────────────────────────────
 const handleCreateNew = () => {
-  editingSignage.value = null;
-  formName.value = '';
-  formUrl.value  = '';
-  showModal.value = true;
+  router.push('/layar-informasi/create');
 };
 
 const handleEdit = (row) => {
-  editingSignage.value = row;
-  formName.value = row.name;
-  formUrl.value  = row.url;
-  showModal.value = true;
-};
-
-const handleCloseModal = () => {
-  showModal.value      = false;
-  editingSignage.value = null;
-  formName.value       = '';
-  formUrl.value        = '';
-};
-
-const handleSubmit = async () => {
-  if (!formName.value.trim()) return;
-  isSubmitting.value = true;
-  try {
-    const payload = {
-      name: formName.value.trim(),
-      url:  formUrl.value.trim(),
-    };
-    if (editingSignage.value) {
-      await updateSignage(editingSignage.value.id, payload);
-      showSuccess('Signage berhasil diperbarui.');
-    } else {
-      await createSignage(payload);
-      showSuccess('Signage berhasil ditambahkan.');
-    }
-    handleCloseModal();
-    await fetchSignages();
-  } catch (err) {
-    console.error('Gagal menyimpan signage:', err);
-    showError(err.response?.data?.message || 'Gagal menyimpan signage.');
-  } finally {
-    isSubmitting.value = false;
-  }
+  // TODO: Navigate to edit page or open edit modal
+  router.push(`/layar-informasi/create?edit=${row.id}`);
 };
 
 // ─── Delete ───────────────────────────────────────────────────────────────────
@@ -360,68 +317,6 @@ onMounted(fetchSignages);
         </div><!-- /bg-white card -->
       </main>
     </div>
-
-    <!-- ── Modal Create / Edit Signage ── -->
-    <Modal
-      :show="showModal"
-      :title="editingSignage ? 'Edit Signage' : 'Create New Signage'"
-      :description="editingSignage ? 'Ubah informasi signage.' : 'Masukkan informasi signage baru.'"
-      width="half"
-      @close="handleCloseModal"
-    >
-      <form id="formSignage" @submit.prevent="handleSubmit" class="space-y-4">
-        <!-- Nama -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Signage</label>
-          <input
-            v-model="formName"
-            type="text"
-            required
-            placeholder="Masukkan nama signage"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                   focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
-                   transition-colors"
-          />
-        </div>
-        <!-- URL -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">URL</label>
-          <input
-            v-model="formUrl"
-            type="url"
-            placeholder="https://example.com"
-            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
-                   focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
-                   transition-colors"
-          />
-        </div>
-      </form>
-
-      <template #footer>
-        <div class="flex items-center justify-end gap-3">
-          <button
-            type="button"
-            @click="handleCloseModal"
-            class="px-5 py-2.5 text-sm font-medium text-gray-600
-                   border border-gray-300 rounded-lg
-                   hover:bg-gray-50 transition-colors"
-          >
-            Batal
-          </button>
-          <button
-            type="submit"
-            form="formSignage"
-            :disabled="isSubmitting"
-            class="px-5 py-2.5 text-sm font-medium text-white
-                   bg-[#F7941D] rounded-lg
-                   hover:bg-[#E8850E] transition-colors
-                   disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {{ editingSignage ? 'Perbarui' : 'Simpan' }}
-          </button>
-        </div>
-      </template>
-    </Modal>
 
     <!-- Toast Notification -->
     <Toast

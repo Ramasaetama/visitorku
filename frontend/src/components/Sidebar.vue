@@ -36,7 +36,7 @@ const shouldShowQuickGuide = computed(() => {
   return isOnAllowedPage && showQuickGuide.value;
 });
 
-// Tambahkan property 'path' untuk setiap menu item
+// Property 'path' untuk setiap menu item (sudah disesuaikan dengan router baru)
 const mainMenuItems = [
   { name: 'Ringkasan', icon: layoutMasonryIcon, path: '/dashboard' },
   { name: 'Data Visitor', icon: groupLineIcon, path: '/data-visitor' },
@@ -52,7 +52,6 @@ const masterDataItems = [
   { name: 'Manajemen Pengguna', icon: groupLineIcon, path: '/manajemen-pengguna' },
   { name: 'Invoice', icon: fileTextIcon, path: '/invoice' },
 ];
-
 
 const isActive = (path) => {
   // Exact match: hanya aktif jika path sama persis dengan route saat ini
@@ -70,14 +69,11 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
 </script>
 
 <template>
-  <!-- Sidebar Container with gray background -->
-<aside class="w-[260px] bg-[#F4F6F8] flex flex-col p-4 gap-4 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">    <!-- Card 1: Main Menu + Master Data -->
+  <aside class="w-[260px] bg-[#F4F6F8] flex flex-col p-4 gap-4 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">    
     <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-      <!-- Main Menu Section -->
       <div class="mb-6">
         <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">Main Menu</h3>
         <div class="space-y-1">
-          <!-- Menggunakan router-link untuk navigasi -->
           <router-link 
             v-for="item in mainMenuItems" 
             :key="item.name"
@@ -95,11 +91,9 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
         </div>
       </div>
 
-      <!-- Master Data Section -->
       <div>
         <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">Master Data</h3>
         <div class="space-y-1">
-          <!-- Menggunakan router-link untuk navigasi -->
           <router-link 
             v-for="item in masterDataItems" 
             :key="item.name"
@@ -118,9 +112,7 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       </div>
     </div>
 
-    <!-- Card 2: Panduan Cepat - Hanya tampil di halaman yang diizinkan -->
     <div v-if="shouldShowQuickGuide" class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
-      <!-- Header -->
       <div class="flex items-center justify-between mb-2">
         <span class="text-[#F7941D] text-[12px] font-semibold">Panduan Cepat</span>
         <button @click="showQuickGuide = false" class="text-gray-400 hover:text-gray-600 p-1">
@@ -130,10 +122,8 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
         </button>
       </div>
       
-      <!-- Content -->
       <p class="text-[12px] text-[#1E293B] font-medium mb-2">Atur akun VisitorKu</p>
       
-      <!-- Progress bar - thinner and elegant -->
       <div class="flex items-center gap-2 mb-4">
         <div class="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
           <div class="h-full bg-[#F7941D] rounded-full transition-all" :style="{ width: progressPercent + '%' }"></div>
@@ -141,7 +131,6 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
         <span class="text-[10px] text-gray-400 whitespace-nowrap">{{ progressPercent }}% Complete</span>
       </div>
       
-      <!-- Checklist -->
       <div class="space-y-2.5">
         <div v-for="(item, index) in quickGuideItems" :key="index" class="flex items-center gap-2.5">
           <img 
@@ -154,9 +143,7 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       </div>
     </div>
 
-    <!-- Card 3: Paket VisitorKu - Cream/Orange background -->
     <div class="bg-gradient-to-br from-[#FFF8F0] to-[#FFEDD5] rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 border border-[#FFE4C4]">
-      <!-- Header -->
       <div class="flex items-center justify-between mb-4">
         <span class="text-[13px] font-semibold text-[#1E293B]">Paket VisitorKu</span>
         <div class="flex items-center gap-1 bg-[#F7941D] rounded-full px-2.5 py-1">
@@ -165,7 +152,6 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
         </div>
       </div>
       
-      <!-- Batas Kunjungan -->
       <div class="mb-3">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] text-[#64748B] font-medium">Batas Kunjungan</span>
@@ -176,7 +162,6 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
         </div>
       </div>
       
-      <!-- Kapasitas Penyimpanan -->
       <div class="mb-4">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] text-[#64748B] font-medium">Kapasitas Penyimpanan</span>
