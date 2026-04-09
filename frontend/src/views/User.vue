@@ -255,6 +255,10 @@ const handleDeletePengguna = async (row) => {
     }
   }
 };
+
+const handleCloseToast = () => {
+  showToast.value = false;
+};
 </script>
 
 <template>
@@ -413,7 +417,7 @@ const handleDeletePengguna = async (row) => {
     >
       <FormTambahPengguna 
         :initialData="editingUser"
-        @submit="handleSubmitPengguna"
+        :branches="branchesData" @submit="handleSubmitPengguna"
         @cancel="handleCloseModal"
       />
       
@@ -431,7 +435,7 @@ const handleDeletePengguna = async (row) => {
             form="formTambahPengguna"
             class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
           >
-            {{ editingUser ? 'Perbarui Pengguna' : 'Simpan Pengguna' }}
+            {{ editingUser ? 'Perbarui Pengguna' : 'Tambah Pengguna' }}
           </button>
         </div>
       </template>

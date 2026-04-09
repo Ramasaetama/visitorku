@@ -5,6 +5,10 @@ const props = defineProps({
   initialData: {
     type: Object,
     default: null
+  },
+  branches: {
+    type: Array,
+    default: () => []
   }
 });
 
@@ -17,7 +21,7 @@ const formData = reactive({
   address: props.initialData?.address || '',
   branch_id: props.initialData?.branch_id || '', 
   password: '', 
-  confirm_password: '', 
+  c_password: '', // Konsisten gunakan c_password
 });
 
 watch(() => props.initialData, (newData) => {
@@ -28,7 +32,7 @@ watch(() => props.initialData, (newData) => {
     formData.address = newData.address || '';
     formData.branch_id = newData.branch_id || '';
     formData.password = ''; 
-    formData.confirm_password = '';
+    formData.c_password = '';
   } else {
     resetForm();
   }
@@ -44,7 +48,7 @@ const resetForm = () => {
   formData.address = '';
   formData.branch_id = '';
   formData.password = '';
-  formData.confirm_password = '';
+  formData.c_password = '';
   passwordError.value = '';
 };
 
@@ -56,7 +60,8 @@ const handleSubmit = async () => {
     return;
   }
 
-  if (formData.password !== formData.confirm_password) {
+  // Validasi menggunakan c_password
+  if (formData.password !== formData.c_password) {
     passwordError.value = "Password dan Konfirmasi Password tidak cocok!";
     return;
   }
@@ -73,8 +78,10 @@ const handleSubmit = async () => {
       branch_id: formData.branch_id === '' ? null : formData.branch_id 
     };
 
+    // Sertakan password dan c_password sesuai standar API Swagger Anda
     if (formData.password) {
       payload.password = formData.password;
+      payload.c_password = formData.c_password; 
     }
 
     emit('submit', payload);
@@ -83,6 +90,7 @@ const handleSubmit = async () => {
     isSubmitting.value = false;
   }
 };
+
 const handleCancel = () => {
   resetForm();
   emit('cancel');
@@ -133,9 +141,13 @@ defineExpose({ resetForm });
         class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors cursor-pointer appearance-none"
       >
         <option value="" disabled>Pilih Cabang</option>
-        <option value="566a1869-35d7-4d50-8aa7-8d38bb0f69dc">KANTOR GMEDIA PRIME BUILDING</option>
-        <option value="branch-jakarta">Gmedia Cabang Jakarta</option>
-        <option value="branch-bali">Gmedia Cabang Bali</option>
+        <option 
+          v-for="branch in branches" 
+          :key="branch.id" 
+          :value="branch.id"
+        >
+          {{ branch.name }}
+        </option>
       </select>
     </div>
 
@@ -162,7 +174,7 @@ defineExpose({ resetForm });
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1.5">Konfirmasi Password<span v-if="!props.initialData" class="text-red-500">*</span></label>
         <input 
-          v-model="formData.confirm_password"
+          v-model="formData.c_password"
           type="password"
           :placeholder="props.initialData ? 'Ulangi jika mengubah password' : 'Ulangi password'"
           class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
