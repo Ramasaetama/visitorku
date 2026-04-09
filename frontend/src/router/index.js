@@ -107,7 +107,7 @@ const routes = [
   {
     path: '/invoice',
     name: 'Invoice',
-    component: () => import('../views/Dashboard.vue'), // TODO: buat halaman Invoice
+    component: () => import('../views/Invoice.vue'), // TODO: buat halaman Invoice
     meta: { requiresAuth: true },
   },
 
