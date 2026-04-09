@@ -15,3 +15,11 @@ export const getMonthlyData = async () => {
 export const getCategoryData = async () => {
   return await api.get('/admin/dashboard/category-data');
 };
+
+export const getLatestVisitors = () => {
+  return api.get('/admin/visitor/latest');
+};
+
+export const getVisit = () => {
+  return api.get('/admin/visit?size=1000');
+};
