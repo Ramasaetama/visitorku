@@ -60,6 +60,7 @@ const fetchVisits = async () => {
     totalRecords.value = res.total ?? res.totalData ?? items.length;
 
     // Mapping data
+    // Mapping data
     visitData.value = items.map(v => ({
       id:           v.id,
       name:         v.name ?? '-',
@@ -67,6 +68,7 @@ const fetchVisits = async () => {
       check_in:     formatDateTime(v.datetime),
       check_out:    formatDateTime(v.logout_data?.datetime ?? null),
       satisfaction: v.satisfaction,
+      picture_url:  v.picture_url, // 👈 TAMBAHKAN BARIS INI
       raw:          v,
     }));
   } catch (err) {
@@ -83,10 +85,8 @@ const formatDateTime = (val) => {
   if (!val) return '-';
   const d = new Date(val);
   if (isNaN(d)) return val;
-  return d.toLocaleString('id-ID', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 };
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
@@ -240,16 +240,30 @@ onMounted(fetchVisits);
                     :key="row.id ?? idx"
                     class="hover:bg-orange-50/40 transition-colors"
                   >
-                    <td class="px-4 py-4 text-[13px] text-gray-800 border-b border-[#EDEDED] font-medium">
-                      {{ row.name }}
+                    <td class="px-4 py-4 border-b border-[#EDEDED]">
+                      <div class="flex items-center gap-3.5">
+                        <img 
+                          v-if="row.picture_url" 
+                          :src="row.picture_url" 
+                          alt="" 
+                          class="w-7 h-7 rounded-sm object-cover border border-gray-100 shrink-0 shadow-xs" 
+                        />
+                        <div 
+                          v-else 
+                          class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 text-sm font-bold shrink-0 border border-gray-200 shadow-xs"
+                        >
+                          {{ row.name !== '-' ? row.name.charAt(0).toUpperCase() : '?' }}
+                        </div>
+                        <span class="text-[13px] text-gray-800 font-medium">{{ row.name }}</span>
+                      </div>
                     </td>
                     <td class="px-4 py-4 text-[13px] text-gray-800 border-b border-[#EDEDED]">
                       {{ row.purpose }}
                     </td>
-                    <td class="px-4 py-4 text-[13px] text-gray-800 border-b border-[#EDEDED]">
+                    <td class="px-4 py-4 text-[13px] text-gray-800 border-b border-[#EDEDED] whitespace-nowrap">
                       {{ row.check_in }}
                     </td>
-                    <td class="px-4 py-4 text-[13px] border-b border-[#EDEDED]">
+                    <td class="px-4 py-4 text-[13px] border-b border-[#EDEDED] whitespace-nowrap">
                       <span v-if="row.check_out !== '-'" class="text-gray-800">{{ row.check_out }}</span>
                       <span v-else class="text-gray-400 font-bold">-</span>
                     </td>
