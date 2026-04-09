@@ -34,13 +34,6 @@ const routes = [
     component: () => import('../views/CabangPerusahaan.vue'),
     meta: { requiresAuth: true },
   },
-  // Manajemen Pengguna
-  {
-    path: '/manajemen-pengguna',
-    name: 'ManajemenPengguna',
-    component: () => import('../views/User.vue'),
-    meta: { requiresAuth: true },
-  },
   // Tujuan Kunjungan
   {
     path: '/tujuan-kunjungan',
@@ -100,21 +93,15 @@ const routes = [
   {
     path: '/data-visitor',
     name: 'DataVisitor',
-    component: () => import('../views/Visitor.vue'),
+    component: () => import('../views/Dashboard.vue'), // TODO: buat halaman DataVisitor
     meta: { requiresAuth: true },
   },
+
   // Invoice
   {
     path: '/invoice',
     name: 'Invoice',
-    component: () => import('../views/Dashboard.vue'), // TODO: buat halaman Invoice
-    meta: { requiresAuth: true },
-  },
-
-  {
-    path: '/visitor/:id',
-    name: 'VisitorDetail',
-    component: () => import('../views/VisitorDetail.vue'), // Sesuaikan dengan nama file detail Anda
+    component: () => import('../views/Invoice.vue'),
     meta: { requiresAuth: true },
   },
 ]
