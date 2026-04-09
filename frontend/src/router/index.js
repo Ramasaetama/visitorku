@@ -34,13 +34,6 @@ const routes = [
     component: () => import('../views/CabangPerusahaan.vue'),
     meta: { requiresAuth: true },
   },
-  // Manajemen Pengguna
-  {
-    path: '/manajemen-pengguna',
-    name: 'ManajemenPengguna',
-    component: () => import('../views/User.vue'),
-    meta: { requiresAuth: true },
-  },
   // Tujuan Kunjungan
   {
     path: '/tujuan-kunjungan',
@@ -100,9 +93,17 @@ const routes = [
   {
     path: '/data-visitor',
     name: 'DataVisitor',
-    component: () => import('../views/Visitor.vue'),
+    component: () => import('../views/Visitor.vue'), // TODO: buat halaman DataVisitor
     meta: { requiresAuth: true },
   },
+  // Manajemen Pengguna
+  {
+    path: '/manajemen-pengguna',
+    name: 'User',
+    component: () => import('../views/User.vue'), // TODO: buat halaman DataVisitor
+    meta: { requiresAuth: true },
+  },
+
   // Invoice
   {
     path: '/invoice',

@@ -337,16 +337,16 @@ const goBack = () => {
               </div>
 
               <!-- Panel Tabs + Layout Info -->
-              <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-1">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-0">
                   <button
                     v-for="(panel, pIdx) in selectedLayoutObj?.panels || []"
                     :key="pIdx"
                     @click="setActivePanel(pIdx)"
-                    class="px-4 py-1.5 text-sm font-medium rounded-lg transition-all"
+                    class="rounded-t-md px-4 py-2 text-sm font-medium transition-all"
                     :class="activePanel === pIdx
-                      ? 'bg-[#FEF3E2] text-[#F7941D] border border-[#F7941D]'
-                      : 'text-gray-500 hover:bg-gray-50'"
+                      ? 'bg-[#FEF3E2] text-[#F7941D] border border-b-0 border-[#F7941D]/40'
+                      : 'text-gray-500 hover:bg-gray-50 border border-transparent'"
                   >
                     Layout {{ pIdx + 1 }}
                   </button>
@@ -364,6 +364,12 @@ const goBack = () => {
 
               <!-- File Upload Area -->
               <div class="mb-6">
+                <!-- Wrapper-->
+                <div
+                  class="p-[10px] gap-2 w-full border border-[#F7941D]/40 min-h-[80px] flex flex-wrap justify-start items-start text-[#F7941D]"
+                  :class="activePanel === 0 ? 'rounded-md rounded-tl-none' : 'rounded-md rounded-tr-none'"
+                >
+
                 <!-- Show preview if file uploaded for this panel -->
                 <div v-if="panelPreviews[activePanel]" class="relative">
                   <div class="border-2 border-dashed border-[#F7941D] rounded-lg overflow-hidden bg-gray-50">
@@ -404,8 +410,8 @@ const goBack = () => {
                   class="border-2 border-dashed rounded-lg p-6 cursor-pointer transition-all flex flex-col items-center justify-center max-w-[200px] min-h-[160px]"
 
                   :class="isDragging
-                    ? 'border-[#F7941D] bg-[#FEF3E2]'
-                    : 'border-[#F7941D]/50 bg-[#FFFAF5] hover:border-[#F7941D] hover:bg-[#FEF3E2]'"
+                    ? 'border-[#F7941D] bg-[#FCEBCF]'
+                    : 'border-[#F7941D]/50 bg-[#FFFAF5] hover:border-[#F7941D] hover:bg-[#FCEBCF]'"
                 >
                   <!-- Camera Icon -->
                   <div class="w-14 h-14 flex items-center justify-center bg-white rounded-xl shadow-sm mb-3">
@@ -427,6 +433,7 @@ const goBack = () => {
                   class="hidden"
                   @change="handleFileSelect"
                 />
+              </div>
               </div>
 
               <!-- Spacer -->
