@@ -183,28 +183,33 @@ onMounted(fetchSignages);
             </div>
 
             <!-- ── Toolbar: Search + Per-Page + Create Button ── -->
-            <div class="flex items-center gap-3 mb-4">
-              <!-- Search -->
-              <SearchInput
-                v-model="searchQuery"
-                placeholder="Search"
-                class="w-80"
-                input-class="rounded-sm"
-                @keyup.enter="executeSearch"
-              />
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+              <div class="w-full sm:max-w-md">
+                <SearchInput 
+                  v-model="searchQuery" 
+                  placeholder="Cari Kunjungan" 
+                  @keyup.enter="executeSearch"  
+                />
+              </div>
 
-              <!-- Per-page selector -->
-              <select
-                v-model="perPage"
-                class="h-9 px-3 border border-gray-300 rounded-sm text-sm text-gray-600
-                       bg-white focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30
-                       focus:border-[#F7941D] cursor-pointer"
-              >
-                <option :value="10">10</option>
-                <option :value="25">25</option>
-                <option :value="50">50</option>
-                <option :value="100">100</option>
-              </select>
+              <div class="relative shrink-0">
+                <select 
+                  v-model="perPage" 
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                >
+                  <option :value="5">5</option>
+                  <option :value="10">10</option>
+                  <option :value="25">25</option>
+                  <option :value="50">50</option>
+                  <option :value="100">100</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+            
 
               <!-- Spacer -->
               <div class="flex-1" />
