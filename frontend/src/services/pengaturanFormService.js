@@ -14,7 +14,7 @@ export const getAdditionalData = async () => {
 export const updateAdditionalData = async (id, payload) => {
     try {
         const response = await api.put(`/admin/additional-data/${id}`, payload);
-        return response;
+        return response.data;
     } catch (error) {
         throw error;
     }

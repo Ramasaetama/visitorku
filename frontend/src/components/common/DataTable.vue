@@ -2,8 +2,7 @@
 /**
  * DataTable Component
  * Komponen reusable untuk tabel data
- * 
- * Props:
+ * * Props:
  * - columns: array kolom [{key, label, sortable}]
  * - data: array data yang ditampilkan
  * - loading: status loading
@@ -17,7 +16,6 @@ const props = defineProps({
   columns: {
     type: Array,
     required: true,
-    // Contoh: [{key: 'name', label: 'Nama', sortable: true}]
   },
   data: {
     type: Array,
@@ -26,6 +24,14 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  sortKey: {
+    type: String,
+    default: ''
+  },
+  sortOrder: {
+    type: String,
+    default: 'asc' // 'asc' | 'desc'
   }
 });
 
@@ -105,9 +111,7 @@ const getCellClass = (key, index) => {
 
 <template>
   <div class="overflow-x-auto">
-    <!-- Table tanpa border-spacing-x agar kolom bisa merge -->
     <table class="w-full border-separate border-spacing-0">
-      <!-- Table Header -->
       <thead>
         <tr>
           <th 
@@ -119,16 +123,21 @@ const getCellClass = (key, index) => {
               getHeaderClass(column.key, index)
             ]"
           >
-            <!-- Container dengan justify-between untuk icon sorting rata kanan -->
             <div class="flex w-full items-center justify-between">
               <span>{{ column.label }}</span>
-              <!-- Sort Icon - Rata kanan -->
               <button 
                 v-if="column.sortable" 
                 @click="$emit('sort', column.key)"
-                class="text-gray-400 hover:text-gray-600 ml-2"
+                class="ml-2 transition-colors"
+                :class="sortKey === column.key ? 'text-[#F7941D]' : 'text-gray-400 hover:text-gray-600'"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg v-if="sortKey === column.key && sortOrder === 'asc'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
+                </svg>
+                <svg v-else-if="sortKey === column.key && sortOrder === 'desc'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                         d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
                 </svg>
@@ -138,14 +147,11 @@ const getCellClass = (key, index) => {
         </tr>
       </thead>
       
-      <!-- Table Body -->
       <tbody>
-        <!-- Border line after header (always visible) -->
         <tr class="border-row">
           <td :colspan="columns.length" class="h-0 border-b-2 border-[#EDEDED] p-0"></td>
         </tr>
         
-        <!-- Loading State -->
         <tr v-if="loading">
           <td :colspan="columns.length" class="px-4 py-8 text-center text-gray-500">
             <div class="flex items-center justify-center gap-2">
@@ -158,7 +164,6 @@ const getCellClass = (key, index) => {
           </td>
         </tr>
         
-        <!-- Data Rows - Menggunakan slot untuk custom row content -->
         <template v-else-if="data.length > 0">
           <slot name="body" :data="data">
             <tr 
@@ -171,35 +176,37 @@ const getCellClass = (key, index) => {
                 :key="column.key" 
                 :class="getCellClass(column.key, columns.findIndex(c => c.key === column.key))"
               >
-                <!-- Kolom Aksi dengan Icon -->
-                <template v-if="column.key === 'aksi'">
-                  <div class="flex items-center gap-3">
-                    <button 
-                      @click="$emit('edit', row)"
-                      class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
-                      title="Edit"
-                    >
-                      <img :src="editIcon" alt="Edit" class="w-5 h-5" />
-                    </button>
-                    <button 
-                      @click="$emit('delete', row)"
-                      class="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
-                      title="Hapus"
-                    >
-                      <img :src="deleteIcon" alt="Hapus" class="w-5 h-5" />
-                    </button>
-                  </div>
-                </template>
-                <!-- Kolom data biasa -->
-                <template v-else>
-                  {{ row[column.key] }}
-                </template>
-              </td>
+                <slot :name="column.key" :row="row">
+                  
+                  <template v-if="column.key === 'aksi'">
+                    <div class="flex items-center gap-3">
+                      <button 
+                        @click="$emit('edit', row)"
+                        class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                        title="Edit"
+                      >
+                        <img :src="editIcon" alt="Edit" class="w-5 h-5" />
+                      </button>
+                      <button 
+                        @click="$emit('delete', row)"
+                        class="p-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                        title="Hapus"
+                      >
+                        <img :src="deleteIcon" alt="Hapus" class="w-5 h-5" />
+                      </button>
+                    </div>
+                  </template>
+
+                  <template v-else>
+                    {{ row[column.key] }}
+                  </template>
+
+                </slot>
+                </td>
             </tr>
           </slot>
         </template>
         
-        <!-- Empty State - Menggunakan slot agar bisa dikustomisasi -->
         <tr v-else>
           <td :colspan="columns.length" class="px-4 py-4">
             <slot name="empty">
@@ -213,4 +220,3 @@ const getCellClass = (key, index) => {
     </table>
   </div>
 </template>
-

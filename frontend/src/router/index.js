@@ -34,6 +34,13 @@ const routes = [
     component: () => import('../views/CabangPerusahaan.vue'),
     meta: { requiresAuth: true },
   },
+  // Manajemen Pengguna
+  {
+    path: '/manajemen-pengguna',
+    name: 'ManajemenPengguna',
+    component: () => import('../views/User.vue'),
+    meta: { requiresAuth: true },
+  },
   // Tujuan Kunjungan
   {
     path: '/tujuan-kunjungan',
@@ -48,11 +55,59 @@ const routes = [
     component: () => import('../views/ProfilPerusahaan.vue'),
     meta: { requiresAuth: true },
   },
+  // Edit Profile
+  {
+    path: '/edit-profile',
+    name: 'EditProfile',
+    component: () => import('../views/EditProfile.vue'),
+    meta: { requiresAuth: true }, // Wajib login
+  },
   // Pengaturan Form Visitor / Custom Field
   {
     path: '/pengaturan-form',
     name: 'PengaturanFormVisitor',
     component: () => import('../views/PengaturanFormVisitor.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Data Kunjungan / Visit
+  {
+    path: '/data-kunjungan',
+    name: 'Visit',
+    component: () => import('../views/Visit.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Signage - Create (multi-step)
+  {
+    path: '/layar-informasi/create',
+    name: 'SignageCreate',
+    component: () => import('../views/SignageCreate.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Signage (Layar Informasi)
+  {
+    path: '/layar-informasi',
+    name: 'Signage',
+    component: () => import('../views/Signage.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Signage Display (Public)
+  {
+    path: '/signage/:slug',
+    name: 'SignageDisplay',
+    component: () => import('../views/SignageDisplay.vue'),
+  },
+  // Data Visitor
+  {
+    path: '/data-visitor',
+    name: 'DataVisitor',
+    component: () => import('../views/Visitor.vue'),
+    meta: { requiresAuth: true },
+  },
+  // Invoice
+  {
+    path: '/invoice',
+    name: 'Invoice',
+    component: () => import('../views/Dashboard.vue'), // TODO: buat halaman Invoice
     meta: { requiresAuth: true },
   },
 ]

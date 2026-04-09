@@ -96,24 +96,3 @@ export const deleteApiKey = async (apiKeyId) => {
     throw error;
   }
 };
-
-// Fungsi untuk mengambil data Admin
-export const getAdminProfile = async () => {
-  try {
-    const response = await api.get('/admin/profile');
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-// Ganti URL-nya ditambah /update-account
-export const updateAdminProfile = async (payload) => {
-  try {
-    // 👇 INI YANG BERUBAH 👇
-    const response = await api.put('/admin/profile/update-account', payload);  
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};

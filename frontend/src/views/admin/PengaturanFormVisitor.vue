@@ -290,26 +290,42 @@ const deleteField = async (index) => {
                       <td class="py-3.5 px-4 text-sm text-gray-500">{{ field.type }}</td>
                       
                       <td class="py-3.5 px-4">
-                        <div class="flex items-center gap-2 w-18 relative">
+                        <div class="flex items-center gap-2 w-18">
                           
                           <button
                             @click.stop="handleEditForm(index)"
-                            class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
+                            class="flex items-center justify-center w-8 h-8 rounded border border-[#F7941D] text-[#F7941D] hover:bg-orange-50 transition-colors"
                           >
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                              <circle cx="12" cy="5" r="1.5" />
+                              <circle cx="12" cy="12" r="1.5" />
+                              <circle cx="12" cy="19" r="1.5" />
                             </svg>
                           </button>
 
                           <button
                             @click.stop="deleteField(index)"
-                            class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none relative z-10"
+                            class="flex items-center justify-center w-8 h-8 rounded bg-[#DE5343] text-white hover:bg-[#C94233] transition-colors"
                           >
-                            <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                              <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                           </button>
-
+                          <!-- Kebab Dropdown -->
+                          <div
+                            v-if="activeKebab === 'custom-' + index"
+                            class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                          >
+                            <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                              Edit
+                            </button>
+                            <button
+                              @click.stop="deleteField(field.id)"
+                              class="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </td>
                     </tr>

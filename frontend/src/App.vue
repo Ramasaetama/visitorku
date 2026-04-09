@@ -1,7 +1,8 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Button } from './components/common'
+import { useAutoLogout } from '@/composables/useAutoLogout';
 import { Navbar, Footer } from './components/layout'
 import Topbar from './components/Topbar.vue'
 
@@ -11,6 +12,19 @@ const route = useRoute()
 const hideLayout = computed(() => {
   return true
 })
+
+// Waktu AutoLogout 
+const { initAutoLogout, destroyAutoLogout } = useAutoLogout(15); 
+
+onMounted(() => {
+  if (localStorage.getItem('token')) {
+    initAutoLogout();
+  }
+});
+
+onUnmounted(() => {
+  destroyAutoLogout();
+});
 </script>
 
 <template>

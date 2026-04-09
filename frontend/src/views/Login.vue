@@ -202,6 +202,13 @@ const forgotPasswordError = ref('')
 const forgotPasswordSuccess = ref(false)
 const isSendingReset = ref(false)
 
+const closeForgotPassword = () => {
+  showForgotPassword.value = false
+  forgotPasswordEmail.value = ''
+  forgotPasswordError.value = ''
+  forgotPasswordSuccess.value = false
+}
+
 const form = ref({
   email: '',
   password: '',
@@ -221,7 +228,7 @@ const handleLogin = async () => {
     const token = response.data?.token;
 
     if (token) {
-      localStorage.setItem('token', token);
+      sessionStorage.setItem('token', token);
       console.log('Login Sukses:', response);
 
       router.push('/dashboard');

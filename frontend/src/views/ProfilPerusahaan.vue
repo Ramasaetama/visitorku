@@ -16,7 +16,6 @@
             </div>
 
             <div class="max-w-225 mx-auto w-full">
-
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                 <div class="lg:w-55 shrink-0">
                   <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Profil</h2>
@@ -27,11 +26,12 @@
                       <div @click="openUploadModal('logo')" class="w-20 h-20 rounded-full bg-linear-to-br from-[#F5A623] to-[#E8920D] shrink-0 relative overflow-hidden cursor-pointer group shadow-md">
                         <img v-if="companyProfile.logoUrl" :src="companyProfile.logoUrl" alt="Logo" class="absolute inset-0 w-full h-full object-cover" />
                         <div v-else class="absolute inset-0 flex items-center justify-center"><span class="text-[30px] font-bold text-white">GM</span></div>
-                        <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-white/40 flex items-center justify-center group-hover:bg-white/55 transition"><span class="text-[11px] font-semibold text-[#EE9D0F]">Ubah</span></div>
+                        <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-white/90 flex items-center justify-center group-hover:bg-white transition"><span class="text-[11px] font-semibold text-[#EE9D0F]">Ubah</span></div>
                       </div>
                       <div class="pt-1 space-y-0.5">
-                        <p class="text-[12px] text-gray-500">• Ukuran gambar yang direkomendasi: lebar 800px, tinggi 400px</p>
-                        <p class="text-[12px] text-gray-500">• Format gambar yang diterima : JPG,JPEG,PNG</p>
+                        <p class="text-[12px] text-gray-500/70 ">• Ukuran gambar yang direkomendasi: lebar 800px, tinggi 400px</p>
+                        <p class="text-[12px] text-gray-500/70">• Besar file maks.: 2.0MB</p>
+                        <p class="text-[12px] text-gray-500/70">• Format gambar yang diterima : JPG,JPEG,PNG</p>
                       </div>
                    </div>
                    <div>
@@ -53,10 +53,10 @@
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-3 bg-[#FEF3E2] px-4 py-3 rounded-xl w-fit">
-                    <div class="w-10.5 h-10.5 rounded-full border border-gray-200 cursor-pointer relative overflow-hidden shrink-0" :style="{ backgroundColor: companyProfile.brandColor }" @click="$refs.colorInput.click()">
-                      <input ref="colorInput" v-model="companyProfile.brandColor" type="color" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
+                    <div class="w-10.5 h-10.5 rounded-full border border-gray-200 cursor-pointer relative overflow-hidden shrink-0" :style="{ backgroundColor: companyProfile.primaryColor }" @click="$refs.colorInput.click()">
+                      <input ref="colorInput" v-model="companyProfile.primaryColor" type="color" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
                     </div>
-                    <div><span class="text-[14px] font-mono text-gray-700 tracking-wider">{{ (companyProfile.brandColor || '#EE9D0F').replace('#', '').toUpperCase() }}</span></div>
+                    <div><span class="text-[14px] font-mono text-gray-700 tracking-wider">{{ (companyProfile.primaryColor || '#EE9D0F').replace('#', '').toUpperCase() }}</span></div>
                   </div>
                   <p class="text-[12px] text-gray-500 italic">Pastikan warna memiliki kontras yang cukup.</p>
                 </div>
@@ -84,7 +84,7 @@
                   <p class="text-[13px] text-gray-500 leading-relaxed">Atur bahasa &amp; wilayah</p>
                 </div>
                 <div class="flex-1 space-y-5">
-                  <div>
+                  <div>                       
                     <label class="block text-[13px] font-medium text-gray-700 mb-2">Bahasa</label>
                     <div class="relative">
                       <select v-model="companyProfile.language" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
@@ -131,7 +131,7 @@
                   </button>
                 </div>
 
-                <div v-else class="mt-4 max-h-[450px] overflow-y-auto pr-2 space-y-6">
+                <div v-else class="mt-4 max-h-112.5 overflow-y-auto pr-2 space-y-6">
                   <div v-for="(token, index) in existingTokens" :key="token.id" class="border border-gray-100 p-6 rounded-2xl bg-white shadow-sm relative">
                     <div class="flex justify-between items-start mb-3">
                       <h3 class="text-[15px] font-bold text-gray-900">{{ token.name }}</h3>
@@ -182,7 +182,8 @@
                     {{ isSaving ? 'Menyimpan...' : 'Simpan Perubahan' }}
                   </button>
                 </div>
-                </div> </div>
+              </div> 
+            </div>
           </div>
         </div>
       </main>
@@ -274,27 +275,24 @@
     </Modal>
 
     <div v-if="showLoadingModal" class="fixed inset-0 z-60 flex items-center justify-center p-4 font-['Poppins']">
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
-        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-175 p-12 flex flex-col items-center text-center">
-            
-            <div class="mb-8">
-                <img :src="nochathistory" alt="Loading Illustration" class="w-35 h-35 object-contain opacity-90 mx-auto" />
-            </div>
-
-            <div class="flex items-center gap-4 mb-8">
-                <svg class="animate-spin w-8 h-8 text-[#F7941D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <h3 class="text-[20px] font-semibold text-gray-800">Generate Token...</h3>
-            </div>
-
-            <div class="w-full px-8">
-                <div class="h-14 w-full bg-gray-100 rounded-lg animate-pulse mb-6"></div>
-                <div class="w-full space-y-3">
-                   <div class="h-3 w-3/4 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
-                   <div class="h-3 w-1/2 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
-                </div>
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+        <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-175 p-12 flex flex-col items-center text-center"> 
+          <div class="mb-8">
+            <img :src="nochathistory" alt="Loading Illustration" class="w-35 h-35 object-contain opacity-90 mx-auto" />
+          </div>
+          <div class="flex items-center gap-4 mb-8">
+            <svg class="animate-spin w-8 h-8 text-[#F7941D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-100" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <h3 class="text-[20px] font-semibold text-gray-800">Generate Token...</h3>
+          </div>
+          <div class="w-full px-8">
+            <div class="h-14 w-full bg-gray-100 rounded-lg animate-pulse mb-6"></div>
+              <div class="w-full space-y-3">
+                <div class="h-3 w-3/4 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
+                <div class="h-3 w-1/2 bg-gray-100 rounded-full animate-pulse mx-auto"></div>
+              </div>
             </div>
         </div>
     </div>
@@ -346,30 +344,35 @@
                 <span class="font-bold text-gray-800">Penting:</span> API Access Token ini tidak akan ditampilkan kembali setelah modal ditutup. Jika Anda kehilangan token ini, Anda perlu membuat token baru.
             </p>
         </div>
-
       </div>
-    </div>
-    
+    </div>   
   </div>
 </template>
+
+<style>
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-// IMPORT KEDUA ENDPOINT
-import { getAdminProfile, getProfile, updateProfile, updateAdminProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/profileService';import Topbar from '@/components/Topbar.vue';
+import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
+import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
+import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
 
+// Hapus email & phone karena itu milik Admin
 const companyProfile = ref({
   id: '', 
   name: '',
   address: '',
-  email: '', 
-  phone: '', 
-  brandColor: '#EE9D0F',
+  primaryColor: '',
   headerBg: headerbg,
   logoUrl: null, 
   language: localStorage.getItem('app_lang') || 'Indonesia',
@@ -413,31 +416,18 @@ const availableScopes = ref([
 const modalTitle = computed(() => { return uploadType.value === 'logo' ? 'Ubah Logo' : 'Sesuaikan Header'; });
 const modalDescription = computed(() => { return uploadType.value === 'logo' ? 'Format yang diterima: <span class="font-medium text-[#EE9D0F]">JPG</span> • <span class="font-medium text-[#EE9D0F]">JPEG</span> • <span class="font-medium text-[#EE9D0F]">PNG</span> (Maks 2MB)' : 'Dimensi yang disarankan: <span class="font-medium text-[#EE9D0F]">1920 x 240px</span>, format PNG transparan, maksimal 2 MB'; });
 
-// ==========================================
-// FETCH GABUNGAN (PROFILE & COMPANY)
-// ==========================================
 const fetchProfileData = async () => {
   isLoadingData.value = true;
   try {
-    const [adminRes, companyRes] = await Promise.all([
-      getAdminProfile(),
-      getProfile()
-    ]);
+    const response = await getProfile();
+    const companyData = response.data || response;
 
-    const adminData = adminRes.data || adminRes;
-    const companyData = companyRes.data || companyRes;
-
-    // DARI /admin/profile (Nama & Alamat)
-    companyProfile.value.name = adminData.name || adminData.company_name || '';
-    companyProfile.value.address = adminData.address || '';
-    companyProfile.value.email = adminData.email || adminData.user_email || '';       // <--- TAMBAHKAN INI
-    companyProfile.value.phone = adminData.phone_number || adminData.phone || '';     // <--- TAMBAHKAN INI
-
-    // DARI /admin/company (Sisanya)
     companyProfile.value.id = companyData.company_id || companyData.id || '';
+    companyProfile.value.name = companyData.name || companyData.company_name || '';
+    companyProfile.value.address = companyData.address || '';
     companyProfile.value.logoUrl = companyData.picture_url || companyData.logo || null; 
     companyProfile.value.headerBg = companyData.background_url || companyData.background || headerbg;
-    companyProfile.value.brandColor = companyData.brand_color || '#EE9D0F';
+    companyProfile.value.primaryColor = companyData.brand_color || companyData.primary_color || '';
     
     if (companyData.language) {
       companyProfile.value.language = companyData.language;
@@ -449,7 +439,7 @@ const fetchProfileData = async () => {
     }
     
   } catch (error) {
-    console.error('Gagal memuat data gabungan profil:', error);
+    console.error('Gagal memuat profil perusahaan:', error);
   } finally {
     isLoadingData.value = false;
   }
@@ -472,7 +462,7 @@ const parseScopes = (settingDataString) => {
 const fetchApiKeyData = async () => {
   try {
     const response = await getCompanyApiKey();
-    const tokenList = response.data.results;
+    const tokenList = response.data;
 
     if (Array.isArray(tokenList) && tokenList.length > 0) {
       existingTokens.value = tokenList.map(tokenData => ({
@@ -498,41 +488,35 @@ onMounted(() => {
 const saveProfile = async () => {
   isSaving.value = true;
   try {
+    if (!companyProfile.value.id) {
+      alert('Gagal menyimpan: ID Perusahaan tidak ditemukan.');
+      isSaving.value = false;
+      return;
+    }
+
     const payloadProfile = {
       name: companyProfile.value.name,
       address: companyProfile.value.address,
-      email: companyProfile.value.email,         // <--- TAMBAHKAN INI
-      phone_number: companyProfile.value.phone   // <--- TAMBAHKAN INI
+      // Hapus pengiriman email & phone karena ini endpoint company
     };
     
-    // 2. TEMBAK KE /admin/profile (Sesuai dengan asal datanya)
-    await updateAdminProfile(payloadProfile);
+    // TEMBAK KE ENDPOINT COMPANY
+    await updateProfile(companyProfile.value.id, payloadProfile);
 
-    // 3. UPDATE BAHASA & TIMEZONE (Ini tetap ke company)
-    if (companyProfile.value.id) {
-      const payloadLangTz = {
-        language: companyProfile.value.language,
-        timezone: companyProfile.value.timezone
-      };
-      await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
-    }
+    const payloadLangTz = {
+      language: companyProfile.value.language,
+      timezone: companyProfile.value.timezone
+    };
+    await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
     
-    alert('Seluruh perubahan profil berhasil disimpan!');
+    alert('Seluruh perubahan profil perusahaan berhasil disimpan!');
     
   } catch (error) {
-    console.error('Gagal menyimpan profil:', error);
+    console.error('Gagal menyimpan profil perusahaan:', error);
     
-    // TANGKAP DETAIL ERROR 422 DARI BACKEND
     const errorData = error.response?.data;
-    
     if (error.response?.status === 422) {
-      console.log("🔥 Detail Error Validasi (422):", errorData);
-      
-      // Biasanya Laravel/Backend menaruh detailnya di dalam 'errors' atau 'message'
-      const pesanValidasi = errorData.errors 
-        ? JSON.stringify(errorData.errors, null, 2) 
-        : errorData.message;
-        
+      const pesanValidasi = errorData.errors ? JSON.stringify(errorData.errors, null, 2) : errorData.message;
       alert("Gagal Disimpan! Backend menolak karena:\n\n" + pesanValidasi);
     } else {
       alert(errorData?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
@@ -632,24 +616,28 @@ const autoSaveLangTz = async () => {
 };
 
 const deleteToken = async (id, index) => {
-  const isConfirmed = confirm('Apakah Anda yakin ingin menghapus API Token ini? Token yang dihapus tidak dapat dipulihkan.');
+  if (!id) { 
+    showError('ID Token tidak valid.'); 
+    return; 
+  }
+
+  const isConfirmed = await confirmDelete('API Token');
+
   if (isConfirmed) {
     try {
-      if (!id) { alert('ID Token tidak valid.'); return; }
       await deleteApiKey(id);
       existingTokens.value.splice(index, 1);
       activeMenuIndex.value = null; 
-      alert('API Token berhasil dihapus dari server!');
+      
+      showSuccess('API Token berhasil dihapus dari server!');
+      
     } catch (error) {
-      alert(error.response?.data?.message || 'Terjadi kesalahan saat mencoba menghapus token.');
+      showError(error.response?.data?.message || 'Terjadi kesalahan saat mencoba menghapus token.');
     }
   }
 };
 </script>
 
 <style scoped>
-
-textarea {
-  resize: vertical;
-}
+  textarea {resize: vertical;}
 </style>

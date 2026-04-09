@@ -1,54 +1,45 @@
 <script setup>
-/**
- * ============================================================
- * Halaman Tujuan Kunjungan
- * ============================================================
- * Kelola data divisi dan penanggung jawab yang dapat dipilih oleh pengunjung
- */
-
-// Import Layout Components
 import Sidebar from '@/components/Sidebar.vue';
-
-// Import Reusable Components
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import FormTambahTujuan from '@/components/cabang/FormTambahTujuan.vue';
-
-// Import Vue Composables & API Services
-import { ref, onMounted } from 'vue';
-
-// Import API Services (Sesuaikan dengan path service Anda jika ada yang diubah)
-import { 
-  getCategories, 
-  getBranches, 
-  createCategory, 
-  updateCategory, 
-  deleteCategory 
-} from '@/services/tujuanService';
-
-// Import assets (gambar, icon)
-import visitorkulogo from '@/assets/visitorku.png';
-import patternBg from '@/assets/Frame 7.svg';
-import globeIcon from '@/assets/proicons_globe.svg';
-import adminprofile from '@/assets/adminprofile.png';
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 
-/**
- * ==========================================
- * STATE & VARIABEL
- * ==========================================
- */
+import { ref, onMounted, computed, watch } from 'vue';
+import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
+import { getCategories, getBranches, createCategory, updateCategory, deleteCategory } from '@/services/tujuanService';
+
 const searchQuery = ref('');
 const tujuanData = ref([]);
-const branchesData = ref([]); // Menyimpan data cabang untuk dikirim ke Form
-const rawDataTujuan = ref([]); // Menyimpan data mentah untuk fitur Edit
-const isEditMode = ref(false); // Penanda Edit atau Tambah
-const editId = ref(null);      // ID data yang sedang diedit
-const selectedData = ref(null); // Data yang dikirim ke form untuk pre-fill
+const branchesData = ref([]); 
+const rawDataTujuan = ref([]); 
+const isEditMode = ref(false); 
+const editId = ref(null);      
+const selectedData = ref(null); 
+
+// PAGINATION STATE
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+
+const appliedSearchQuery = ref('');
+const executeSearch = () => {
+  appliedSearchQuery.value = searchQuery.value;
+  currentPage.value = 1; // Reset halaman saat mencari
+};
+
+watch(searchQuery, (nilaiBaru) => {
+  if (nilaiBaru === '') {
+    executeSearch(); 
+  }
+});
+
+watch(itemsPerPage, () => {
+  currentPage.value = 1;
+});
 
 const tableColumns = [
   { key: 'divisi', label: 'Nama Divisi / Ruangan', sortable: true },
@@ -61,19 +52,8 @@ const tableColumns = [
 const isLoading = ref(false);
 const showModal = ref(false);
 const showToast = ref(false);
-const toastMessage = ref(''); // Wadah untuk pesan notifikasi dinamis
+const toastMessage = ref(''); 
 
-// Dummy profile sementara untuk mencegah error blank page
-const companyProfile = ref({
-  name: '',
-  logoUrl: ''
-});
-
-/**
- * ==========================================
- * FUNGSI TARIK DATA (GET & JOIN)
- * ==========================================
- */
 const fetchDataTujuan = async () => {
   isLoading.value = true;
   try {
@@ -86,7 +66,7 @@ const fetchDataTujuan = async () => {
     const branches = resBranch.data?.results || resBranch.data?.data || resBranch.data || [];
 
     rawDataTujuan.value = categories; 
-    branchesData.value = branches; // Simpan daftar cabang untuk Dropdown Form
+    branchesData.value = branches; 
 
     if (Array.isArray(categories)) {
       tujuanData.value = categories.map(cat => {
@@ -111,11 +91,9 @@ onMounted(() => {
   fetchDataTujuan();
 });
 
-/**
- * ==========================================
- * FUNGSI UI (TUTUP MODAL & TOAST & SORT)
- * ==========================================
- */
+const sortKey = ref('');
+const sortOrder = ref('asc');
+
 const handleCloseModal = () => {
   showModal.value = false;
 };
@@ -125,24 +103,84 @@ const handleCloseToast = () => {
 };
 
 const handleSort = (columnKey) => {
-  console.log('Sort by:', columnKey);
+  if (sortKey.value === columnKey) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value = columnKey;
+    sortOrder.value = 'asc';
+  }
 };
 
-/**
- * ==========================================
- * FUNGSI AKSI (TAMBAH, EDIT, HAPUS, SUBMIT)
- * ==========================================
- */
+const filteredData = computed(() => {
+  if (!appliedSearchQuery.value) {
+    return tujuanData.value;
+  }
+  
+  const keyword = appliedSearchQuery.value.toLowerCase();
+  
+  return tujuanData.value.filter(item => {
+    return (
+      (item.divisi && item.divisi.toLowerCase().includes(keyword)) ||
+      (item.pic && item.pic.toLowerCase().includes(keyword)) ||
+      (item.jabatan && item.jabatan.toLowerCase().includes(keyword)) ||
+      (item.cabang && item.cabang.toLowerCase().includes(keyword))
+    );
+  });
+});
 
-// 1. Klik Tombol Tambah
+const sortedData = computed(() => {
+  if (!sortKey.value) return filteredData.value; 
+
+  return [...filteredData.value].sort((a, b) => { 
+    const valA = a[sortKey.value] ?? '';
+    const valB = b[sortKey.value] ?? '';
+    const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
+    return sortOrder.value === 'asc' ? cmp : -cmp;
+  });
+});
+
+// LOGIKA PAGINATION DINAMIS
+const totalItems = computed(() => filteredData.value.length);
+const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
+const startIndex = computed(() => totalItems.value === 0 ? 0 : ((currentPage.value - 1) * itemsPerPage.value) + 1);
+const endIndex = computed(() => Math.min(currentPage.value * itemsPerPage.value, totalItems.value));
+
+const paginatedData = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage.value;
+  const end = start + itemsPerPage.value;
+  return sortedData.value.slice(start, end);
+});
+
+const visiblePages = computed(() => {
+  const maxVisible = 5; 
+  let start = Math.max(1, currentPage.value - 2);
+  let end = start + maxVisible - 1;
+
+  if (end > totalPages.value) {
+    end = totalPages.value;
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  let pages = [];
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
+    currentPage.value = page;
+  }
+};
+
 const handleTambahTujuan = () => {
   isEditMode.value = false;
   editId.value = null;
-  selectedData.value = null; // Pastikan form kosong
+  selectedData.value = null; 
   showModal.value = true;
 };
 
-// 2. Klik Tombol Edit
 const handleEditTujuan = (row) => {
   const rawData = rawDataTujuan.value.find(item => item.id === row.id);
   
@@ -163,34 +201,24 @@ const handleEditTujuan = (row) => {
   }
 };
 
-// 3. Klik Tombol Hapus
-// 3. Klik Tombol Hapus
-// 3. Klik Tombol Hapus
 const handleDeleteTujuan = async (row) => {
-  const isConfirmed = confirm(`Apakah Anda yakin ingin menghapus Tujuan Kunjungan untuk PIC: ${row.pic}?`);
+  const isConfirmed = await confirmDelete(`Tujuan Kunjungan untuk PIC: ${row.pic}`);
 
   if (isConfirmed) {
     try {
       isLoading.value = true;
       await deleteCategory(row.id);
-      
-      // MUNCULKAN TOAST SUKSES HAPUS
-      toastMessage.value = 'Tujuan Kunjungan berhasil dihapus!';
-      showToast.value = true;
-      
-      fetchDataTujuan(); // Refresh tabel
+      showSuccess('Tujuan Kunjungan berhasil dihapus!');
+      fetchDataTujuan();
     } catch (error) {
       console.error('Gagal menghapus data:', error);
-      // MUNCULKAN TOAST GAGAL HAPUS
-      toastMessage.value = error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.';
-      showToast.value = true;
+      showError(error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.');
     } finally {
       isLoading.value = false;
     }
   }
 };
 
-// 4. Proses Submit (POST / PUT)
 const handleSubmitTujuan = async (formData) => {
   try {
     isLoading.value = true; 
@@ -206,19 +234,17 @@ const handleSubmitTujuan = async (formData) => {
     };
 
     if (isEditMode.value) {
-      // Edit 
       await updateCategory(editId.value, payloadCategory);
       toastMessage.value = 'Tujuan Kunjungan berhasil diperbarui!';
     } else {
-      // Tambah 
       await createCategory(payloadCategory);
       toastMessage.value = 'Tujuan Kunjungan berhasil ditambahkan!';
     }
 
     showModal.value = false;
-    showToast.value = true; // Munculkan toast setelah proses berhasil
+    showToast.value = true; 
     
-    fetchDataTujuan(); // Refresh tabel
+    fetchDataTujuan(); 
 
   } catch (error) {
     console.log('Detail Penolakan Backend:', error.response?.data);
@@ -252,25 +278,43 @@ const handleSubmitTujuan = async (formData) => {
                 @click="handleTambahTujuan"
                 class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] 
                        text-[#F7941D] rounded-lg font-medium text-sm 
-                       hover:bg-[#F7941D] hover:text-white transition-all"
+                       hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none"
               >
                 <span class="text-lg leading-none">+</span>
                 Tambah Tujuan
               </button>
             </div>
             
-            <div class="mb-6 flex items-center gap-3">
-              <div class="max-w-md flex-1">
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+              <div class="w-full sm:max-w-md flex-1">
                 <SearchInput 
                   v-model="searchQuery" 
                   placeholder="Cari berdasarkan nama PIC/Divisi" 
-                />
+                  @keyup.enter="executeSearch" />
+              </div>
+
+              <div class="relative shrink-0">
+                <select 
+                  v-model="itemsPerPage" 
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                >
+                  <option :value="5">5</option>
+                  <option :value="10">10</option>
+                  <option :value="25">25</option>
+                  <option :value="50">50</option>
+                  <option :value="100">100</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
               </div>
               
               <button 
                 class="flex items-center gap-2 px-4 py-2.5 border-2 border-gray-300 
-                       text-gray-600 rounded-lg font-medium text-sm 
-                       hover:bg-gray-50 transition-all"
+                       text-gray-600 rounded-lg font-medium text-[13px] 
+                       hover:bg-gray-50 transition-all focus:outline-none"
               >
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
@@ -282,20 +326,53 @@ const handleSubmitTujuan = async (formData) => {
             
             <div class="flex-1 overflow-hidden">
               <DataTable 
-                :columns="tableColumns"
-                :data="tujuanData"
+                :columns="tableColumns"               
+                :data="paginatedData" 
                 :loading="isLoading"
+                :sort-key="sortKey"
+                :sort-order="sortOrder"
                 @sort="handleSort"
-                @edit="handleEditTujuan"
-                @delete="handleDeleteTujuan"
               >
+                <template #aksi="{ row }">
+                  <div class="flex items-center gap-2 relative">
+                    
+                    <button 
+                      @click="handleEditTujuan(row)"
+                      class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
+                      title="Edit Data"
+                    >
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                      </svg>
+                    </button>
+
+                    <button 
+                      @click="handleDeleteTujuan(row)"
+                      class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none relative z-10"
+                      title="Hapus"
+                    >
+                      <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
+                      </svg>
+                    </button>
+
+                  </div>
+                </template>
+
                 <template #empty>
                   <EmptyState 
+                    v-if="tujuanData.length === 0"
                     :icon="notfound"
-                    title="Tujuan belum tersedia"
+                    title="Tujuan Belum Tersedia"
                     description="Tambahkan tujuan terlebih dahulu untuk memulai tujuan kunjungan."
-                    buttonText="+ Tambah Tujuan"
+                    buttonText="Tambah Tujuan"
                     @action="handleTambahTujuan"
+                  />
+                  <EmptyState 
+                    v-else
+                    :icon="notfound"
+                    title="No Records to display"
+                    :description="`Tidak ada tujuan kunjungan yang cocok dengan kata kunci '${appliedSearchQuery}'`"
                   />
                 </template>
               </DataTable>
@@ -303,12 +380,35 @@ const handleSubmitTujuan = async (formData) => {
             
           </div>
           
-          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-sm text-gray-500">
-            <span>Menampilkan data</span>
-            <div class="flex items-center gap-2">
-              <button class="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">Pertama</button>
-              <button class="w-8 h-8 flex items-center justify-center bg-[#F7941D] text-white rounded-lg font-medium">1</button>
-              <button class="px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">Terakhir</button>
+          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B]">
+            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalItems }} records</span>
+            
+            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+              <button 
+                @click="goToPage(currentPage - 1)" 
+                :disabled="currentPage === 1"
+                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+              </button>
+              
+              <button 
+                v-for="page in visiblePages" 
+                :key="page"
+                @click="goToPage(page)"
+                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
+                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
+              >
+                {{ page }}
+              </button>
+
+              <button 
+                @click="goToPage(currentPage + 1)" 
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+              </button>
             </div>
           </div>
           
@@ -338,7 +438,7 @@ const handleSubmitTujuan = async (formData) => {
             @click="handleCloseModal"
             class="px-5 py-2.5 text-sm font-medium text-gray-600 
                    border border-gray-300 rounded-lg
-                   hover:bg-gray-50 transition-colors"
+                   hover:bg-gray-50 transition-colors focus:outline-none"
           >
             Batal
           </button>
@@ -347,7 +447,7 @@ const handleSubmitTujuan = async (formData) => {
             form="formTambahTujuan"
             class="px-5 py-2.5 text-sm font-medium text-white 
                    bg-[#F7941D] rounded-lg
-                   hover:bg-[#E8850E] transition-colors"
+                   hover:bg-[#E8850E] transition-colors focus:outline-none"
             :disabled="isLoading"
           >
             {{ isLoading ? 'Menyimpan...' : 'Simpan Tujuan' }}
@@ -364,3 +464,10 @@ const handleSubmitTujuan = async (formData) => {
     
   </div>
 </template>
+
+<style scoped>
+button:focus, select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>

@@ -1,32 +1,27 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://visitorku.io/api-stg', 
+  baseURL: '/api-stg', 
   headers: {
     'Content-Type': 'application/json',
   }
 });
 
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-      if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
+api.interceptors.request.use(config => {
+  const token = sessionStorage.getItem('token');
+  
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+  return config;
+});
 
 api.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem('auth_token')
-            localStorage.removeItem('auth_user')
+            sessionStorage.removeItem('auth_token')
+            sessionStorage.removeItem('auth_user')
 
             const currentPath = window.location.pathname
             if (!currentPath.startsWith('/login') && !currentPath.startsWith('/register')) {
