@@ -1,52 +1,44 @@
-import { useRouter, useRoute } from 'vue-router';
+import { useRouter } from 'vue-router';
 
-export function useAutoLogout(timeoutMinutes = 0.1) {
+/**
+ * useAutoLogout — logs the user out after `idleMinutes` of inactivity.
+ *
+ * Usage in App.vue:
+ *   const { initAutoLogout, destroyAutoLogout } = useAutoLogout(15);
+ *   onMounted(() => { if (localStorage.getItem('token')) initAutoLogout(); });
+ *   onUnmounted(() => destroyAutoLogout());
+ */
+export function useAutoLogout(idleMinutes = 15) {
   const router = useRouter();
-  const route = useRoute();
-  let timeoutId = null;
+  let timer = null;
+  const idleMs = idleMinutes * 60 * 1000;
 
-  const logoutUser = () => {
-    localStorage.removeItem('token'); 
-    localStorage.removeItem('app_lang');
-    localStorage.removeItem('app_tz');
-    
+  const ACTIVITY_EVENTS = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'];
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     router.push('/login');
-    // Pesan Alert
-    alert('Sesi Anda telah habis karena tidak ada aktivitas. Silakan login kembali.');
   };
 
   const resetTimer = () => {
-    if (timeoutId) clearTimeout(timeoutId);
-    
-    if (route.path === '/login') {
-      return; 
-    }
-    
-    timeoutId = setTimeout(logoutUser, timeoutMinutes * 60 * 1000);
+    clearTimeout(timer);
+    timer = setTimeout(logout, idleMs);
   };
 
   const initAutoLogout = () => {
-    const activityEvents = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'];
-    
-    activityEvents.forEach(event => {
-      window.addEventListener(event, resetTimer);
-    });
-
     resetTimer();
+    ACTIVITY_EVENTS.forEach(event => {
+      window.addEventListener(event, resetTimer, { passive: true });
+    });
   };
 
   const destroyAutoLogout = () => {
-    const activityEvents = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart'];
-    
-    activityEvents.forEach(event => {
+    clearTimeout(timer);
+    ACTIVITY_EVENTS.forEach(event => {
       window.removeEventListener(event, resetTimer);
     });
-    
-    if (timeoutId) clearTimeout(timeoutId);
   };
 
-  return {
-    initAutoLogout,
-    destroyAutoLogout
-  };
+  return { initAutoLogout, destroyAutoLogout };
 }
