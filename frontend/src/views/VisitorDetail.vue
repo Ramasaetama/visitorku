@@ -142,7 +142,7 @@ onMounted(() => {
 
                   <template #check_in="{ row }">
                     <div class="flex items-center gap-2.5">
-                      <img v-if="row.picture_url" :src="row.picture_url" class="w-7 h-7 rounded-md object-cover bg-gray-100" />
+                      <img v-if="row.picture_url" :src="row.picture_url" class="w-7 h-7 rounded-sm object-cover bg-gray-100" />
                       <div v-else class="w-7 h-7 rounded-md bg-gray-200 flex items-center justify-center text-[10px] text-gray-500">?</div>
                       <span class="text-sm font-medium">{{ formatDate(row.datetime) }}</span>
                     </div>
@@ -150,7 +150,7 @@ onMounted(() => {
 
                   <template #check_out="{ row }">
                     <div class="flex items-center gap-2.5" v-if="row.logout_data">
-                      <img v-if="row.logout_data.picture_url" :src="row.logout_data.picture_url" class="w-7 h-7 rounded-md object-cover bg-gray-100" />
+                      <img v-if="row.logout_data.picture_url" :src="row.logout_data.picture_url" class="w-7 h-7 rounded-sm object-cover bg-gray-100" />
                       <div v-else class="w-7 h-7 rounded-md bg-gray-200 flex items-center justify-center text-[10px] text-gray-500">?</div>
                       <span class="text-sm font-medium">{{ formatDate(row.logout_data.datetime) }}</span>
                     </div>

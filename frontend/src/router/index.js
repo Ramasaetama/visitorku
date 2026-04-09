@@ -110,6 +110,13 @@ const routes = [
     component: () => import('../views/Dashboard.vue'), // TODO: buat halaman Invoice
     meta: { requiresAuth: true },
   },
+
+  {
+    path: '/visitor/:id',
+    name: 'VisitorDetail',
+    component: () => import('../views/VisitorDetail.vue'), // Sesuaikan dengan nama file detail Anda
+    meta: { requiresAuth: true },
+  },
 ]
 
 const router = createRouter({
