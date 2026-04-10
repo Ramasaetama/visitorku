@@ -389,7 +389,7 @@ onMounted(() => {
                   <tr v-else v-for="visitor in latestVisitors" :key="visitor.id" class="border-b border-gray-100 hover:bg-[#FDF9F2]/50 transition-colors">
                     <td class="py-4 px-5">
                       <div class="flex items-center gap-3.5">
-                        <img v-if="visitor.picture_url" :src="visitor.picture_url" alt="" class="w-9 h-9 rounded-lg object-cover border border-gray-100 shrink-0 shadow-xs" />
+                        <img v-if="visitor.picture_url" :src="visitor.picture_url" alt="" class="w-7 h-7 rounded-sm object-cover border border-gray-100 shrink-0 shadow-xs" />
                         <div v-else class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 text-sm font-bold shrink-0 border border-gray-200 shadow-xs">
                           {{ visitor.name ? visitor.name.charAt(0).toUpperCase() : '?' }}
                         </div>

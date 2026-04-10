@@ -4,6 +4,8 @@ import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
+import EmptyState from '@/components/common/EmptyState.vue';
+import notfound from '@/assets/notfound.svg';
 import { getAllVisits, exportVisitReport } from '@/services/visitService';
 
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -57,14 +59,17 @@ const fetchVisits = async () => {
     const items = Array.isArray(res) ? res : (res.data || res.items || []);
     totalRecords.value = res.total ?? res.totalData ?? items.length;
 
+    // Mapping data
     visitData.value = items.map(v => ({
-      id:        v.id,
-      name:      v.visitor_name  ?? v.name       ?? '-',
-      purpose:   v.purpose_name  ?? v.purpose     ?? '-',
-      check_in:  formatDateTime(v.check_in  ?? v.checkin  ?? v.created_at),
-      check_out: formatDateTime(v.check_out ?? v.checkout ?? null),
-      face:      v.face_image    ?? v.photo       ?? null,
-      raw:       v,
+      id:            v.id,
+      name:          v.name ?? '-',
+      purpose:       v.purpose ?? '-',
+      check_in:      formatDateTime(v.datetime),
+      check_in_pic:  v.picture_url, // Foto saat Check In
+      check_out:     formatDateTime(v.logout_data?.datetime ?? null),
+      check_out_pic: v.logout_data?.picture_url ?? null, // Foto saat Check Out
+      satisfaction:  v.satisfaction,
+      raw:           v,
     }));
   } catch (err) {
     console.error('Gagal memuat data visit:', err);
@@ -80,30 +85,38 @@ const formatDateTime = (val) => {
   if (!val) return '-';
   const d = new Date(val);
   if (isNaN(d)) return val;
-  return d.toLocaleString('id-ID', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit',
-  });
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 };
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
-const totalPages = computed(() =>
-  Math.max(1, Math.ceil(totalRecords.value / perPage.value))
-);
+const totalPages = computed(() => Math.ceil(totalRecords.value / perPage.value));
 
-const showingFrom = computed(() => {
-  if (totalRecords.value === 0) return 0;
-  return (currentPage.value - 1) * perPage.value + 1;
+const startIndex = computed(() => totalRecords.value === 0 ? 0 : ((currentPage.value - 1) * perPage.value) + 1);
+const endIndex = computed(() => Math.min(currentPage.value * perPage.value, totalRecords.value));
+
+const visiblePages = computed(() => {
+  const maxVisible = 5; 
+  let start = Math.max(1, currentPage.value - 2);
+  let end = start + maxVisible - 1;
+
+  if (end > totalPages.value) {
+    end = totalPages.value;
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  let pages = [];
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
 });
 
-const showingTo = computed(() =>
-  Math.min(currentPage.value * perPage.value, totalRecords.value)
-);
-
 const goToPage = (page) => {
-  if (page < 1 || page > totalPages.value) return;
-  currentPage.value = page;
-  fetchVisits();
+  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
+    currentPage.value = page;
+    fetchVisits(); 
+  }
 };
 
 // ─── Search ───────────────────────────────────────────────────────────────────
@@ -162,76 +175,56 @@ onMounted(fetchVisits);
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
-            <!-- ── Header ── -->
-            <div class="flex items-center justify-between mb-4">
-              <!-- Judul -->
-              <h1 class="text-xl font-semibold text-gray-800">Visit</h1>
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h1 class="text-2xl font-semibold text-gray-800 mb-1">Daftar Kunjungan</h1>
+                <p class="text-sm text-gray-500">Pantau seluruh data kunjungan yang terdaftar.</p>
+              </div> 
 
-              <!-- Breadcrumb -->
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">Visit</span>
-              </nav>
-            </div>
-
-            <!-- ── Toolbar: Search + Per-Page + Report ── -->
-            <div class="flex items-center gap-3 mb-4">
-              <!-- Search -->
-              <SearchInput
-                v-model="searchQuery"
-                placeholder="Search"
-                class="w-80"
-                input-class="rounded-sm"
-                @keyup.enter="executeSearch"
-              />
-
-              <!-- Per-page selector -->
-              <select
-                v-model="perPage"
-                class="h-9 px-3 border border-gray-300 rounded- text-sm text-gray-600 
-                       bg-white focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 
-                       focus:border-[#F7941D] cursor-pointer"
-              >
-                <option :value="10">10</option>
-                <option :value="25">25</option>
-                <option :value="50">50</option>
-                <option :value="100">100</option>
-              </select>
-
-              <!-- Spacer -->
-              <div class="flex-1" />
-
-              <!-- Tombol Report -->
-              <button
+              <button 
                 @click="handleReport"
-                :disabled="isExporting"
-                class="flex items-center gap-2 px-4 py-2 bg-white border border-[#36d41aff] 
-                       text-[#36d41aff] text-sm font-medium rounded-lg 
-                       hover:bg-[#FFF4E8] active:scale-95 transition-all
-                       disabled:opacity-60 disabled:cursor-not-allowed"
+                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] 
+                       text-[#38CA99] rounded-lg font-medium text-sm 
+                       hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
               >
-                <!-- Ikon dokumen/laporan -->
-                <svg v-if="!isExporting" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <!-- Spinner saat loading -->
-                <svg v-else class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                  <line x1="8" y1="15" x2="8" y2="12" />
+                  <line x1="12" y1="15" x2="12" y2="9" />
+                  <line x1="16" y1="15" x2="16" y2="13" />
                 </svg>
                 Report
               </button>
             </div>
 
-            <!-- ── DataTable ── -->
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+              <div class="w-full sm:max-w-md">
+                <SearchInput 
+                  v-model="searchQuery" 
+                  placeholder="Cari Kunjungan" 
+                  @keyup.enter="executeSearch"  
+                />
+              </div>
+
+              <div class="relative shrink-0">
+                <select 
+                  v-model="perPage" 
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                >
+                  <option :value="5">5</option>
+                  <option :value="10">10</option>
+                  <option :value="25">25</option>
+                  <option :value="50">50</option>
+                  <option :value="100">100</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
             <div class="flex-1 overflow-hidden">
               <DataTable
                 :columns="tableColumns"
@@ -241,108 +234,153 @@ onMounted(fetchVisits);
                 :sort-order="sortOrder"
                 @sort="handleSort"
               >
-                <!-- Custom body slot agar kolom FACE bisa render gambar -->
                 <template #body="{ data }">
                   <tr
                     v-for="(row, idx) in data"
                     :key="row.id ?? idx"
-                    class="hover:bg-orange-50/40 transition-colors"
+                    class="hover:bg-[#FDF9F2]/50 transition-colors"
                   >
-                    <!-- NAME -->
-                    <td class="px-4 py-3 text-sm text-gray-700 border-b border-[#EDEDED] font-medium">
+                    <td class="px-5 py-4 text-[13px] text-gray-800 border-b border-[#EDEDED] font-medium">
                       {{ row.name }}
                     </td>
-                    <!-- PURPOSE -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      <span
-                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                               bg-orange-100 text-orange-700"
-                      >
-                        {{ row.purpose }}
-                      </span>
+
+                    <td class="px-5 py-4 text-[13px] text-gray-800 border-b border-[#EDEDED]">
+                      {{ row.purpose }}
                     </td>
-                    <!-- CHECK IN -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      {{ row.check_in }}
+
+                    <td class="px-5 py-4 text-[13px] text-gray-800 border-b border-[#EDEDED] whitespace-nowrap">
+                      <div class="flex items-center gap-3">
+                        <img 
+                          v-if="row.check_in_pic" 
+                          :src="row.check_in_pic" 
+                          alt="Check In" 
+                          class="w-7 h-7 rounded-sm object-cover border border-gray-100 shrink-0 shadow-xs" 
+                        />
+                        <div 
+                          v-else 
+                          class="w-7 h-7 rounded-sm bg-gray-100 flex items-center justify-center text-gray-500 text-sm font-bold shrink-0 border border-gray-200 shadow-xs"
+                        >
+                          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                          </svg>
+                        </div>
+                        <span>{{ row.check_in }}</span>
+                      </div>
                     </td>
-                    <!-- CHECK OUT -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      <span v-if="row.check_out !== '-'" class="text-gray-600">{{ row.check_out }}</span>
-                      <span v-else class="text-gray-300 italic text-xs">—</span>
+
+                    <td class="px-5 py-4 text-[13px] border-b border-[#EDEDED] whitespace-nowrap">
+                      <div v-if="row.check_out !== '-'" class="flex items-center gap-3 text-gray-800">
+                        <img 
+                          v-if="row.check_out_pic" 
+                          :src="row.check_out_pic" 
+                          alt="Check Out" 
+                          class="w-7 h-7 rounded-sm object-cover border border-gray-100 shrink-0 shadow-xs" 
+                        />
+                        <div 
+                          v-else 
+                          class="w-7 h-7 rounded-sm bg-gray-100 flex items-center justify-center text-gray-500 text-sm font-bold shrink-0 border border-gray-200 shadow-xs"
+                        >
+                          <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                          </svg>
+                        </div>
+                        <span>{{ row.check_out }}</span>
+                      </div>
+                      <span v-else class="text-gray-400 font-bold">-</span>
                     </td>
-                    <!-- FACE -->
-                    <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
-                      <img
-                        v-if="row.face"
-                        :src="row.face"
-                        :alt="row.name"
-                        class="w-9 h-9 rounded-full object-cover ring-2 ring-orange-200"
-                      />
-                      <div
-                        v-else
-                        class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center"
-                        title="Tidak ada foto"
-                      >
-                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
+
+                    <td class="px-5 py-4 text-[13px] border-b border-[#EDEDED] text-center">
+                      <div class="flex justify-center">
+                        <template v-if="row.satisfaction === 3">
+                          <svg class="w-6.5 h-6.5 text-[#10B981]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                            <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                            <path d="M8 14.5c1.5 2 4.5 2 6 0" stroke-linecap="round"/>
+                          </svg>
+                        </template>
+                        <template v-else-if="row.satisfaction === 2">
+                          <svg class="w-6.5 h-6.5 text-[#F59E0B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                            <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                            <line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round"/>
+                          </svg>
+                        </template>
+                        <template v-else-if="row.satisfaction === 1">
+                          <svg class="w-6.5 h-6.5 text-[#EF4444]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                            <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                            <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                            <path d="M8 16c1.5-2 4.5-2 6 0" stroke-linecap="round"/>
+                          </svg>
+                        </template>
+                        <span v-else class="text-gray-400 font-bold">-</span>
                       </div>
                     </td>
                   </tr>
                 </template>
 
-                <!-- Empty State -->
                 <template #empty>
-                  <div class="flex flex-col items-center justify-center py-16 text-gray-400">
-                    <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    <p class="text-sm font-medium text-gray-500">No Records to display</p>
-                  </div>
+                  <EmptyState 
+                    v-if="visitData.length === 0"
+                    :icon="notfound"
+                    title="Data Kunjungan Belum Tersedia"
+                    description="Belum ada data kunjungan yang terekam di sistem."
+                    :showButton="false"
+                  />
+
+                  <EmptyState 
+                    v-else
+                    :icon="notfound"
+                    title="Pencarian Tidak Ditemukan"
+                    :description="`Tidak ada kunjungan yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                    :showButton="false"
+                  />
                 </template>
               </DataTable>
             </div>
 
-          </div><!-- /p-6 -->
-
-          <!-- ── Pagination Footer ── -->
-          <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-            <!-- Info -->
-            <span>
-              Showing {{ showingFrom }} to {{ showingTo }} from {{ totalRecords }} records
-            </span>
-
-            <!-- Prev / Next -->
-            <div class="flex items-center gap-1">
-              <button
-                @click="goToPage(currentPage - 1)"
+          </div><div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B]">
+            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalRecords }} records</span>
+            
+            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+              <button 
+                @click="goToPage(currentPage - 1)" 
                 :disabled="currentPage === 1"
-                class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                       text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed 
-                       transition-colors"
+                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
               </button>
-              <button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage >= totalPages"
-                class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                       text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed 
-                       transition-colors"
+              
+              <button 
+                v-for="page in visiblePages" 
+                :key="page"
+                @click="goToPage(page)"
+                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
+                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
               >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
+                {{ page }}
+              </button>
+
+              <button 
+                @click="goToPage(currentPage + 1)" 
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
               </button>
             </div>
           </div>
 
-        </div><!-- /bg-white card -->
-      </main>
+        </div></main>
     </div>
   </div>
 </template>
+
+<style scoped>
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>

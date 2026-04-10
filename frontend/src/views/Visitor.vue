@@ -71,7 +71,7 @@ const fetchVisitors = async () => {
         telepon: visitor.phone_number || '-', 
         total_kunjungan: parseInt(visitor.total_visit) || 0,
         kunjungan_terakhir: visitor.last_visit ? visitor.last_visit.split('T')[0] : '-',
-        notes: visitor.notes || '' // 👇 Simpan data notes untuk ditampilkan di Modal
+        notes: visitor.notes || '' 
       }));
       
       totalItems.value = respData.total || 0; 
