@@ -4,7 +4,7 @@ import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
-import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
+import { getAllInvoices, confirmInvoice } from '@/services/invoiceService';
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const invoiceData   = ref([]);

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 
@@ -9,6 +10,8 @@ import DataTable from '@/components/common/DataTable.vue';
 import notfound from '@/assets/notfound.svg';
 
 import { getVisitor, updateVisitorNotes } from '@/services/visitorService';
+
+const router = useRouter();
 
 // STATE & SEARCH
 const visitorData = ref([]); 
@@ -189,7 +192,7 @@ const saveNotes = async () => {
 
 // ACTIONS
 const handleReport = () => {
-  console.log("Tombol Report diklik!");
+  router.push('/report');
 };
 
 onMounted(() => {

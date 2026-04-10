@@ -115,7 +115,15 @@ const routes = [
   {
     path: '/visitor/:id',
     name: 'VisitorDetail',
-    component: () => import('../views/VisitorDetail.vue'), // Sesuaikan dengan nama file detail Anda
+    component: () => import('../views/VisitorDetail.vue'),
+    meta: { requiresAuth: true },
+  },
+
+  // Laporan Visitor
+  {
+    path: '/report',
+    name: 'Report',
+    component: () => import('../views/Report.vue'),
     meta: { requiresAuth: true },
   },
 ]
