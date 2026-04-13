@@ -29,10 +29,11 @@ const layoutPanels = computed(() => {
   return layouts[layout] || [{ flex: 1 }];
 });
 
-// ─── Files mapped to panels ──────────────────────────────────────────────────
+// SignageDisplay.vue
 const panelFiles = computed(() => {
   if (!signage.value) return {};
-  return signage.value.files || {};
+  // Pastikan mengambil objek files dari response API
+  return signage.value.files || {}; 
 });
 
 const runningText = computed(() => signage.value?.running_text || signage.value?.runningText || '');
@@ -118,22 +119,23 @@ onUnmounted(() => {
           :style="{ flex: panel.flex }"
         >
           <!-- If has uploaded file -->
-          <template v-if="panelFiles[pIdx]">
-            <video
-              v-if="isVideo(panelFiles[pIdx])"
-              :src="panelFiles[pIdx]"
-              class="panel-media"
-              autoplay
-              loop
-              muted
-            ></video>
-            <img
-              v-else
-              :src="panelFiles[pIdx]"
-              alt="Signage content"
-              class="panel-media"
-            />
-          </template>
+         <template v-if="panelFiles[pIdx]">
+  <video
+    v-if="isVideo(panelFiles[pIdx])"
+    :src="panelFiles[pIdx]" 
+    class="panel-media"
+    autoplay
+    loop
+    muted
+  ></video>
+  
+  <img
+    v-else
+    :src="panelFiles[pIdx]" 
+    alt="Signage content"
+    class="panel-media"
+  />
+</template>
           <!-- No image placeholder -->
           <template v-else>
             <div class="no-image">

@@ -6,7 +6,10 @@ import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
 import notfound from '@/assets/notfound.svg';
-import { getAllVisits, exportVisitReport } from '@/services/visitService';
+import { getAllVisits } from '@/services/visitService';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const visitData     = ref([]);
@@ -139,25 +142,9 @@ watch(perPage, () => {
   fetchVisits();
 });
 
-// ─── Report Export ────────────────────────────────────────────────────────────
-const isExporting = ref(false);
-const handleReport = async () => {
-  isExporting.value = true;
-  try {
-    const response = await exportVisitReport({ search: appliedSearch.value || undefined });
-    const url  = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href  = url;
-    link.setAttribute('download', `visit-report-${Date.now()}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error('Gagal mengunduh laporan:', err);
-  } finally {
-    isExporting.value = false;
-  }
+// ─── Actions ──────────────────────────────────────────────────────────────────
+const handleReport = () => {
+  router.push('/report');
 };
 
 // ─── Init ─────────────────────────────────────────────────────────────────────

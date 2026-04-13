@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { isAuthenticated } from '../services/authService'
+import SignageDisplay from '../views/SignageDisplay.vue'
 
 const routes = [
   {
@@ -126,10 +127,19 @@ const routes = [
     component: () => import('../views/Report.vue'),
     meta: { requiresAuth: true },
   },
+
+  {
+    // 2. Definisikan path dengan parameter dinamis ':slug'
+    path: '/signage/:slug',
+    name: 'SignageDisplay',
+    component: SignageDisplay,
+    // Jika halaman ini ingin bisa diakses siapa saja tanpa login (public)
+    meta: { requiresAuth: false }
+  },
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 })
 
