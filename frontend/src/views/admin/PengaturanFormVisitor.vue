@@ -258,7 +258,7 @@ const deleteField = async (index) => {
                     <td class="py-3.5 px-4 text-sm text-gray-500">{{ field.type }}</td>
                     
                     <td class="py-3.5 px-4">
-                      <div class="flex justify-center w-[72px]">
+                      <div class="flex justify-center w-18">
                         <button
                           class="flex items-center justify-center w-8 h-8 rounded border border-[#F7941D] text-[#F7941D] hover:bg-orange-50 transition-colors"
                         >
@@ -314,7 +314,7 @@ const deleteField = async (index) => {
                           <!-- Kebab Dropdown -->
                           <div
                             v-if="activeKebab === 'custom-' + index"
-                            class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-[120px]"
+                            class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-10 min-w-30"
                           >
                             <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
                               Edit

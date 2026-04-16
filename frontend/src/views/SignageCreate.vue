@@ -107,8 +107,14 @@ const setActivePanel = (index) => {
 };
 
 // ─── File Upload ──────────────────────────────────────────────────────────────
+// ─── File Upload ──────────────────────────────────────────────────────────────
 const fileInputRef = ref(null);
 const isDragging = ref(false);
+
+// State untuk Modal Durasi
+const showDurationModal = ref(false);
+const durationInput = ref('60');
+const pendingFile = ref(null);
 
 const triggerFileInput = () => {
   fileInputRef.value?.click();
@@ -117,7 +123,6 @@ const triggerFileInput = () => {
 const handleFileSelect = (event) => {
   const file = event.target.files?.[0];
   if (file) processFile(file);
-  // Reset input so same file can be re-selected
   event.target.value = '';
 };
 
@@ -137,14 +142,46 @@ const handleDrop = (e) => {
   if (file) processFile(file);
 };
 
+// Modifikasi processFile untuk menampilkan Modal jika file adalah gambar
 const processFile = (file) => {
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
   if (!validTypes.includes(file.type)) {
     showError('Format file tidak didukung. Gunakan jpg, png, jpeg, atau mp4.');
     return;
   }
-  panelFiles.value = { ...panelFiles.value, [activePanel.value]: file };
-  // Create preview
+
+  if (file.type.startsWith('image/')) {
+    // Tampilkan Modal
+    pendingFile.value = file;
+    durationInput.value = '60'; // Default 60 detik
+    showDurationModal.value = true;
+  } else {
+    // Jika Video, langsung proses tanpa durasi input
+    finalizeFileProcess(file, null);
+  }
+};
+
+// Fungsi yang dipanggil saat tombol OK di modal ditekan
+const confirmDuration = () => {
+  if (pendingFile.value) {
+    finalizeFileProcess(pendingFile.value, durationInput.value);
+  }
+  closeDurationModal();
+};
+
+// Fungsi membatalkan upload
+const closeDurationModal = () => {
+  showDurationModal.value = false;
+  pendingFile.value = null;
+};
+
+// Logika inti untuk menyimpan file & membuat preview
+const finalizeFileProcess = (file, duration) => {
+  panelFiles.value = { 
+    ...panelFiles.value, 
+    [activePanel.value]: { file: file, duration: duration, type: file.type } 
+  };
+  
   const reader = new FileReader();
   reader.onload = (e) => {
     panelPreviews.value = {
@@ -164,6 +201,9 @@ const removeFile = (panelIndex) => {
   panelPreviews.value = newPreviews;
 };
 
+// Input Durasi
+
+
 // ─── Submit ───────────────────────────────────────────────────────────────────
 const handleSubmit = async () => {
   if (!formName.value.trim()) {
@@ -172,22 +212,55 @@ const handleSubmit = async () => {
   }
   isSubmitting.value = true;
   try {
-    // 1. Upload files for each panel
-    const uploadedFiles = {};
-    for (const [panelIndex, file] of Object.entries(panelFiles.value)) {
-      const res = await uploadSignageFile(file);
-      const data = res.data?.data || res.data;
-      uploadedFiles[panelIndex] = data.url || data.path || data.filename || data;
+    // 1. Upload file ke server/S3
+    const uploadedFilesData = {};
+    for (const [panelIndex, data] of Object.entries(panelFiles.value)) {
+      const res = await uploadSignageFile(data.file); 
+      const responseData = res.data?.data || res.data;
+      uploadedFilesData[panelIndex] = {
+        url: responseData.url || responseData.path || responseData.filename || responseData,
+        duration: data.duration,
+        type: data.type
+      };
     }
 
-    // 2. Create signage
+    // 2. Perbaikan Nama Layout
+    let finalLayoutType = selectedLayout.value;
+    if (['1-1', '1-2', '2-1', '1-1-1'].includes(finalLayoutType)) {
+      finalLayoutType = 'split-' + finalLayoutType;
+    }
+
+    // 3. Format Array ke bentuk Multidimensi
+    const formattedFiles = [];
+    const panelLength = selectedLayoutObj.value.panels.length;
+    
+    // Memaksa array berisi 3 elemen untuk semua layout split
+    const requiredLength = finalLayoutType === 'fullscreen' ? 1 : 3;
+
+    for (let i = 0; i < requiredLength; i++) {
+      if (i < panelLength && uploadedFilesData[i]) {
+        formattedFiles.push([
+          {
+            id: Math.random().toString(36).substring(2, 12),
+            type: uploadedFilesData[i].type.startsWith('image/') ? 'image' : 'video',
+            url: uploadedFilesData[i].url,
+            duration: uploadedFilesData[i].duration || "0"
+          }
+        ]);
+      } else {
+        // PERBAIKAN FINAL: Kirim array kosong "[]" murni sesuai permintaan Backend!
+        formattedFiles.push([]); 
+      }
+    }
+
+    // 4. Kirim Payload ke API
     const payload = {
       name: formName.value.trim(),
       running_text: formRunningText.value.trim(),
-      layout: selectedLayout.value,
-      files: uploadedFiles,
+      type: finalLayoutType,      
+      files: formattedFiles,      
     };
-
+    
     await createSignage(payload);
     showSuccess('Signage berhasil dibuat.');
     router.push('/layar-informasi');
@@ -463,7 +536,36 @@ const goBack = () => {
 
           </div><!-- /p-6 -->
         </div><!-- /bg-white card -->
+        <div v-if="showDurationModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+      <div class="bg-white rounded-2xl shadow-2xl w-[400px] p-8 text-center transform scale-100 transition-transform">
+        <h2 class="text-[22px] font-bold text-gray-700 mb-2">Image Duration</h2>
+        <p class="text-[15px] text-gray-500 mb-6">Input image duration</p>
+
+        <input
+          v-model="durationInput"
+          type="number"
+          min="1"
+          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] text-center mb-8 font-semibold text-gray-700 text-lg shadow-sm"
+        />
+
+        <div class="flex items-center justify-center gap-4">
+          <button
+            @click="confirmDuration"
+            class="px-8 py-2.5 bg-[#F7941D] text-white rounded-lg font-medium hover:bg-[#E8850E] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
+          >
+            OK
+          </button>
+          <button
+            @click="closeDurationModal"
+            class="px-8 py-2.5 bg-[#A3A3A3] text-white rounded-lg font-medium hover:bg-[#8F8F8F] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
       </main>
     </div>
   </div>
+  
 </template>

@@ -29,12 +29,30 @@ const layoutPanels = computed(() => {
   return layouts[layout] || [{ flex: 1 }];
 });
 
-// SignageDisplay.vue
 const panelFiles = computed(() => {
   if (!signage.value) return {};
-  // Pastikan mengambil objek files dari response API
-  return signage.value.files || {}; 
+  let fls = signage.value.files || signage.value.file || signage.value.media;
+  if (typeof fls === 'string') {
+    try {
+      fls = JSON.parse(fls);
+    } catch {
+      fls = {};
+    }
+  }
+  return fls || {}; 
 });
+
+const getFileUrl = (url) => {
+  if (!url) return '';
+  if (url.startsWith('http') || url.startsWith('blob:') || url.startsWith('data:')) {
+    return url;
+  }
+  // Try to fix relative storage URLs if they are not absolute
+  if (url.startsWith('storage/')) {
+    return `https://visitorku.io/${url}`;
+  }
+  return `https://visitorku.io/storage/${url.replace(/^\/+/, '')}`;
+};
 
 const runningText = computed(() => signage.value?.running_text || signage.value?.runningText || '');
 
@@ -119,10 +137,10 @@ onUnmounted(() => {
           :style="{ flex: panel.flex }"
         >
           <!-- If has uploaded file -->
-         <template v-if="panelFiles[pIdx]">
+         <template v-if="panelFiles[pIdx] && panelFiles[pIdx][0] && panelFiles[pIdx][0].url">
   <video
-    v-if="isVideo(panelFiles[pIdx])"
-    :src="panelFiles[pIdx]" 
+    v-if="isVideo(panelFiles[pIdx][0].url)"
+    :src="getFileUrl(panelFiles[pIdx][0].url)" 
     class="panel-media"
     autoplay
     loop
@@ -131,7 +149,7 @@ onUnmounted(() => {
   
   <img
     v-else
-    :src="panelFiles[pIdx]" 
+    :src="getFileUrl(panelFiles[pIdx][0].url)" 
     alt="Signage content"
     class="panel-media"
   />

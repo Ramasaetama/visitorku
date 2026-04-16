@@ -6,10 +6,6 @@ import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Toast from '@/components/common/Toast.vue';
-import EmptyState from '@/components/common/EmptyState.vue';
-import notfound from '@/assets/notfound.svg';
-import editIcon from '@/assets/edit.svg';
-import deleteIcon from '@/assets/delete.svg';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import {
   getAllSignages,
@@ -26,6 +22,17 @@ const appliedSearch  = ref('');
 const perPage        = ref(10);
 const currentPage    = ref(1);
 const totalRecords   = ref(0);
+
+// ─── Dropdown State ──────────────────────────────────────────────────────────
+const activeDropdown = ref(null);
+
+const toggleDropdown = (id) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+  }
+};
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
@@ -127,8 +134,8 @@ const handleCreateNew = () => {
 };
 
 const handleEdit = (row) => {
-  // TODO: Navigate to edit page or open edit modal
   router.push(`/layar-informasi/create?edit=${row.id}`);
+  activeDropdown.value = null;
 };
 
 // ─── Delete ───────────────────────────────────────────────────────────────────
@@ -164,11 +171,9 @@ onMounted(fetchSignages);
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
-            <!-- ── Header ── -->
             <div class="flex items-center justify-between mb-4">
               <h1 class="text-xl font-semibold text-gray-800">Signage</h1>
 
-              <!-- Breadcrumb -->
               <nav class="flex items-center gap-1.5 text-sm text-gray-400">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -182,12 +187,11 @@ onMounted(fetchSignages);
               </nav>
             </div>
 
-            <!-- ── Toolbar: Search + Per-Page + Create Button ── -->
             <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
               <div class="w-full sm:max-w-md">
                 <SearchInput 
                   v-model="searchQuery" 
-                  placeholder="Cari Kunjungan" 
+                  placeholder="Cari Signage" 
                   @keyup.enter="executeSearch"  
                 />
               </div>
@@ -209,12 +213,9 @@ onMounted(fetchSignages);
                   </svg>
                 </div>
               </div>
-            
 
-              <!-- Spacer -->
               <div class="flex-1" />
 
-              <!-- Tombol Create New Signage -->
               <button
                 @click="handleCreateNew"
                 class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
@@ -226,21 +227,30 @@ onMounted(fetchSignages);
               </button>
             </div>
 
-            <!-- ── DataTable ── -->
             <div class="flex-1 overflow-hidden">
               <DataTable 
                 :columns="tableColumns"               
-                :data="sortedData" 
+                :data="paginatedData" 
                 :loading="isLoading"
                 :sort-key="sortKey"
                 :sort-order="sortOrder"
                 @sort="handleSort"
               >
+                <template #url="{ row }">
+                  <a 
+                    :href="row.url" 
+                    target="_blank" 
+                    class="text-blue-500 hover:underline"
+                  >
+                    {{ row.url }}
+                  </a>
+                </template>
+
                 <template #aksi="{ row }">
                   <div class="flex items-center gap-2 relative">
                     
                     <button 
-                      @click="toggleDropdown(row.id)"
+                      @click.stop="toggleDropdown(row.id)"
                       class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
                     >
                       <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -249,20 +259,18 @@ onMounted(fetchSignages);
                     </button>
 
                     <div v-if="activeDropdown === row.id" @click="activeDropdown = null" class="fixed inset-0 z-40"></div>
+                    
                     <div 
                       v-if="activeDropdown === row.id" 
                       class="absolute top-[110%] left-0 w-36 bg-white rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-gray-100 py-1.5 z-50"
                     >
-                      <button @click="handleEditPengguna(row)" class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none">
+                      <button @click="handleEdit(row)" class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none">
                         Edit Data
-                      </button>
-                      <button @click="handlePermission(row)" class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none">
-                        Permission
                       </button>
                     </div>
 
                     <button 
-                      @click="handleDeletePengguna(row)"
+                      @click="handleDelete(row)"
                       class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none relative z-10"
                     >
                       <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -285,9 +293,8 @@ onMounted(fetchSignages);
               </DataTable>
             </div>
 
-          </div><!-- /p-6 -->
+          </div>
 
-          <!-- ── Pagination Footer ── -->
           <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
             <span>
               Showing {{ showingFrom }} to {{ showingTo }} from {{ filteredData.length }} records
@@ -318,12 +325,10 @@ onMounted(fetchSignages);
               </button>
             </div>
           </div>
-
-        </div><!-- /bg-white card -->
+        </div>
       </main>
     </div>
 
-    <!-- Toast Notification -->
     <Toast
       :show="showToast"
       :message="toastMessage"
