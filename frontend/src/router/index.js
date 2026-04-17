@@ -120,6 +120,15 @@ const routes = [
     meta: { requiresAuth: true },
   },
 
+  // Invoice Detail
+  {
+    path: '/master/invoice/detail/:id',
+    name: 'InvoiceDetail',
+    component: () => import('../views/InvoiceDetail.vue'),
+    meta: { requiresAuth: true },
+  },
+
+
   // Laporan Visitor
   {
     path: '/report',

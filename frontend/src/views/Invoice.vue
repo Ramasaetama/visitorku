@@ -4,6 +4,7 @@ import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
+import { useRouter } from 'vue-router';
 import { getAllInvoices, confirmInvoice } from '@/services/invoiceService';
 
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -14,6 +15,7 @@ const appliedSearch = ref('');
 const perPage       = ref(10);
 const currentPage   = ref(1);
 const totalRecords  = ref(0);
+const router        = useRouter();
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
@@ -25,6 +27,10 @@ const tableColumns = [
   { key: 'status',   label: 'STATUS',      sortable: false },
   { key: 'action',   label: 'ACTION',      sortable: false },
 ];
+
+const goToDetail = (row) => {
+  router.push(`/master/invoice/detail/${row.id}`);
+};
 
 // ─── Fetch Data ───────────────────────────────────────────────────────────────
 const fetchInvoices = async () => {
@@ -242,8 +248,8 @@ onMounted(fetchInvoices);
                     <!-- ACTION -->
                     <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
                       <button
-                        @click="handleConfirm(row)"
-                        title="Konfirmasi Invoice"
+                        @click="goToDetail(row)"
+                        title="Lihat Detail Invoice"
                         class="w-8 h-8 flex items-center justify-center rounded-full
                                bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors"
                       >
