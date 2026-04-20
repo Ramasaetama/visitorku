@@ -16,6 +16,7 @@ import checkOnIcon from '@/assets/icon-park-solid_check-one-on.svg';
 import checkOffIcon from '@/assets/icon-park-solid_check-one.svg';
 import starIcon from '@/assets/solar_star-shine-broken.svg';
 import starOrangeIcon from '@/assets/solar_star-shine-broken.svg';
+import calendarIcon from '@/assets/calendar-line.svg';
 
 // Get current route untuk deteksi halaman aktif
 const route = useRoute();
@@ -41,6 +42,7 @@ const mainMenuItems = [
   { name: 'Ringkasan', icon: layoutMasonryIcon, path: '/dashboard' },
   { name: 'Data Visitor', icon: groupLineIcon, path: '/data-visitor' },
   { name: 'Data Kunjungan', icon: logoutBoxIcon, path: '/data-kunjungan' },
+  { name: 'Event', icon: calendarIcon, path: '/event' },
   { name: 'Layar Informasi', icon: listIndefiniteIcon, path: '/layar-informasi' },
 ];
 
@@ -54,7 +56,11 @@ const masterDataItems = [
 ];
 
 const isActive = (path) => {
-  // Exact match: hanya aktif jika path sama persis dengan route saat ini
+  // For /event, also match sub-routes like /event/:id/visitor
+  if (path === '/event') {
+    return route.path === '/event' || route.path.startsWith('/event/');
+  }
+  // Exact match for all other paths
   return route.path === path;
 };
 

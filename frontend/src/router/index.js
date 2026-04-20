@@ -70,6 +70,32 @@ const routes = [
     component: () => import('../views/Visit.vue'),
     meta: { requiresAuth: true },
   },
+  // Event
+  {
+    path: '/event',
+    name: 'Event',
+    component: () => import('../views/Event.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/event/:id/visitor',
+    name: 'EventVisitor',
+    component: () => import('../views/EventVisitor.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/event/:id/feedback',
+    name: 'EventFeedback',
+    component: () => import('../views/EventFeedback.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/event/:id/setting',
+    name: 'EventSetting',
+    component: () => import('../views/EventSetting.vue'),
+    meta: { requiresAuth: true },
+  },
+
   // Signage - Create (multi-step)
   {
     path: '/layar-informasi/create',
