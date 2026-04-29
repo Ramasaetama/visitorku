@@ -361,7 +361,7 @@ import { ref, computed, onMounted } from 'vue';
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
+import { confirmDelete, showSuccess, showError, showWarning, showToast } from '@/utils/alertHelper'; 
 import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
 import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
@@ -489,7 +489,7 @@ const saveProfile = async () => {
   isSaving.value = true;
   try {
     if (!companyProfile.value.id) {
-      alert('Gagal menyimpan: ID Perusahaan tidak ditemukan.');
+      showError('Gagal menyimpan: ID Perusahaan tidak ditemukan.');
       isSaving.value = false;
       return;
     }
@@ -509,7 +509,7 @@ const saveProfile = async () => {
     };
     await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
     
-    alert('Seluruh perubahan profil perusahaan berhasil disimpan!');
+    showToast('Profil perusahaan berhasil disimpan!', 'success');
     
   } catch (error) {
     console.error('Gagal menyimpan profil perusahaan:', error);
@@ -517,9 +517,9 @@ const saveProfile = async () => {
     const errorData = error.response?.data;
     if (error.response?.status === 422) {
       const pesanValidasi = errorData.errors ? JSON.stringify(errorData.errors, null, 2) : errorData.message;
-      alert("Gagal Disimpan! Backend menolak karena:\n\n" + pesanValidasi);
+      showError('Gagal Disimpan! Backend menolak karena: ' + pesanValidasi);
     } else {
-      alert(errorData?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
+      showError(errorData?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
     }
   } finally {
     isSaving.value = false;
@@ -540,7 +540,7 @@ const handleParentCheckbox = (index) => { const scope = availableScopes.value[in
 const handleChildCheckbox = (index) => { const scope = availableScopes.value[index]; const allChecked = scope.permissions.every(perm => perm.checked); scope.checked = allChecked; };
 
 const processGenerate = async () => {
-  if (!tokenForm.value.name) { alert('Nama token wajib diisi!'); return; }
+  if (!tokenForm.value.name) { showWarning('Nama token wajib diisi!'); return; }
   
   showFormModal.value = false;
   showLoadingModal.value = true;
@@ -571,7 +571,7 @@ const processGenerate = async () => {
     });
   } catch (error) {
     showLoadingModal.value = false;
-    alert(error.response?.data?.message || 'Terjadi kesalahan saat membuat API Token');
+    showError(error.response?.data?.message || 'Terjadi kesalahan saat membuat API Token');
   }
 };
 
@@ -591,16 +591,16 @@ const handleImageConfirm = async (data) => {
     if (data.file) {
       try {
         await uploadCompanyLogo(data.file);
-        alert('Logo berhasil diperbarui di server!');
-      } catch (error) { alert('Terjadi kesalahan saat mengunggah logo.'); }
+        showToast('Logo berhasil diperbarui!', 'success');
+      } catch (error) { showError('Terjadi kesalahan saat mengunggah logo.'); }
     }
   } else if (uploadType.value === 'header') {
     companyProfile.value.headerBg = data.previewUrl;
     if (data.file) {
       try {
         await uploadCompanyBackground(data.file);
-        alert('Background header berhasil diperbarui di server!');
-      } catch (error) { alert('Terjadi kesalahan saat mengunggah background.'); }
+        showToast('Background header berhasil diperbarui!', 'success');
+      } catch (error) { showError('Terjadi kesalahan saat mengunggah background.'); }
     }
   }
 };

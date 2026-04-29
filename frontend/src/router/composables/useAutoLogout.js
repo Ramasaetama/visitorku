@@ -1,4 +1,5 @@
 import { useRouter, useRoute } from 'vue-router';
+import Swal from 'sweetalert2';
 
 export function useAutoLogout(timeoutMinutes = 0.1) {
   const router = useRouter();
@@ -12,7 +13,12 @@ export function useAutoLogout(timeoutMinutes = 0.1) {
     
     router.push('/login');
     // Pesan Alert
-    alert('Sesi Anda telah habis karena tidak ada aktivitas. Silakan login kembali.');
+    Swal.fire({
+      icon: 'warning',
+      title: 'Sesi Berakhir',
+      text: 'Sesi Anda telah habis karena tidak ada aktivitas. Silakan login kembali.',
+      confirmButtonColor: '#D68D0D'
+    });
   };
 
   const resetTimer = () => {

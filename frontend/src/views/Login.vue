@@ -189,6 +189,7 @@ import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../components/layout'
 import { Input, PasswordInput } from '../components/common'
 import { loginUser } from '@/services/authService';
+import { showWarning, showToast } from '@/utils/alertHelper';
 
 const router = useRouter()
 
@@ -233,7 +234,7 @@ const handleLogin = async () => {
 
       router.push('/dashboard');
     } else {
-      alert('Login berhasil, tetapi token tidak ditemukan dari server.');
+      showWarning('Login berhasil, tetapi token tidak ditemukan dari server.');
     }
 
   } catch (error) {
@@ -242,7 +243,7 @@ const handleLogin = async () => {
     const pesanDariBackend = error.response?.data?.message;
     const pesanTampil = pesanDariBackend || 'Login gagal. Silakan periksa jaringan Anda.';
     
-    alert(pesanTampil);
+    showToast(pesanTampil, 'error');
   } finally {
     isLoading.value = false
   }

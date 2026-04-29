@@ -10,6 +10,7 @@ import DataTable from '@/components/common/DataTable.vue';
 import notfound from '@/assets/notfound.svg';
 
 import { getVisitor, updateVisitorNotes } from '@/services/visitorService';
+import { showError } from '@/utils/alertHelper';
 
 const router = useRouter();
 
@@ -184,7 +185,7 @@ const saveNotes = async () => {
     closeNotesModal();
   } catch (error) {
     console.error("Gagal menyimpan notes:", error);
-    alert("Terjadi kesalahan saat menyimpan catatan.");
+    showError("Terjadi kesalahan saat menyimpan catatan.");
   } finally {
     isSavingNotes.value = false;
   }

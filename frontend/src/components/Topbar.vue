@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { getAdminProfile } from '@/services/adminProfileService';
+import { confirmAction } from '@/utils/alertHelper';
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
@@ -54,8 +55,9 @@ onUnmounted(() => {
   window.removeEventListener('profile-updated', fetchProfileData);
 });
 
-const handleLogout = () => {
-  if(confirm('Apakah Anda yakin ingin keluar?')) {
+const handleLogout = async () => {
+  const confirmed = await confirmAction('Logout', 'Apakah Anda yakin ingin keluar?');
+  if (confirmed) {
     sessionStorage.removeItem('token'); 
     router.push('/login');
   }

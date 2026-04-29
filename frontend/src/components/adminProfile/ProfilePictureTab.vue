@@ -20,6 +20,7 @@
 <script setup>
 import { ref } from 'vue';
 import { uploadAdminProfilePicture } from '@/services/adminProfileService';
+import { showToast, showError } from '@/utils/alertHelper';
 
 const props = defineProps({
   profileData: { type: Object, required: true }
@@ -44,11 +45,11 @@ const save = async () => {
   isSaving.value = true;
   try {
     await uploadAdminProfilePicture(selectedFile.value);
-    alert('Profile picture updated successfully!');
+    showToast('Foto profil berhasil diperbarui!', 'success');
     selectedFile.value = null; // Reset setelah sukses
     emit('refresh');
   } catch (error) {
-    alert('Failed to upload profile picture.');
+    showError('Gagal mengunggah foto profil.');
   } finally {
     isSaving.value = false;
   }

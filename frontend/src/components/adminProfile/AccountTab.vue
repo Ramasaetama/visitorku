@@ -35,6 +35,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { updateAdminProfile } from '@/services/adminProfileService';
+import { showToast, showError } from '@/utils/alertHelper';
 
 const props = defineProps({
   profileData: { type: Object, required: true }
@@ -60,14 +61,14 @@ const save = async () => {
   validationErrors.value = [];
   try {
     await updateAdminProfile(form.value);
-    alert('Account data updated successfully!');
+    showToast('Data akun berhasil diperbarui!', 'success');
     emit('refresh'); // Suruh parent ambil data terbaru
   } catch (error) {
     if (error.response?.status === 422) {
       // Tangkap array error dari backend seperti di screenshot Anda
       validationErrors.value = error.response.data || [{ message: 'Data tidak valid' }];
     } else {
-      alert(error.response?.data?.message || 'Failed to save changes.');
+      showError(error.response?.data?.message || 'Gagal menyimpan perubahan.');
     }
   } finally {
     isSaving.value = false;

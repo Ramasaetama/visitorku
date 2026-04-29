@@ -2,7 +2,7 @@
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { Button } from './components/common'
-import { useAutoLogout } from '@/composables/useAutoLogout';
+import { useAutoLogout } from '@/router/composables/useAutoLogout';
 import { Navbar, Footer } from './components/layout'
 import Topbar from './components/Topbar.vue'
 

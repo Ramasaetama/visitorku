@@ -30,6 +30,7 @@
 <script setup>
 import { ref } from 'vue';
 import { updateAdminPassword } from '@/services/adminProfileService';
+import { showToast, showError } from '@/utils/alertHelper';
 
 const form = ref({ 
   current_password: '', 
@@ -55,7 +56,7 @@ const save = async () => {
   isSaving.value = true;
   try {
     await updateAdminPassword(form.value);
-    alert('Password berhasil diperbarui!');
+    showToast('Password berhasil diperbarui!', 'success');
     
     form.value = { current_password: '', new_password: '', c_new_password: '' };
   } catch (error) {
@@ -63,7 +64,7 @@ const save = async () => {
       const errorData = error.response.data;
       validationErrors.value = errorData.errors || [{ message: errorData.message || 'Validasi gagal' }];
     } else {
-      alert(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan password.');
+      showError(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan password.');
     }
   } finally {
     isSaving.value = false;
