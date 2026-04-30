@@ -10,6 +10,10 @@ import FormPermissionPengguna from '@/components/pengguna/FormPermissionPengguna
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 
+
+import keyline from '@/assets/icons/key-line.svg';
+import editIcon from '@/assets/icons/edit-box-line.svg';
+
 import { ref, onMounted, computed, watch } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
 
@@ -310,34 +314,27 @@ const handleCloseToast = () => {
                 :sort-order="sortOrder"
                 @sort="handleSort"
               >
-                <template #aksi="{ row }">
-                  <div class="flex items-center gap-2">
-                    
-                    <button 
-                      @click.stop="toggleDropdown($event, row.id)"
-                      class="w-[30px] h-[30px] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none"
-                    >
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                      </svg>
-                    </button>
+                <!-- SESUDAH -->
+<template #aksi="{ row }">
+  <div class="flex items-center gap-2">
 
-                    <Teleport to="body">
-                      <div v-if="activeDropdown === row.id" @click="activeDropdown = null" class="fixed inset-0 z-[9998]"></div>
-                      
-                      <div 
-                        v-if="activeDropdown === row.id" 
-                        class="fixed w-36 bg-white rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-gray-100 py-1.5 z-[9999] animate-fade-in-up"
-                        :style="{ top: dropdownPos.top + 'px', left: dropdownPos.left + 'px' }"
-                      >
-                        <button @click="handleEditPengguna(row)" class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors">
-                          Edit Data
-                        </button>
-                        <button v-if="!row.is_owner" @click="handlePermission(row)" class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors">
-                          Permission
-                        </button>
-                      </div>
-                    </Teleport>
+    <!-- Tombol Permission (hanya tampil jika bukan owner) -->
+   <!-- Tombol Permission - icon putih di atas orange -->
+<button
+  v-if="!row.is_owner"
+  @click="handlePermission(row)"
+  class="w-[30px] h-[30px] rounded bg-[#F7941D] flex items-center justify-center hover:bg-[#E8850E] transition-colors focus:outline-none"
+>
+  <img :src="keyline" class="w-[15px] h-[15px] brightness-0 invert" alt="permission" />
+</button>
+
+<!-- Tombol Edit - icon putih di atas biru -->
+<button
+  @click="handleEditPengguna(row)"
+  class="w-[30px] h-[30px] rounded bg-[#3B82F6] flex items-center justify-center hover:bg-[#2563EB] transition-colors focus:outline-none"
+>
+  <img :src="editIcon" class="w-[15px] h-[15px] brightness-0 invert" alt="edit" />
+</button>
 
                     <button 
                       @click="handleDeletePengguna(row)"
