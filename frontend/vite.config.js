@@ -24,6 +24,26 @@ export default defineConfig(({ mode }) => {
           proxyTimeout: 120000,
         }
       }
+    },
+    build: {
+      // Pecah chunk jika ukurannya > 500KB
+      chunkSizeWarningLimit: 500,
+      rollupOptions: {
+        output: {
+          // rolldown-vite membutuhkan manualChunks berupa fungsi
+          manualChunks(id) {
+            if (id.includes('node_modules/vue') || id.includes('node_modules/vue-router')) {
+              return 'vendor-vue'
+            }
+            if (id.includes('node_modules/axios')) {
+              return 'vendor-axios'
+            }
+            if (id.includes('node_modules/sweetalert2') || id.includes('node_modules/vue-sweetalert2')) {
+              return 'vendor-sweetalert'
+            }
+          }
+        }
+      }
     }
   }
 })

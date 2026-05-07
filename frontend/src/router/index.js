@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isAuthenticated } from '../services/authService'
-import SignageDisplay from '../views/SignageDisplay.vue'
+import pipeline from './middleware/pipeline'
+import auth from './middleware/auth'
+import guest from './middleware/guest'
 
 const routes = [
   {
@@ -12,88 +13,88 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: () => import('../views/onboarding/Register.vue'),
-    meta: { guest: true },
+    meta: { middleware: [guest] },
   },
-  // Dashboard (placeholder)
+  // Dashboard
   {
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('../views/Dashboard.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Login
   {
     path: '/login',
     name: 'Login',
     component: () => import('../views/Login.vue'),
-    meta: { guest: true },
+    meta: { middleware: [guest] },
   },
   // Cabang Perusahaan
   {
     path: '/cabang',
     name: 'CabangPerusahaan',
     component: () => import('../views/CabangPerusahaan.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Tujuan Kunjungan
   {
     path: '/tujuan-kunjungan',
     name: 'TujuanKunjungan',
     component: () => import('../views/TujuanKunjungan.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Profil Perusahaan
   {
     path: '/profil-perusahaan',
     name: 'ProfilPerusahaan',
     component: () => import('../views/ProfilPerusahaan.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Edit Profile
   {
     path: '/edit-profile',
     name: 'EditProfile',
     component: () => import('../views/EditProfile.vue'),
-    meta: { requiresAuth: true }, // Wajib login
+    meta: { middleware: [auth] }, // Wajib login
   },
   // Pengaturan Form Visitor / Custom Field
   {
     path: '/pengaturan-form',
     name: 'PengaturanFormVisitor',
     component: () => import('../views/PengaturanFormVisitor.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Data Kunjungan / Visit
   {
     path: '/data-kunjungan',
     name: 'Visit',
     component: () => import('../views/Visit.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Event
   {
     path: '/event',
     name: 'Event',
     component: () => import('../views/Event.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   {
     path: '/event/:id/visitor',
     name: 'EventVisitor',
     component: () => import('../views/EventVisitor.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   {
     path: '/event/:id/feedback',
     name: 'EventFeedback',
     component: () => import('../views/EventFeedback.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   {
     path: '/event/:id/setting',
     name: 'EventSetting',
     component: () => import('../views/EventSetting.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
 
   // Signage - Create (multi-step)
@@ -101,49 +102,50 @@ const routes = [
     path: '/layar-informasi/create',
     name: 'SignageCreate',
     component: () => import('../views/SignageCreate.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Signage (Layar Informasi)
   {
     path: '/layar-informasi',
     name: 'Signage',
     component: () => import('../views/Signage.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
   // Signage Display (Public)
   {
     path: '/signage/:slug',
     name: 'SignageDisplay',
     component: () => import('../views/SignageDisplay.vue'),
+    meta: {},
   },
   // Data Visitor
   {
     path: '/data-visitor',
     name: 'DataVisitor',
-    component: () => import('../views/Visitor.vue'), // TODO: buat halaman DataVisitor
-    meta: { requiresAuth: true },
+    component: () => import('../views/Visitor.vue'),
+    meta: { middleware: [auth] },
   },
   // Manajemen Pengguna
   {
     path: '/manajemen-pengguna',
     name: 'User',
-    component: () => import('../views/User.vue'), // TODO: buat halaman DataVisitor
-    meta: { requiresAuth: true },
+    component: () => import('../views/User.vue'),
+    meta: { middleware: [auth] },
   },
 
   // Invoice
   {
     path: '/invoice',
     name: 'Invoice',
-    component: () => import('../views/Invoice.vue'), // TODO: buat halaman Invoice
-    meta: { requiresAuth: true },
+    component: () => import('../views/Invoice.vue'),
+    meta: { middleware: [auth] },
   },
 
   {
     path: '/visitor/:id',
     name: 'VisitorDetail',
     component: () => import('../views/VisitorDetail.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
 
   // Invoice Detail
@@ -151,25 +153,15 @@ const routes = [
     path: '/master/invoice/detail/:id',
     name: 'InvoiceDetail',
     component: () => import('../views/InvoiceDetail.vue'),
-    meta: { requiresAuth: true },
+    meta: { middleware: [auth] },
   },
-
 
   // Laporan Visitor
   {
     path: '/report',
     name: 'Report',
     component: () => import('../views/Report.vue'),
-    meta: { requiresAuth: true },
-  },
-
-  {
-    // 2. Definisikan path dengan parameter dinamis ':slug'
-    path: '/signage/:slug',
-    name: 'SignageDisplay',
-    component: SignageDisplay,
-    // Jika halaman ini ingin bisa diakses siapa saja tanpa login (public)
-    meta: { requiresAuth: false }
+    meta: { middleware: [auth] },
   },
 ]
 
@@ -178,21 +170,17 @@ const router = createRouter({
   routes,
 })
 
-// Navigation guard
+// Navigation guard — menjalankan middleware pipeline
 router.beforeEach((to, from, next) => {
-  const authenticated = isAuthenticated()
-
-  if (to.meta.requiresAuth && !authenticated) {
-    next({ name: 'Login' })
-    return
+  // Jika route tidak mendefinisikan middleware, langsung lanjut
+  if (!to.meta.middleware || to.meta.middleware.length === 0) {
+    return next()
   }
 
-  if (to.meta.guest && authenticated) {
-    next({ name: 'Dashboard' })
-    return
-  }
+  const context = { to, from, next }
 
-  next()
+  // Jalankan semua middleware secara berantai melalui pipeline
+  return pipeline(context, to.meta.middleware, next)
 })
 
 export default router
