@@ -9,35 +9,26 @@ import logoutBoxIcon from '@/assets/logout-box-r-line.svg';
 import listIndefiniteIcon from '@/assets/list-indefinite.svg';
 import buildingIcon from '@/assets/building-4-line.svg';
 import gitMergeIcon from '@/assets/git-merge-line.svg';
-import frame7Icon from '@/assets/Frame 7.svg';
 import settingsIcon from '@/assets/settings-3-line.svg';
 import fileTextIcon from '@/assets/file-text-line.svg';
 import checkOnIcon from '@/assets/icon-park-solid_check-one-on.svg';
 import checkOffIcon from '@/assets/icon-park-solid_check-one.svg';
 import starIcon from '@/assets/solar_star-shine-broken.svg';
-import starOrangeIcon from '@/assets/solar_star-shine-broken.svg';
 import calendarIcon from '@/assets/calendar-line.svg';
 
-// Get current route untuk deteksi halaman aktif
 const route = useRoute();
 
 // State untuk toggle Panduan Cepat secara manual (tombol X)
 const showQuickGuide = ref(true);
 
 const shouldShowQuickGuide = computed(() => {
-  // Daftar halaman yang menampilkan Panduan Cepat
   const pagesWithQuickGuide = ['/dashboard'];
-  
-  // Cek apakah halaman saat ini ada di daftar
-  const isOnAllowedPage = pagesWithQuickGuide.some(page => 
+  const isOnAllowedPage = pagesWithQuickGuide.some(page =>
     route.path === page || route.path.startsWith(page + '/')
   );
-  
-  // Tampilkan jika: di halaman yang diizinkan DAN user belum menutupnya
   return isOnAllowedPage && showQuickGuide.value;
 });
 
-// Property 'path' untuk setiap menu item (sudah disesuaikan dengan router baru)
 const mainMenuItems = [
   { name: 'Ringkasan', icon: layoutMasonryIcon, path: '/dashboard' },
   { name: 'Data Visitor', icon: groupLineIcon, path: '/data-visitor' },
@@ -56,11 +47,9 @@ const masterDataItems = [
 ];
 
 const isActive = (path) => {
-  // For /event, also match sub-routes like /event/:id/visitor
   if (path === '/event') {
     return route.path === '/event' || route.path.startsWith('/event/');
   }
-  // Exact match for all other paths
   return route.path === path;
 };
 
@@ -75,19 +64,20 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
 </script>
 
 <template>
-  <aside class="w-[260px] bg-[#F4F6F8] flex flex-col p-4 gap-4 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">    
+  <!-- EXPANDED sidebar (md ke atas) -->
+  <aside class="hidden md:flex w-[260px] bg-[#F4F6F8] flex-col p-4 gap-4 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">
     <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <div class="mb-6">
         <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">Main Menu</h3>
         <div class="space-y-1">
-          <router-link 
-            v-for="item in mainMenuItems" 
+          <router-link
+            v-for="item in mainMenuItems"
             :key="item.name"
             :to="item.path"
             :class="[
               'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all text-[13px] no-underline',
-              isActive(item.path) 
-                ? 'bg-[#FEF3E2] text-[#F7941D] font-medium' 
+              isActive(item.path)
+                ? 'bg-[#FEF3E2] text-[#F7941D] font-medium'
                 : 'text-[#64748B] hover:bg-gray-50 font-normal'
             ]"
           >
@@ -100,14 +90,14 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       <div>
         <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">Master Data</h3>
         <div class="space-y-1">
-          <router-link 
-            v-for="item in masterDataItems" 
+          <router-link
+            v-for="item in masterDataItems"
             :key="item.name"
             :to="item.path"
             :class="[
               'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all text-[13px] no-underline',
-              isActive(item.path) 
-                ? 'bg-[#FEF3E2] text-[#F7941D] font-medium' 
+              isActive(item.path)
+                ? 'bg-[#FEF3E2] text-[#F7941D] font-medium'
                 : 'text-[#64748B] hover:bg-gray-50 font-normal'
             ]"
           >
@@ -127,23 +117,16 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
           </svg>
         </button>
       </div>
-      
       <p class="text-[12px] text-[#1E293B] font-medium mb-2">Atur akun VisitorKu</p>
-      
       <div class="flex items-center gap-2 mb-4">
         <div class="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
           <div class="h-full bg-[#F7941D] rounded-full transition-all" :style="{ width: progressPercent + '%' }"></div>
         </div>
         <span class="text-[10px] text-gray-400 whitespace-nowrap">{{ progressPercent }}% Complete</span>
       </div>
-      
       <div class="space-y-2.5">
         <div v-for="(item, index) in quickGuideItems" :key="index" class="flex items-center gap-2.5">
-          <img 
-            :src="item.completed ? checkOnIcon : checkOffIcon" 
-            alt="" 
-            class="w-[18px] h-[18px]" 
-          />
+          <img :src="item.completed ? checkOnIcon : checkOffIcon" alt="" class="w-[18px] h-[18px]" />
           <span :class="['text-[12px]', item.completed ? 'text-[#22C55E] font-medium' : 'text-gray-400']">{{ item.name }}</span>
         </div>
       </div>
@@ -157,7 +140,6 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
           <span class="text-[10px] font-semibold text-white">Free</span>
         </div>
       </div>
-      
       <div class="mb-3">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] text-[#64748B] font-medium">Batas Kunjungan</span>
@@ -167,7 +149,6 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
           <div class="h-full bg-[#F7941D] rounded-full w-1/4"></div>
         </div>
       </div>
-      
       <div class="mb-4">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] text-[#64748B] font-medium">Kapasitas Penyimpanan</span>
@@ -177,10 +158,59 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
           <div class="h-full bg-[#F7941D] rounded-full w-1/6"></div>
         </div>
       </div>
-      
       <button class="w-full border-2 border-[#F7941D] text-[#F7941D] text-[12px] font-semibold py-2.5 rounded-xl hover:bg-[#F7941D] hover:text-white transition-all">
         Upgrade Paket
       </button>
+    </div>
+  </aside>
+
+  <!-- COLLAPSED sidebar — hanya icon (di bawah md / mobile) -->
+  <aside class="flex md:hidden w-[56px] bg-[#F4F6F8] flex-col items-center py-3 gap-1 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">
+    <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-2 w-full flex flex-col items-center gap-1">
+      <!-- Main Menu icons -->
+      <router-link
+        v-for="item in mainMenuItems"
+        :key="'m-' + item.name"
+        :to="item.path"
+        :title="item.name"
+        :class="[
+          'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
+          isActive(item.path)
+            ? 'bg-[#FEF3E2]'
+            : 'hover:bg-gray-100'
+        ]"
+      >
+        <img
+          :src="item.icon"
+          :alt="item.name"
+          class="w-[20px] h-[20px]"
+          :class="{ 'filter-orange': isActive(item.path) }"
+        />
+      </router-link>
+
+      <!-- Divider -->
+      <div class="w-8 h-px bg-gray-200 my-1"></div>
+
+      <!-- Master Data icons -->
+      <router-link
+        v-for="item in masterDataItems"
+        :key="'d-' + item.name"
+        :to="item.path"
+        :title="item.name"
+        :class="[
+          'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
+          isActive(item.path)
+            ? 'bg-[#FEF3E2]'
+            : 'hover:bg-gray-100'
+        ]"
+      >
+        <img
+          :src="item.icon"
+          :alt="item.name"
+          class="w-[20px] h-[20px]"
+          :class="{ 'filter-orange': isActive(item.path) }"
+        />
+      </router-link>
     </div>
   </aside>
 </template>
