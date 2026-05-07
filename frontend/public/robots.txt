@@ -1,0 +1,3 @@
+# robots.txt for VisitorKu
+User-agent: *
+Allow: /
