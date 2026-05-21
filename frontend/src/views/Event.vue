@@ -31,8 +31,8 @@ const totalRecords = ref(0);
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
   { key: 'name',             label: 'NAME',             sortable: true  },
-  { key: 'event_start_at',   label: 'EVENT START',      sortable: true  },
-  { key: 'event_finish_at',  label: 'EVENT FINISH',     sortable: true  },
+  { key: 'start_at',   label: 'EVENT START',      sortable: true  },
+  { key: 'finish_at',  label: 'EVENT FINISH',     sortable: true  },
   { key: 'url_registration', label: 'URL REGISTRATION', sortable: false },
   { key: 'aksi',             label: 'ACTION',           sortable: false },
 ];
@@ -72,10 +72,10 @@ const fetchEvents = async () => {
       description:      e.description ?? '',
       location:         e.location ?? '',
       location_url:     e.location_url ?? '',
-      event_start_at:   formatDateTime(e.event_start_at),
-      event_finish_at:  formatDateTime(e.event_finish_at),
-      reg_start_at:     e.registration_start_at ?? '',
-      reg_finish_at:    e.registration_finish_at ?? '',
+      start_at:   formatDateTime(e.start_at),
+      finish_at:  formatDateTime(e.finish_at),
+      registration_start_at:     e.registration_start_at ?? '',
+      registration_finish_at:    e.registration_finish_at ?? '',
       url_registration: e.url_registration ?? e.registration_url ?? '-',
       raw:              e,
     }));
@@ -147,8 +147,8 @@ const form = ref({
   description:           '',
   location:              '',
   location_url:          '',
-  event_start_at:        '',
-  event_finish_at:       '',
+  start_at:        '',
+  finish_at:       '',
   registration_start_at: '',
   registration_finish_at:'',
 });
@@ -158,7 +158,7 @@ const openAddModal = () => {
   editingId.value = null;
   form.value = {
     name: '', description: '', location: '', location_url: '',
-    event_start_at: '', event_finish_at: '',
+    start_at: '', finish_at: '',
     registration_start_at: '', registration_finish_at: '',
   };
   showModal.value = true;
@@ -173,8 +173,8 @@ const openEditModal = (row) => {
     description:            r.description ?? '',
     location:               r.location ?? '',
     location_url:           r.location_url ?? '',
-    event_start_at:         toInputDatetime(r.event_start_at),
-    event_finish_at:        toInputDatetime(r.event_finish_at),
+    start_at:         toInputDatetime(r.start_at),
+    finish_at:        toInputDatetime(r.finish_at),
     registration_start_at:  toInputDatetime(r.registration_start_at),
     registration_finish_at: toInputDatetime(r.registration_finish_at),
   };
@@ -186,7 +186,7 @@ const closeModal = () => {
 };
 
 const handleSubmit = async () => {
-  if (!form.value.name || !form.value.description || !form.value.event_start_at || !form.value.event_finish_at || !form.value.registration_start_at || !form.value.registration_finish_at) {
+  if (!form.value.name || !form.value.description || !form.value.start_at || !form.value.finish_at || !form.value.registration_start_at || !form.value.registration_finish_at) {
     showError('Harap lengkapi semua field yang wajib diisi.');
     return;
   }
@@ -320,7 +320,13 @@ onMounted(fetchEvents);
               >
                 <template #url_registration="{ row }">
                   <div v-if="row.url_registration && row.url_registration !== '-'" class="flex items-center gap-2">
-                    <span class="text-[13px] text-blue-500 truncate max-w-[160px]">{{ row.url_registration }}</span>
+                    <a 
+                      :href="row.url_registration" 
+                      target="_blank" 
+                      class="text-[13px] text-blue-500 truncate max-w-[160px]"
+                    >
+                      {{ row.url_registration }}
+                    </a>
                     <button
                       @click="copyUrl(row.url_registration)"
                       class="shrink-0 w-[26px] h-[26px] rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
@@ -499,14 +505,14 @@ onMounted(fetchEvents);
 
           <!-- Event Start At -->
           <DateTimePicker
-            v-model="form.event_start_at"
+            v-model="form.start_at"
             label="Event Start At"
             :required="true"
           />
 
           <!-- Event Finish At -->
           <DateTimePicker
-            v-model="form.event_finish_at"
+            v-model="form.finish_at"
             label="Event Finish At"
             :required="true"
           />
