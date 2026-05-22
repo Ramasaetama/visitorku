@@ -318,7 +318,6 @@ const handleCloseToast = () => {
 <template #aksi="{ row }">
   <div class="flex items-center gap-2">
 
-    <!-- Tombol Permission (hanya tampil jika bukan owner) -->
    <!-- Tombol Permission - icon putih di atas orange -->
 <button
   v-if="!row.is_owner"

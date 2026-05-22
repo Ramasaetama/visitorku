@@ -36,12 +36,31 @@
       </p>
 
       <!-- Error Message -->
-      <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl flex items-start gap-3">
-        <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <p class="text-sm text-red-600 font-poppins">{{ errorMessage }}</p>
-      </div>
+     <Transition name="error-banner">
+        <div v-if="errorMessage" class="mb-6 relative z-10 w-full">
+          <button
+            type="button"
+            @click="errorMessage = ''"
+            class="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center shadow-md z-20 border-none cursor-pointer hover:bg-red-600 transition-colors p-0"
+          >
+            <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <div class="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-lg py-4 px-5 border-b-[4px] border-red-500 flex items-center gap-3 relative">
+            <div class="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-red-500 flex items-center justify-center">
+              <svg class="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+
+            <p class="text-[14px] text-gray-900 font-poppins font-medium leading-snug">
+              {{ errorMessage }}
+            </p>
+          </div>
+        </div>
+      </Transition>
 
       <form @submit.prevent="handleLogin" class="space-y-6">
         <Input
@@ -189,7 +208,7 @@ import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../components/layout'
 import { Input, PasswordInput } from '../components/common'
 import { loginUser } from '@/services/authService';
-import { showWarning, showToast } from '@/utils/alertHelper';
+import { showWarning } from '@/utils/alertHelper';
 
 const router = useRouter()
 
@@ -221,31 +240,87 @@ const formIsValid = computed(() => {
 
 // Fungsi handleLogin
 const handleLogin = async () => {
-  isLoading.value = true
-  
+  isSubmitting.value = true;
+  errorMessage.value = '';
+
   try {
-    const response = await loginUser(form.value.email, form.value.password)
-    
-    const token = response.data?.token;
+    // loginUser mengembalikan response.data langsung (bukan Axios response)
+    const response = await loginUser(form.value.email, form.value.password);
+
+    // Debug: log response untuk melihat struktur data dari server
+    console.log('[Login] Response dari server:', response);
+
+    // Coba beberapa kemungkinan field name token dari backend
+    const token = response?.token
+      || response?.access_token
+      || response?.data?.token
+      || response?.data?.access_token;
 
     if (token) {
       sessionStorage.setItem('token', token);
-      console.log('Login Sukses:', response);
-
       router.push('/dashboard');
     } else {
+      console.warn('[Login] Struktur response tidak mengandung token:', JSON.stringify(response));
       showWarning('Login berhasil, tetapi token tidak ditemukan dari server.');
     }
 
   } catch (error) {
-    console.error('Login Gagal:', error)
+    console.error('Login Gagal:', error);
 
-    const pesanDariBackend = error.response?.data?.message;
-    const pesanTampil = pesanDariBackend || 'Login gagal. Silakan periksa jaringan Anda.';
-    
-    showToast(pesanTampil, 'error');
+    const status = error.response?.status;
+    const pesanBackend = error.response?.data?.message?.toLowerCase() ?? '';
+
+    // TAMBAHKAN BLOK INI: Cek langsung string dari backend
+    if (pesanBackend.includes('invalid credential')) {
+      errorMessage.value = 'Email atau kata sandi tidak sesuai, silahkan coba lagi';
+      isSubmitting.value = false;
+      return; // Hentikan eksekusi di sini
+    }
+
+    if (status === 401) {
+      if (pesanBackend.includes('password')) {
+        errorMessage.value = 'Kata sandi yang Anda masukkan salah. Silakan coba lagi atau klik "Lupa password".';
+      } else if (pesanBackend.includes('email') || pesanBackend.includes('user') || pesanBackend.includes('not found')) {
+        errorMessage.value = 'Email tidak terdaftar dalam sistem. Periksa kembali email Anda.';
+      } else {
+        // Backend kirim "invalid credential" tanpa detail lebih lanjut
+        errorMessage.value = 'Email atau kata sandi tidak sesuai, silakan coba lagi.';
+      }
+    } else if (status === 422) {
+      const errors = error.response?.data?.errors;
+      errorMessage.value = errors
+        ? Object.values(errors).flat().join(' ')
+        : (error.response?.data?.message || 'Data yang dimasukkan tidak valid.');
+    } else if (status === 429) {
+      errorMessage.value = 'Terlalu banyak percobaan login. Tunggu beberapa saat lalu coba lagi.';
+    } else if (status >= 500) {
+      errorMessage.value = 'Server sedang bermasalah. Silakan coba beberapa saat lagi.';
+    } else if (!error.response) {
+      errorMessage.value = 'Koneksi gagal. Periksa koneksi internet Anda.';
+    } else {
+      errorMessage.value = error.response?.data?.message || 'Login gagal. Silakan coba lagi.';
+    }
+
   } finally {
-    isLoading.value = false
+    isSubmitting.value = false;
   }
 }
 </script>
+
+<style scoped>
+/* Animasi banner error */
+.error-banner-enter-active {
+  transition: all 0.3s ease-out;
+}
+.error-banner-leave-active {
+  transition: all 0.2s ease-in;
+}
+.error-banner-enter-from {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.error-banner-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+</style>

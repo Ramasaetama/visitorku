@@ -1,0 +1,48 @@
+export default {
+  sidebar: {
+    mainMenu: 'Main Menu',
+    masterData: 'Master Data',
+    quickGuide: 'Quick Guide',
+    setupAccount: 'Setup your VisitorKu account',
+    complete: 'Complete',
+    visitLimit: 'Visit Limit',
+    unlimited: 'Unlimited',
+    storageCapacity: 'Storage Capacity',
+    upgradePackage: 'Upgrade Package',
+    visitorPackage: 'VisitorKu Package',
+    menu: {
+      dashboard: 'Dashboard',
+      dataVisitor: 'Visitor Data',
+      dataKunjungan: 'Visit Data',
+      event: 'Event',
+      layarInformasi: 'Information Screen',
+      profilPerusahaan: 'Company Profile',
+      cabang: 'Branch',
+      tujuanDivisi: 'Purpose & Division',
+      pengaturanForm: 'Visitor Form Settings',
+      manajemenPengguna: 'User Management',
+      invoice: 'Invoice',
+    },
+    quickGuideItems: {
+      profilPerusahaan: 'Company Profile',
+      cabang: 'Branch',
+      tujuanDivisi: 'Purpose & Division',
+    },
+  },
+  topbar: {
+    editProfile: 'Edit Profile',
+    logout: 'Logout',
+    selectLanguage: 'Select Language',
+    language: {
+      id: 'Indonesian',
+      en: 'English',
+    },
+  },
+  common: {
+    loading: 'Loading...',
+    emailUnavailable: 'Email not available',
+    phoneUnavailable: 'Phone Number Not Available',
+    logoutTitle: 'Logout',
+    logoutConfirm: 'Are you sure you want to logout?',
+  },
+}

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 
 // Import icons directly
 import layoutMasonryIcon from '@/assets/layout-masonry-line.svg';
@@ -16,9 +17,9 @@ import checkOffIcon from '@/assets/icon-park-solid_check-one.svg';
 import starIcon from '@/assets/solar_star-shine-broken.svg';
 import calendarIcon from '@/assets/calendar-line.svg';
 
+const { t } = useI18n();
 const route = useRoute();
 
-// State untuk toggle Panduan Cepat secara manual (tombol X)
 const showQuickGuide = ref(true);
 
 const shouldShowQuickGuide = computed(() => {
@@ -29,22 +30,22 @@ const shouldShowQuickGuide = computed(() => {
   return isOnAllowedPage && showQuickGuide.value;
 });
 
-const mainMenuItems = [
-  { name: 'Ringkasan', icon: layoutMasonryIcon, path: '/dashboard' },
-  { name: 'Data Visitor', icon: groupLineIcon, path: '/data-visitor' },
-  { name: 'Data Kunjungan', icon: logoutBoxIcon, path: '/data-kunjungan' },
-  { name: 'Event', icon: calendarIcon, path: '/event' },
-  { name: 'Layar Informasi', icon: listIndefiniteIcon, path: '/layar-informasi' },
-];
+const mainMenuItems = computed(() => [
+  { key: 'menu.dashboard', icon: layoutMasonryIcon, path: '/dashboard' },
+  { key: 'menu.dataVisitor', icon: groupLineIcon, path: '/data-visitor' },
+  { key: 'menu.dataKunjungan', icon: logoutBoxIcon, path: '/data-kunjungan' },
+  { key: 'menu.event', icon: calendarIcon, path: '/event' },
+  { key: 'menu.layarInformasi', icon: listIndefiniteIcon, path: '/layar-informasi' },
+]);
 
-const masterDataItems = [
-  { name: 'Profil Perusahaan', icon: buildingIcon, path: '/profil-perusahaan' },
-  { name: 'Cabang', icon: gitMergeIcon, path: '/cabang' },
-  { name: 'Tujuan & Divisi', icon: listIndefiniteIcon, path: '/tujuan-kunjungan' },
-  { name: 'Pengaturan Form Visitor', icon: settingsIcon, path: '/pengaturan-form' },
-  { name: 'Manajemen Pengguna', icon: groupLineIcon, path: '/manajemen-pengguna' },
-  { name: 'Invoice', icon: fileTextIcon, path: '/invoice' },
-];
+const masterDataItems = computed(() => [
+  { key: 'menu.profilPerusahaan', icon: buildingIcon, path: '/profil-perusahaan' },
+  { key: 'menu.cabang', icon: gitMergeIcon, path: '/cabang' },
+  { key: 'menu.tujuanDivisi', icon: listIndefiniteIcon, path: '/tujuan-kunjungan' },
+  { key: 'menu.pengaturanForm', icon: settingsIcon, path: '/pengaturan-form' },
+  { key: 'menu.manajemenPengguna', icon: groupLineIcon, path: '/manajemen-pengguna' },
+  { key: 'menu.invoice', icon: fileTextIcon, path: '/invoice' },
+]);
 
 const isActive = (path) => {
   if (path === '/event') {
@@ -53,14 +54,14 @@ const isActive = (path) => {
   return route.path === path;
 };
 
-const quickGuideItems = [
-  { name: 'Profil Perusahaan', completed: false },
-  { name: 'Cabang', completed: false },
-  { name: 'Tujuan & Divisi', completed: false },
-];
+const quickGuideItems = computed(() => [
+  { nameKey: 'quickGuideItems.profilPerusahaan', completed: false },
+  { nameKey: 'quickGuideItems.cabang', completed: false },
+  { nameKey: 'quickGuideItems.tujuanDivisi', completed: false },
+]);
 
-const completedCount = quickGuideItems.filter(item => item.completed).length;
-const progressPercent = Math.round((completedCount / quickGuideItems.length) * 100);
+const completedCount = computed(() => quickGuideItems.value.filter(item => item.completed).length);
+const progressPercent = computed(() => Math.round((completedCount.value / quickGuideItems.value.length) * 100));
 </script>
 
 <template>
@@ -68,11 +69,11 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
   <aside class="hidden md:flex w-[260px] bg-[#F4F6F8] flex-col p-4 gap-4 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">
     <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <div class="mb-6">
-        <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">Main Menu</h3>
+        <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">{{ t('sidebar.mainMenu') }}</h3>
         <div class="space-y-1">
           <router-link
             v-for="item in mainMenuItems"
-            :key="item.name"
+            :key="item.key"
             :to="item.path"
             :class="[
               'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all text-[13px] no-underline',
@@ -82,17 +83,17 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
             ]"
           >
             <img :src="item.icon" alt="" class="w-[18px] h-[18px] flex-shrink-0" :class="{ 'filter-orange': isActive(item.path) }" />
-            <span>{{ item.name }}</span>
+            <span>{{ t('sidebar.' + item.key) }}</span>
           </router-link>
         </div>
       </div>
 
       <div>
-        <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">Master Data</h3>
+        <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">{{ t('sidebar.masterData') }}</h3>
         <div class="space-y-1">
           <router-link
             v-for="item in masterDataItems"
-            :key="item.name"
+            :key="item.key"
             :to="item.path"
             :class="[
               'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all text-[13px] no-underline',
@@ -102,7 +103,7 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
             ]"
           >
             <img :src="item.icon" alt="" class="w-[18px] h-[18px] flex-shrink-0" :class="{ 'filter-orange': isActive(item.path) }" />
-            <span>{{ item.name }}</span>
+            <span>{{ t('sidebar.' + item.key) }}</span>
           </router-link>
         </div>
       </div>
@@ -110,31 +111,31 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
 
     <div v-if="shouldShowQuickGuide" class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <div class="flex items-center justify-between mb-2">
-        <span class="text-[#F7941D] text-[12px] font-semibold">Panduan Cepat</span>
+        <span class="text-[#F7941D] text-[12px] font-semibold">{{ t('sidebar.quickGuide') }}</span>
         <button @click="showQuickGuide = false" class="text-gray-400 hover:text-gray-600 p-1">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none">
             <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           </svg>
         </button>
       </div>
-      <p class="text-[12px] text-[#1E293B] font-medium mb-2">Atur akun VisitorKu</p>
+      <p class="text-[12px] text-[#1E293B] font-medium mb-2">{{ t('sidebar.setupAccount') }}</p>
       <div class="flex items-center gap-2 mb-4">
         <div class="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
           <div class="h-full bg-[#F7941D] rounded-full transition-all" :style="{ width: progressPercent + '%' }"></div>
         </div>
-        <span class="text-[10px] text-gray-400 whitespace-nowrap">{{ progressPercent }}% Complete</span>
+        <span class="text-[10px] text-gray-400 whitespace-nowrap">{{ progressPercent }}% {{ t('sidebar.complete') }}</span>
       </div>
       <div class="space-y-2.5">
         <div v-for="(item, index) in quickGuideItems" :key="index" class="flex items-center gap-2.5">
           <img :src="item.completed ? checkOnIcon : checkOffIcon" alt="" class="w-[18px] h-[18px]" />
-          <span :class="['text-[12px]', item.completed ? 'text-[#22C55E] font-medium' : 'text-gray-400']">{{ item.name }}</span>
+          <span :class="['text-[12px]', item.completed ? 'text-[#22C55E] font-medium' : 'text-gray-400']">{{ t('sidebar.' + item.nameKey) }}</span>
         </div>
       </div>
     </div>
 
     <div class="bg-gradient-to-br from-[#FFF8F0] to-[#FFEDD5] rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 border border-[#FFE4C4]">
       <div class="flex items-center justify-between mb-4">
-        <span class="text-[13px] font-semibold text-[#1E293B]">Paket VisitorKu</span>
+        <span class="text-[13px] font-semibold text-[#1E293B]">{{ t('sidebar.visitorPackage') }}</span>
         <div class="flex items-center gap-1 bg-[#F7941D] rounded-full px-2.5 py-1">
           <img :src="starIcon" alt="" class="w-3.5 h-3.5 filter brightness-0 invert" />
           <span class="text-[10px] font-semibold text-white">Free</span>
@@ -142,8 +143,8 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       </div>
       <div class="mb-3">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] text-[#64748B] font-medium">Batas Kunjungan</span>
-          <span class="text-[11px] text-[#64748B]">Tak terbatas</span>
+          <span class="text-[11px] text-[#64748B] font-medium">{{ t('sidebar.visitLimit') }}</span>
+          <span class="text-[11px] text-[#64748B]">{{ t('sidebar.unlimited') }}</span>
         </div>
         <div class="h-1 bg-[#FFD9B3] rounded-full overflow-hidden">
           <div class="h-full bg-[#F7941D] rounded-full w-1/4"></div>
@@ -151,15 +152,15 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       </div>
       <div class="mb-4">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] text-[#64748B] font-medium">Kapasitas Penyimpanan</span>
-          <span class="text-[11px] text-[#64748B]">Unlimited</span>
+          <span class="text-[11px] text-[#64748B] font-medium">{{ t('sidebar.storageCapacity') }}</span>
+          <span class="text-[11px] text-[#64748B]">{{ t('sidebar.unlimited') }}</span>
         </div>
         <div class="h-1 bg-[#FFD9B3] rounded-full overflow-hidden">
           <div class="h-full bg-[#F7941D] rounded-full w-1/6"></div>
         </div>
       </div>
       <button class="w-full border-2 border-[#F7941D] text-[#F7941D] text-[12px] font-semibold py-2.5 rounded-xl hover:bg-[#F7941D] hover:text-white transition-all">
-        Upgrade Paket
+        {{ t('sidebar.upgradePackage') }}
       </button>
     </div>
   </aside>
@@ -170,9 +171,9 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       <!-- Main Menu icons -->
       <router-link
         v-for="item in mainMenuItems"
-        :key="'m-' + item.name"
+        :key="'m-' + item.key"
         :to="item.path"
-        :title="item.name"
+        :title="t('sidebar.' + item.key)"
         :class="[
           'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
           isActive(item.path)
@@ -182,7 +183,7 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       >
         <img
           :src="item.icon"
-          :alt="item.name"
+          :alt="t('sidebar.' + item.key)"
           class="w-[20px] h-[20px]"
           :class="{ 'filter-orange': isActive(item.path) }"
         />
@@ -194,9 +195,9 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       <!-- Master Data icons -->
       <router-link
         v-for="item in masterDataItems"
-        :key="'d-' + item.name"
+        :key="'d-' + item.key"
         :to="item.path"
-        :title="item.name"
+        :title="t('sidebar.' + item.key)"
         :class="[
           'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
           isActive(item.path)
@@ -206,7 +207,7 @@ const progressPercent = Math.round((completedCount / quickGuideItems.length) * 1
       >
         <img
           :src="item.icon"
-          :alt="item.name"
+          :alt="t('sidebar.' + item.key)"
           class="w-[20px] h-[20px]"
           :class="{ 'filter-orange': isActive(item.path) }"
         />

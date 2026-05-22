@@ -12,13 +12,21 @@ export default {
           50: '#FEF9F0',
           100: '#FCEBCF',
           200: '#FAD89F',
-          300: '#F7C46F',
+          300: '#6fd1f7ff',
           400: '#F4B13F',
           500: '#EE9D0F', // BASE
           600: '#BE7E0C',
           700: '#8F5E09',
           800: '#5F3F06',
           900: '#301F03',
+        },
+        // Secondary Primary Colors (Blue)
+        secondary: {
+          500: '#23B9F2', // BASE
+          600: '#D3F1FC', // Header Table
+          700: '#D3F1FC', // Batas Kunjungan
+          800:  '#23B9F2', // Background Ringkasan Perusahaan blur 500
+          900:  '#36d41aff', // Background Ringkasan Perusahaan blur 500
         },
         // Gray Colors
         gray: {
@@ -40,6 +48,11 @@ export default {
         accent: '#FFC765',
         // Divider
         divider: '#D9D9D9',
+        // Secondary Primary Colors (Blue) - SuperAdmin
+        secondary: {
+          500: '#23B9F2', // BASE
+          600: '#D3F1FC', // Header Table
+        },
       },
       fontFamily: {
         // Primary font for headings and body

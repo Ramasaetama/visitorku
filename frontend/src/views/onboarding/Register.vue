@@ -159,9 +159,7 @@
           </span>
         </div>
 
-        <div v-if="apiError" class="p-3 mt-2 bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg font-poppins text-center">
-          {{ apiError }}
-        </div>
+
 
         <div class="flex items-center justify-between pt-2">
           <button
@@ -205,6 +203,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { showError } from '@/utils/alertHelper'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../../components/layout'
 import { Button, Input, Textarea, Toggle, Checkbox, PasswordInput } from '../../components/common'
@@ -222,7 +221,6 @@ const isSubmitting = ref(false)
 const errorMessage = ref('')
 
 const isLoading = ref(false)
-const apiError = ref('')
 
 const form = ref({
   companyName: '',
@@ -264,7 +262,6 @@ const prevStep = () => {
   if (currentStep.value > 1) {
     errorMessage.value = ''
     currentStep.value--
-    apiError.value = '' 
   }
 }
 
@@ -277,7 +274,6 @@ const submitRegister = async () => {
   if (form.value.password !== form.value.confirmPassword) return;
 
   isLoading.value = true;
-  apiError.value = '';
 
   try {
     const regis = {
@@ -300,20 +296,30 @@ const submitRegister = async () => {
 
   } catch (error) {
     console.error("Error Registrasi:", error);
-    
-    // Karena authService.js melempar error Axios, kita tangkap di sini
+
     if (error.response) {
-      if (error.response.status === 401) {
-        apiError.value = '401 Unauthorized: Cek konfigurasi backend Anda.';
-      } else if (error.response.data && error.response.data.message) {
-        apiError.value = error.response.data.message;
+      const msg = error.response.data?.message || error.response.data?.error || '';
+      const msgLower = msg.toLowerCase();
+
+      if (
+        msgLower.includes('email') &&
+        (msgLower.includes('already') || msgLower.includes('exist') || msgLower.includes('taken') || msgLower.includes('terdaftar'))
+      ) {
+        showError('Email Sudah Digunakan', 'Email yang Anda masukkan sudah terdaftar. Gunakan email lain atau masuk dengan akun yang ada.');
+      } else if (error.response.status === 422 && error.response.data?.errors) {
+        const firstError = Object.values(error.response.data.errors)[0];
+        showError('Data Tidak Valid', Array.isArray(firstError) ? firstError[0] : firstError);
+      } else if (error.response.status === 401) {
+        showError('Tidak Diizinkan', '401 Unauthorized: Cek konfigurasi backend Anda.');
+      } else if (msg) {
+        showError('Email sudah digunakan', msg);
       } else {
-        apiError.value = `Gagal mendaftar (Status Server: ${error.response.status})`;
+        showError('Email sudah digunakan', `Terjadi kesalahan (Status: ${error.response.status})`);
       }
     } else if (error.request) {
-      apiError.value = 'Gagal terhubung ke server. Pastikan Backend Server sudah menyala.';
+      showError('Koneksi Gagal', 'Gagal terhubung ke server. Pastikan Backend Server sudah menyala.');
     } else {
-      apiError.value = 'Terjadi kesalahan sistem.';
+      showError('Kesalahan Sistem', 'Terjadi kesalahan yang tidak diketahui.');
     }
   } finally {
     isLoading.value = false;

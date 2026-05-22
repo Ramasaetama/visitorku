@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { getAdminProfile } from '@/services/adminProfileService';
 import { confirmAction } from '@/utils/alertHelper';
 import visitorkulogo from '@/assets/visitorku.png';
@@ -8,7 +9,30 @@ import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
 
 const router = useRouter();
+const { t, locale } = useI18n();
+
 const isDropdownOpen = ref(false);
+const isLangDropdownOpen = ref(false);
+
+const languages = [
+  { code: 'id', label: 'Indonesia', flag: '🇮🇩' },
+  { code: 'en', label: 'English', flag: '🇬🇧' },
+];
+
+const currentLang = ref(languages.find(l => l.code === locale.value) || languages[0]);
+
+const switchLanguage = (lang) => {
+  locale.value = lang.code;
+  currentLang.value = lang;
+  localStorage.setItem('locale', lang.code);
+  isLangDropdownOpen.value = false;
+};
+
+const toggleLangDropdown = (e) => {
+  e.stopPropagation();
+  isLangDropdownOpen.value = !isLangDropdownOpen.value;
+  if (isLangDropdownOpen.value) isDropdownOpen.value = false;
+};
 
 const profileData = ref({
   name: 'Loading...',
@@ -24,9 +48,8 @@ const fetchProfileData = async () => {
 
     profileData.value = {
       name: adminData.name || adminData.fullname || 'Admin',
-      email: adminData.email || adminData.user_email || 'Email tidak tersedia',
-      phone: adminData.phone || adminData.phone_number || 'Nomer Telepon Tidak Tersedia',
-      
+      email: adminData.email || adminData.user_email || t('common.emailUnavailable'),
+      phone: adminData.phone || adminData.phone_number || t('common.phoneUnavailable'),
       profilePict: adminData.profile_picture || adminData.avatar || adminData.picture || null
     };
   } catch (error) {
@@ -36,11 +59,15 @@ const fetchProfileData = async () => {
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
+  if (isDropdownOpen.value) isLangDropdownOpen.value = false;
 };
 
 const closeDropdown = (e) => {
   if (!e.target.closest('.profile-section')) {
     isDropdownOpen.value = false;
+  }
+  if (!e.target.closest('.lang-section')) {
+    isLangDropdownOpen.value = false;
   }
 };
 
@@ -56,7 +83,7 @@ onUnmounted(() => {
 });
 
 const handleLogout = async () => {
-  const confirmed = await confirmAction('Logout', 'Apakah Anda yakin ingin keluar?');
+  const confirmed = await confirmAction(t('common.logoutTitle'), t('common.logoutConfirm'));
   if (confirmed) {
     sessionStorage.removeItem('token'); 
     router.push('/login');
@@ -84,10 +111,62 @@ const handleLogout = async () => {
     </div>
     
     <div class="relative z-10 flex items-center gap-4">
-      <button class="p-1.5 rounded-full hover:bg-white/20 transition">
-        <img :src="globeIcon" alt="Language" class="w-5 h-5" />
-      </button>
+
+      <!-- Language Switcher -->
+      <div class="lang-section relative">
+        <button
+          @click="toggleLangDropdown"
+          class="p-1.5 rounded-full hover:bg-white/20 transition flex items-center gap-1.5"
+          :title="t('topbar.selectLanguage')"
+        >
+          <img :src="globeIcon" alt="Language" class="w-5 h-5" />
+          <span class="text-white text-xs font-semibold uppercase hidden sm:inline">{{ currentLang.code }}</span>
+        </button>
+
+        <!-- Language Dropdown -->
+        <transition
+          enter-active-class="transition ease-out duration-150"
+          enter-from-class="transform opacity-0 scale-95 translate-y-1"
+          enter-to-class="transform opacity-100 scale-100 translate-y-0"
+          leave-active-class="transition ease-in duration-100"
+          leave-from-class="transform opacity-100 scale-100 translate-y-0"
+          leave-to-class="transform opacity-0 scale-95 translate-y-1"
+        >
+          <div
+            v-if="isLangDropdownOpen"
+            class="absolute right-0 top-10 w-44 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
+            @click.stop
+          >
+            <!-- Header -->
+            <div class="px-3 py-2 bg-gradient-to-r from-[#FFF8F0] to-[#FFEDD5] border-b border-[#FFE4C4]">
+              <p class="text-[10px] font-semibold text-[#F7941D] uppercase tracking-wider">{{ t('topbar.selectLanguage') }}</p>
+            </div>
+            <!-- Options -->
+            <div class="py-1">
+              <button
+                v-for="lang in languages"
+                :key="lang.code"
+                @click="switchLanguage(lang)"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all hover:bg-[#FEF3E2]"
+                :class="locale === lang.code
+                  ? 'text-[#F7941D] font-semibold bg-[#FEF3E2]'
+                  : 'text-gray-600 font-normal'"
+              >
+                <span class="text-base leading-none">{{ lang.flag }}</span>
+                <span>{{ lang.label }}</span>
+                <!-- Active checkmark -->
+                <span v-if="locale === lang.code" class="ml-auto">
+                  <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </transition>
+      </div>
       
+      <!-- Profile Section -->
       <div 
         class="profile-section flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity"
         @click="toggleDropdown"
@@ -161,7 +240,7 @@ const handleLogout = async () => {
                   class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm font-medium hover:bg-blue-50 transition"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                  Edit Profile
+                  {{ t('topbar.editProfile') }}
                 </button>
                 
                 <button 
@@ -169,7 +248,7 @@ const handleLogout = async () => {
                   class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-red-500 text-red-500 rounded-lg text-sm font-medium hover:bg-red-50 transition"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                  Logout
+                  {{ t('topbar.logout') }}
                 </button>
               </div>
             </div>
