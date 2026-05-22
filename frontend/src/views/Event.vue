@@ -6,6 +6,8 @@ import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DateTimePicker from '@/components/common/DateTimePicker.vue';
+import Modal from '@/components/common/Modal.vue';
+import Toast from '@/components/common/Toast.vue';
 import SettingIcon from '@/assets/settings-3-line.svg';
 import DeleteIcon from '@/assets/delete.svg';
 import EditIcon from '@/assets/edit-box-line.svg';
@@ -138,10 +140,19 @@ watch(searchQuery, (val) => { if (val === '') executeSearch(); });
 watch(perPage, () => { currentPage.value = 1; fetchEvents(); });
 
 // ─── Modal Add/Edit ───────────────────────────────────────────────────────────
-const showModal   = ref(false);
-const isEdit      = ref(false);
-const isSaving    = ref(false);
-const editingId   = ref(null);
+const showModal    = ref(false);
+const isEdit       = ref(false);
+const isSaving     = ref(false);
+const editingId    = ref(null);
+const showToast    = ref(false);
+const toastMessage = ref('');
+
+// ─── Form & Validasi Tanggal ──────────────────────────────────────────────────
+const dateErrors = ref({
+  event_finish_at:        '',
+  registration_finish_at: '',
+  registration_start_at:  '',
+});
 
 const form = ref({
   name:                  '',
@@ -154,6 +165,44 @@ const form = ref({
   registration_finish_at:'',
 });
 
+// Validasi urutan tanggal secara reactive (dipanggil saat field berubah)
+const validateDates = () => {
+  dateErrors.value.event_finish_at = '';
+  dateErrors.value.registration_finish_at = '';
+  dateErrors.value.registration_start_at = '';
+
+  const eventStart  = form.value.event_start_at  ? new Date(form.value.event_start_at)  : null;
+  const eventFinish = form.value.event_finish_at  ? new Date(form.value.event_finish_at) : null;
+  const regStart    = form.value.registration_start_at  ? new Date(form.value.registration_start_at)  : null;
+  const regFinish   = form.value.registration_finish_at ? new Date(form.value.registration_finish_at) : null;
+
+  if (eventStart && eventFinish && eventFinish <= eventStart) {
+    dateErrors.value.event_finish_at = 'Waktu selesai event harus setelah waktu mulai event.';
+  }
+  if (regStart && regFinish && regFinish <= regStart) {
+    dateErrors.value.registration_finish_at = 'Waktu selesai registrasi harus setelah waktu mulai registrasi.';
+  }
+  if (regStart && eventStart && regStart >= eventStart) {
+    dateErrors.value.registration_start_at = 'Waktu mulai registrasi harus sebelum waktu mulai event.';
+  }
+};
+
+// Jalankan validasi setiap kali tanggal berubah
+watch(
+  () => [
+    form.value.event_start_at,
+    form.value.event_finish_at,
+    form.value.registration_start_at,
+    form.value.registration_finish_at,
+  ],
+  validateDates,
+  { deep: true }
+);
+
+const hasDateErrors = computed(() =>
+  Object.values(dateErrors.value).some(msg => msg !== '')
+);
+
 const openAddModal = () => {
   isEdit.value    = false;
   editingId.value = null;
@@ -162,6 +211,7 @@ const openAddModal = () => {
     start_at: '', finish_at: '',
     registration_start_at: '', registration_finish_at: '',
   };
+  dateErrors.value = { event_finish_at: '', registration_finish_at: '', registration_start_at: '' };
   showModal.value = true;
 };
 
@@ -179,6 +229,7 @@ const openEditModal = (row) => {
     registration_start_at:  toInputDatetime(r.registration_start_at),
     registration_finish_at: toInputDatetime(r.registration_finish_at),
   };
+  dateErrors.value = { event_finish_at: '', registration_finish_at: '', registration_start_at: '' };
   showModal.value = true;
 };
 
@@ -187,10 +238,19 @@ const closeModal = () => {
 };
 
 const handleSubmit = async () => {
+  // Validasi field wajib
   if (!form.value.name || !form.value.description || !form.value.start_at || !form.value.finish_at || !form.value.registration_start_at || !form.value.registration_finish_at) {
     showError('Harap lengkapi semua field yang wajib diisi.');
     return;
   }
+
+  // Validasi urutan tanggal
+  validateDates();
+  if (hasDateErrors.value) {
+    showError('urutan tanggal yang dimasukkan salah.');
+    return;
+  }
+
   isSaving.value = true;
   try {
     const payload = { ...form.value };
@@ -304,6 +364,29 @@ onMounted(fetchEvents);
                 :sort-order="sortOrder"
                 @sort="handleSort"
               >
+                <template #url_location="{ row }">
+                  <div v-if="row.location_url && row.location_url !== ''" class="flex items-center gap-2">
+                    <a
+                      :href="row.location_url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-[13px] text-blue-500 truncate max-w-[150px] hover:underline"
+                      :title="row.location_url"
+                    >{{ row.location_url }}</a>
+                    <button
+                      @click="copyUrl(row.location_url)"
+                      class="shrink-0 w-[26px] h-[26px] rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
+                      title="Copy URL Lokasi"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <span v-else class="text-gray-400">-</span>
+                </template>
+
                 <template #url_registration="{ row }">
                   <div v-if="row.url_registration && row.url_registration !== '-'" class="flex items-center gap-2">
                     <a 
@@ -451,113 +534,152 @@ onMounted(fetchEvents);
         </div>
       </main>
 
-    <!-- ─── Add / Edit Event Modal ─── -->
-    <div v-if="showModal" class="fixed inset-0 z-999 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 relative animate-fade-in-up max-h-[90vh] flex flex-col">
-
-        <!-- Modal Header -->
-        <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
-          <h2 class="text-lg font-semibold text-gray-900">{{ isEdit ? 'Edit Event' : 'Add Event' }}</h2>
-          <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <path d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
+    <!-- ─── Add / Edit Event Modal (side-over) ─── -->
+    <Modal
+      :show="showModal"
+      :title="isEdit ? 'Edit Event' : 'Tambah Event'"
+      :description="isEdit ? 'Ubah informasi event yang sudah ada.' : 'Masukan informasi event baru ke dalam sistem.'"
+      width="half"
+      @close="closeModal"
+    >
+      <!-- Body Form -->
+      <div class="space-y-5">
+        <!-- Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Event <span class="text-red-500">*</span></label>
+          <input
+            v-model="form.name"
+            type="text"
+            placeholder="Masukkan nama event..."
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          />
         </div>
 
-        <!-- Modal Body -->
-        <div class="flex-1 overflow-y-auto px-6 py-5 space-y-4">
-          <!-- Name -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
-            <input
-              v-model="form.name"
-              type="text"
-              placeholder="Enter name here..."
-              class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
-            />
-          </div>
+        <!-- Description -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi <span class="text-red-500">*</span></label>
+          <textarea
+            v-model="form.description"
+            rows="3"
+            placeholder="Masukkan deskripsi event..."
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          ></textarea>
+        </div>
 
-          <!-- Description -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Description <span class="text-red-500">*</span></label>
-            <textarea
-              v-model="form.description"
-              rows="3"
-              placeholder="Enter description here..."
-              class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent resize-none"
-            ></textarea>
-          </div>
+        <!-- Location -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">Lokasi</label>
+          <textarea
+            v-model="form.location"
+            rows="2"
+            placeholder="Masukkan lokasi event..."
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          ></textarea>
+        </div>
 
-          <!-- Location -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Location</label>
-            <textarea
-              v-model="form.location"
-              rows="2"
-              placeholder="Enter location here..."
-              class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent resize-none"
-            ></textarea>
-          </div>
-
-          <!-- Location URL -->
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Location Url</label>
-            <input
-              v-model="form.location_url"
-              type="text"
-              placeholder="Enter location url here..."
-              class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
-            />
-          </div>
-
-          <!-- Event Start At -->
-          <DateTimePicker
-            v-model="form.start_at"
-            label="Event Start At"
-            :required="true"
+        <!-- Location URL -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">URL Lokasi</label>
+          <input
+            v-model="form.location_url"
+            type="text"
+            placeholder="Masukkan URL lokasi..."
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
           />
+        </div>
 
-          <!-- Event Finish At -->
+        <!-- Event Start At -->
+        <DateTimePicker
+          v-model="form.start_at"
+          label="Waktu Mulai Event"
+          :required="true"
+        />
+
+        <!-- Event Finish At -->
+        <div>
           <DateTimePicker
             v-model="form.finish_at"
-            label="Event Finish At"
+            label="Waktu Selesai Event"
             :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.event_finish_at }"
           />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.event_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.event_finish_at }}
+            </p>
+          </Transition>
+        </div>
 
-          <!-- Registration Start At -->
+        <!-- Registration Start At -->
+        <div>
           <DateTimePicker
             v-model="form.registration_start_at"
-            label="Registration Start At"
+            label="Waktu Mulai Registrasi"
             :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_start_at }"
           />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.registration_start_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.registration_start_at }}
+            </p>
+          </Transition>
+        </div>
 
-          <!-- Registration Finish At -->
+        <!-- Registration Finish At -->
+        <div>
           <DateTimePicker
             v-model="form.registration_finish_at"
-            label="Registration Finish At"
+            label="Waktu Selesai Registrasi"
             :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_finish_at }"
           />
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
-          <button
-            @click="closeModal"
-            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors focus:outline-none"
-          >
-            Cancel
-          </button>
-          <button
-            @click="handleSubmit"
-            :disabled="isSaving"
-            class="px-6 py-2 bg-[#F7941D] text-white rounded-lg font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ isSaving ? 'Loading...' : 'Submit' }}
-          </button>
+          <Transition name="err-fade">
+            <p v-if="dateErrors.registration_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.registration_finish_at }}
+            </p>
+          </Transition>
         </div>
       </div>
-    </div>
+
+      <!-- Footer Slot -->
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            type="button"
+            @click="closeModal"
+            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          >
+            Batal
+          </button>
+          <button
+            type="button"
+            @click="handleSubmit"
+            :disabled="isSaving || hasDateErrors"
+            :title="hasDateErrors ? 'Periksa kembali urutan tanggal' : ''"
+            class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            :class="hasDateErrors ? 'bg-gray-400' : 'bg-[#F7941D] hover:bg-[#E8850E]'"
+          >
+            {{ isSaving ? 'Menyimpan...' : (isEdit ? 'Perbarui Event' : 'Tambah Event') }}
+          </button>
+        </div>
+      </template>
+    </Modal>
+
+    <!-- Toast Notification -->
+    <Toast
+      :show="showToast"
+      :message="toastMessage"
+      @close="showToast = false"
+    />
 </template>
 
 <style scoped>
@@ -566,12 +688,9 @@ button:focus {
   box-shadow: none !important;
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.2s ease-out forwards;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(10px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
-}
+/* Animasi pesan error tanggal */
+.err-fade-enter-active { transition: all 0.2s ease-out; }
+.err-fade-leave-active { transition: all 0.15s ease-in; }
+.err-fade-enter-from  { opacity: 0; transform: translateY(-4px); }
+.err-fade-leave-to    { opacity: 0; transform: translateY(-4px); }
 </style>

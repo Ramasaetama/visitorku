@@ -6,7 +6,7 @@ import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
 import notfound from '@/assets/notfound.svg';
-import { getAllVisits } from '@/services/visitService';
+import { getAllVisits, exportVisitReport } from '@/services/visitService';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -122,6 +122,8 @@ const goToPage = (page) => {
   }
 };
 
+
+
 // ─── Search ───────────────────────────────────────────────────────────────────
 const executeSearch = () => {
   appliedSearch.value = searchQuery.value;
@@ -142,14 +144,30 @@ watch(perPage, () => {
   fetchVisits();
 });
 
-// ─── Actions ──────────────────────────────────────────────────────────────────
-const handleReport = () => {
-  router.push('/report');
+// ─── Report Export ────────────────────────────────────────────────────────────
+const isExporting = ref(false);
+const handleReport = async () => {
+  isExporting.value = true;
+  try {
+    const response = await exportVisitReport({ search: appliedSearch.value || undefined });
+    const url  = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href  = url;
+    link.setAttribute('download', `visit-report-${Date.now()}.xlsx`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('Gagal mengunduh laporan:', err);
+  } finally {
+    isExporting.value = false;
+  }
 };
-
-// ─── Init ─────────────────────────────────────────────────────────────────────
 onMounted(fetchVisits);
 </script>
+
+
 
 <template>
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
@@ -177,6 +195,8 @@ onMounted(fetchVisits);
                 Report
               </button>
             </div>
+
+            
 
             <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
               <div class="w-full sm:max-w-md">

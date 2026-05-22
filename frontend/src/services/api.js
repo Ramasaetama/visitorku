@@ -21,7 +21,7 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
-      sessionStorage.removeItem('auth_token')
+      sessionStorage.removeItem('token')
       sessionStorage.removeItem('auth_user')
 
       const currentPath = window.location.pathname

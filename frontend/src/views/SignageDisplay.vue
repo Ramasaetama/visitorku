@@ -136,7 +136,6 @@ onUnmounted(() => {
           class="panel"
           :style="{ flex: panel.flex }"
         >
-          <!-- If has uploaded file -->
          <template v-if="panelFiles[pIdx] && panelFiles[pIdx][0] && panelFiles[pIdx][0].url">
   <video
     v-if="isVideo(panelFiles[pIdx][0].url)"
