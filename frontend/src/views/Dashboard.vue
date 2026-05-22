@@ -1,7 +1,5 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import Sidebar from '@/components/Sidebar.vue';
-import Topbar from '@/components/Topbar.vue';
 import patternBg from '@/assets/Frame 7.svg'; 
 
 // Import fungsi API 
@@ -211,13 +209,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-      
-      <main class="flex-1 bg-[#F4F6F8] p-4 overflow-y-auto hide-scrollbar">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="flex flex-col gap-6">
 
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -360,18 +352,18 @@ onMounted(() => {
               <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                   <tr class="border-y border-gray-200 bg-[#FEF4E3]" :style="{ backgroundImage: patternBg ? `url(${patternBg})` : 'none', backgroundSize: 'cover' }">
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">NAME</th>
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">PURPOSE</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">Name</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">Purpose</th>
                     <th @click="toggleSort" class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider cursor-pointer hover:bg-[#FCECD4] transition-colors select-none">
                       <div class="flex items-center gap-1.5 w-max">
-                        CHECK IN
+                        Check In
                         <svg class="w-3.5 h-3.5 text-gray-800 transition-transform duration-300" :class="{ 'rotate-180': sortOrder === 'asc' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
                         </svg>
                       </div>
                     </th>
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">CHECK OUT</th>
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider text-center">FACE</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">Check Out</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider text-center">Face</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -421,9 +413,7 @@ onMounted(() => {
 
         </div>
       </main>
-    </div>
-  </div>
-</template>
+\</template>
 
 <style scoped>
 .apexcharts-canvas:focus,

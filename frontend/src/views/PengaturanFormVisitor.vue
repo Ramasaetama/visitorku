@@ -203,15 +203,7 @@ const deleteField = async (index) => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']" @click="closeKebab">
-    
-    <Topbar />
-
-    <!-- MAIN CONTAINER -->
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-
-      <main class="flex-1 bg-[#F4F6F8] p-4">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
             <!-- Page Header -->
@@ -332,7 +324,6 @@ const deleteField = async (index) => {
           </div>
         </div>
       </main>
-    </div>
 
     <!-- CREATE FIELD MODAL -->
     <Modal
@@ -428,5 +419,4 @@ const deleteField = async (index) => {
 
     <!-- Toast Notification -->
     <Toast :show="showToast" :message="toastMessage" @close="handleCloseToast" />
-  </div>
 </template>

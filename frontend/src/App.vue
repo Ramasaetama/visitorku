@@ -1,55 +1,45 @@
 <script setup>
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { Button } from './components/common'
-import { useAutoLogout } from '@/router/composables/useAutoLogout';
-import { Navbar, Footer } from './components/layout'
-import Topbar from './components/Topbar.vue'
+import { useAutoLogout } from '@/router/composables/useAutoLogout'
+
+// 🌟 Import Layout Utama di sini
+import Topbar from '@/components/Topbar.vue'
+import Sidebar from '@/components/Sidebar.vue'
 
 const route = useRoute()
 
-// Hide the default navbar/footer on all pages since this is an admin application
+// 🌟 Logic cerdas: Sembunyikan Topbar & Sidebar HANYA saat di halaman Login
 const hideLayout = computed(() => {
-  return true
+  return route.path === '/login' || route.name === 'Login' || route.meta.hideLayout
 })
 
-// Waktu AutoLogout 
-const { initAutoLogout, destroyAutoLogout } = useAutoLogout(15); 
+const { initAutoLogout, destroyAutoLogout } = useAutoLogout(15)
 
 onMounted(() => {
   if (localStorage.getItem('token')) {
-    initAutoLogout();
+    initAutoLogout()
   }
-});
+})
 
 onUnmounted(() => {
-  destroyAutoLogout();
-});
+  destroyAutoLogout()
+})
 </script>
 
 <template>
-  <div class="min-h-screen bg-background flex flex-col font-poppins">
+  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
+    
     <Topbar v-if="!hideLayout" />
-    <Navbar v-if="!hideLayout">
-      <template #menu>
-        <router-link to="/" class="text-gray-600 hover:text-primary-500 transition-colors font-medium">Home</router-link>
-        <router-link to="/about" class="text-gray-600 hover:text-primary-500 transition-colors font-medium">About</router-link>
-        <router-link to="/contact" class="text-gray-600 hover:text-primary-500 transition-colors font-medium">Contact</router-link>
-      </template>
-      <template #actions>
-        <Button variant="outline" size="sm">Login</Button>
-        <Button size="sm">Sign Up</Button>
-      </template>
-    </Navbar>
 
-    <main :class="hideLayout ? 'flex-1' : 'flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full'">
-      <router-view />
-    </main>
+    <div class="flex flex-1 items-stretch min-w-0">
+      
+      <Sidebar v-if="!hideLayout" />
 
-    <Footer v-if="!hideLayout" />
+      <main class="flex-1 bg-[#F4F6F8] min-w-0" :class="!hideLayout ? 'p-4' : ''">
+        <router-view />
+      </main>
+
+    </div>
   </div>
 </template>
-
-<style scoped>
-/* Add custom styles here if needed */
-</style>

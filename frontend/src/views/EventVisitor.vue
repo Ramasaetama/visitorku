@@ -44,13 +44,13 @@ const totalRecords  = ref(0);
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
-  { key: 'name',         label: 'NAME',         sortable: true  },
-  { key: 'email',        label: 'EMAIL',        sortable: true  },
-  { key: 'phone_number', label: 'PHONE NUMBER', sortable: false },
-  { key: 'check_in',    label: 'CHECK IN',     sortable: true  },
-  { key: 'check_out',   label: 'CHECK OUT',    sortable: true  },
-  { key: 'satisfaction', label: 'SATISFACTION', sortable: false },
-  { key: 'aksi',        label: 'ACTION',       sortable: false },
+  { key: 'name',         label: 'Name',         sortable: true  },
+  { key: 'email',        label: 'Email',        sortable: true  },
+  { key: 'phone_number', label: 'Phone Number', sortable: false },
+  { key: 'check_in',    label: 'Check In',     sortable: true  },
+  { key: 'check_out',   label: 'Check Out',    sortable: true  },
+  { key: 'satisfaction', label: 'Satisfaction', sortable: false },
+  { key: 'aksi',        label: 'Action',       sortable: false },
 ];
 
 // ─── Fetch Event Info ─────────────────────────────────────────────────────────

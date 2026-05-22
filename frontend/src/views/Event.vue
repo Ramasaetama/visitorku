@@ -30,11 +30,12 @@ const totalRecords = ref(0);
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
-  { key: 'name',             label: 'NAME',             sortable: true  },
-  { key: 'start_at',   label: 'EVENT START',      sortable: true  },
-  { key: 'finish_at',  label: 'EVENT FINISH',     sortable: true  },
-  { key: 'url_registration', label: 'URL REGISTRATION', sortable: false },
-  { key: 'aksi',             label: 'ACTION',           sortable: false },
+  { key: 'name',             label: 'Name',             sortable: true,  width: 'w-[20%]' },
+  { key: 'start_at',         label: 'Event Start',      sortable: true,  width: 'w-[16%]' },
+  { key: 'finish_at',        label: 'Event Finish',     sortable: true,  width: 'w-[16%]' },
+  { key: 'url_registration', label: 'URL Registration', sortable: false, width: 'w-[16%]' },
+  { key: 'location_url',     label: 'URL Location',     sortable: false, width: 'w-[16%]' },
+  { key: 'aksi',             label: 'Action',           sortable: false, width: 'w-[16%]' },
 ];
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
@@ -241,30 +242,25 @@ onMounted(fetchEvents);
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-
-      <main class="flex-1 bg-[#F4F6F8] p-4">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
             <!-- Header -->
-            <div class="flex items-center justify-between mb-4">
-              <h1 class="text-xl font-semibold text-gray-800">Event</h1>
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">Event</span>
-              </nav>
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h1 class="text-2xl font-semibold text-gray-800 mb-1">Event</h1>
+                <p class="text-sm text-gray-500">Kelola dan pantau seluruh data event yang ada.</p>
+              </div>  
+              <button
+                @click="openAddModal"
+                class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
+                       text-[#F7941D] text-sm font-medium rounded-lg
+                       hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
+              >
+                <span class="text-lg leading-none">+</span>
+                Create New Event
+              </button>              
             </div>
 
             <!-- Toolbar -->
@@ -280,7 +276,7 @@ onMounted(fetchEvents);
               <div class="relative shrink-0">
                 <select
                   v-model="perPage"
-                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
                 >
                   <option :value="5">5</option>
                   <option :value="10">10</option>
@@ -296,16 +292,6 @@ onMounted(fetchEvents);
               </div>
 
               <div class="flex-1" />
-
-              <button
-                @click="openAddModal"
-                class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
-                       text-[#F7941D] text-sm font-medium rounded-lg
-                       hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
-              >
-                <span class="text-lg leading-none">+</span>
-                Create New Event
-              </button>
             </div>
 
             <!-- Table -->
@@ -323,13 +309,36 @@ onMounted(fetchEvents);
                     <a 
                       :href="row.url_registration" 
                       target="_blank" 
-                      class="text-[13px] text-blue-500 truncate max-w-[160px]"
+                      class="text-[13px] text-gray-800 truncate max-w-40"
                     >
                       {{ row.url_registration }}
                     </a>
                     <button
                       @click="copyUrl(row.url_registration)"
-                      class="shrink-0 w-[26px] h-[26px] rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
+                      class="shrink-0 w-6.5 h-6.5 rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
+                      title="Copy URL"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <span v-else class="text-gray-400">-</span>
+                </template>
+
+                <template #location_url="{ row }">
+                  <div v-if="row.location_url && row.location_url !== '-'" class="flex items-center gap-2">
+                    <a 
+                      :href="row.location_url" 
+                      target="_blank" 
+                      class="text-[13px] text-gray-800 truncate max-w-40"
+                    >
+                      {{ row.location_url }}
+                    </a>
+                    <button
+                      @click="copyUrl(row.location_url)"
+                      class="shrink-0 w-6.5 h-6.5 rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
                       title="Copy URL"
                     >
                       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -347,11 +356,11 @@ onMounted(fetchEvents);
     <!-- Visitor -->
     <button
       @click="goToEventVisitor(row)"
-      class="w-[38px] h-[38px] flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
       style="background: #EEF2FF;"
       title="Event Visitor"
     >
-      <svg class="w-[18px] h-[18px] text-[#4075FF]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+      <svg class="w-4.5 h-4.5 text-[#4075FF]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
         <circle cx="12" cy="12" r="3"/>
       </svg>
@@ -360,11 +369,11 @@ onMounted(fetchEvents);
     <!-- Setting -->
     <button
       @click="goToEventSetting(row)"
-      class="w-[38px] h-[38px] flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
       style="background: #FFF7E6;"
       title="Event Setting"
     >
-      <svg class="w-[18px] h-[18px] text-[#F7941D]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+      <svg class="w-4.5 h-4.5 text-[#F7941D]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="3"/>
         <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
       </svg>
@@ -373,21 +382,21 @@ onMounted(fetchEvents);
     <!-- Edit -->
     <button
       @click="openEditModal(row)"
-      class="w-[38px] h-[38px] flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
       style="background: #E6F4FF;"
       title="Edit Event"
     >
-      <img :src="EditIcon" alt="Edit" class="w-[18px] h-[18px]" />
+      <img :src="EditIcon" alt="Edit" class="w-4.5 h-4.5" />
     </button>
 
     <!-- Delete -->
     <button
       @click="handleDelete(row)"
-      class="w-[38px] h-[38px] flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
       style="background: #FFEEEE;"
       title="Delete Event"
     >
-      <img :src="DeleteIcon" alt="Delete" class="w-[18px] h-[18px]" />
+      <img :src="DeleteIcon" alt="Delete" class="w-4.5 h-4.5" />
     </button>
 
   </div>
@@ -441,10 +450,9 @@ onMounted(fetchEvents);
           </div>
         </div>
       </main>
-    </div>
 
     <!-- ─── Add / Edit Event Modal ─── -->
-    <div v-if="showModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div v-if="showModal" class="fixed inset-0 z-999 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4 relative animate-fade-in-up max-h-[90vh] flex flex-col">
 
         <!-- Modal Header -->
@@ -550,7 +558,6 @@ onMounted(fetchEvents);
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
