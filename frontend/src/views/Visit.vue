@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import Topbar from '@/components/Topbar.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';

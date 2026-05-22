@@ -2,6 +2,9 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 import Sidebar from '@/components/Sidebar.vue';
 
 import EmptyState from '@/components/common/EmptyState.vue';
@@ -32,15 +35,14 @@ watch(searchQuery, (nilaiBaru) => {
   }
 });
 
-// DEFINISI KOLOM TABEL VISITOR
-const tableColumns = [
-  { key: 'nama', label: 'Nama', sortable: true },
-  { key: 'email', label: 'Email', sortable: true },
-  { key: 'telepon', label: 'No Telepon', sortable: false },
-  { key: 'total_kunjungan', label: 'Total Kunjungan', sortable: true },
-  { key: 'kunjungan_terakhir', label: 'Kunjungan Terakhir', sortable: true },
-  { key: 'aksi', label: 'Aksi', sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'nama',             label: t('visitorData.table.name'),       sortable: true },
+  { key: 'email',            label: t('visitorData.table.email'),      sortable: true },
+  { key: 'telepon',          label: t('visitorData.table.phone'),      sortable: false },
+  { key: 'total_kunjungan',  label: t('visitorData.table.totalVisit'), sortable: true },
+  { key: 'kunjungan_terakhir', label: t('visitorData.table.lastVisit'),sortable: true },
+  { key: 'aksi',             label: t('visitorData.table.action'),     sortable: false },
+]);
 
 // PAGINATION
 const currentPage = ref(1);
@@ -215,8 +217,8 @@ onMounted(() => {
             
             <div class="flex items-start justify-between mb-6">
               <div>
-                <h1 class="text-2xl font-semibold text-gray-800 mb-1">Daftar Visitor</h1>
-                <p class="text-sm text-gray-500">Kelola dan pantau seluruh data pengunjung yang terdaftar.</p>
+                <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('visitorData.title') }}</h1>
+                <p class="text-sm text-gray-500">{{ t('visitorData.subtitle') }}</p>
               </div>
               
               <button 
@@ -231,7 +233,7 @@ onMounted(() => {
                   <line x1="12" y1="15" x2="12" y2="9" />
                   <line x1="16" y1="15" x2="16" y2="13" />
                 </svg>
-                Report
+                {{ t('visitorData.reportButton') }}
               </button>
             </div>
             
@@ -239,7 +241,7 @@ onMounted(() => {
               <div class="w-full sm:max-w-md">
                 <SearchInput 
                   v-model="searchQuery" 
-                  placeholder="Cari Visitor" 
+                  placeholder="Search" 
                   @keyup.enter="executeSearch"  
                 />
               </div>
@@ -304,16 +306,16 @@ onMounted(() => {
                   <EmptyState 
                     v-if="visitorData.length === 0"
                     :icon="notfound"
-                    title="Data Visitor Belum Tersedia"
-                    description="Belum ada data visitor yang terekam di sistem."
+                    :title="t('visitorData.empty.noData')"
+                    :description="t('visitorData.empty.noDataDesc')"
                     :showButton="false"
                   />
 
                   <EmptyState 
                     v-else
                     :icon="notfound"
-                    title="Pencarian Tidak Ditemukan"
-                    :description="`Tidak ada visitor yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                    title="t('visitorData.empty.notFound')"
+                    :description="`${t('visitorData.empty.notFoundDesc')} '${appliedSearchQuery}'`"
                     :showButton="false"
                   />
                 </template>
@@ -323,7 +325,7 @@ onMounted(() => {
           </div>
           
           <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B]">
-            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalItems }} records</span>
+            <span>{{ t('visitorData.showing', { from: startIndex, to: endIndex, total: totalItems }) }}</span>
             
             <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
               <button 

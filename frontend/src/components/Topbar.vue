@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { getAdminProfile } from '@/services/adminProfileService';
@@ -8,6 +8,7 @@ import { themeState } from '@/utils/ThemeState';
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
+
 
 const router = useRouter();
 const { t, locale } = useI18n();
@@ -21,6 +22,10 @@ const languages = [
 ];
 
 const currentLang = ref(languages.find(l => l.code === locale.value) || languages[0]);
+
+watch(locale, (newLocale) => {
+  currentLang.value = languages.find(l => l.code === newLocale) || languages[0];
+});
 
 const switchLanguage = (lang) => {
   locale.value = lang.code;
@@ -60,8 +65,8 @@ const fetchCompanyTheme = async () => {
 
 onMounted(() => {
   document.addEventListener('click', closeDropdown);
-  fetchProfileData(); 
-  fetchCompanyTheme(); // 🌟 Panggil fungsinya di sini
+  fetchProfileData();
+  fetchCompanyTheme();
   window.addEventListener('profile-updated', fetchProfileData);
 });
 
@@ -95,11 +100,7 @@ const closeDropdown = (e) => {
   }
 };
 
-onMounted(() => {
-  document.addEventListener('click', closeDropdown);
-  fetchProfileData();
-  window.addEventListener('profile-updated', fetchProfileData);
-});
+
 
 onUnmounted(() => {
   document.removeEventListener('click', closeDropdown);
