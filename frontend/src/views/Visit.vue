@@ -25,11 +25,11 @@ const totalRecords  = ref(0);
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
-  { key: 'name',      label: 'NAME',      sortable: true  },
-  { key: 'purpose',   label: 'PURPOSE',   sortable: true  },
-  { key: 'check_in',  label: 'CHECK IN',  sortable: true  },
-  { key: 'check_out', label: 'CHECK OUT', sortable: false },
-  { key: 'face',      label: 'FACE',      sortable: false },
+  { key: 'name',      label: 'Name',      sortable: true  },
+  { key: 'purpose',   label: 'Purpose',   sortable: true  },
+  { key: 'check_in',  label: 'Check In',  sortable: true  },
+  { key: 'check_out', label: 'Check Out', sortable: false },
+  { key: 'face',      label: 'Face',      sortable: false },
 ];
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
@@ -173,13 +173,7 @@ onMounted(fetchVisits);
 
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-
-      <main class="flex-1 bg-[#F4F6F8] p-4">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
@@ -219,7 +213,7 @@ onMounted(fetchVisits);
               <div class="relative shrink-0">
                 <select 
                   v-model="perPage" 
-                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
                 >
                   <option :value="5">5</option>
                   <option :value="10">10</option>
@@ -382,10 +376,8 @@ onMounted(fetchVisits);
               </button>
             </div>
           </div>
-
-        </div></main>
-    </div>
-  </div>
+        </div>
+      </main>
 </template>
 
 <style scoped>

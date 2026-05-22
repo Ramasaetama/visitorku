@@ -214,13 +214,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-      
-      <main class="flex-1 bg-[#F4F6F8] p-4 overflow-y-auto hide-scrollbar">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="flex flex-col gap-6">
 
           <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -424,9 +418,7 @@ onMounted(() => {
 
         </div>
       </main>
-    </div>
-  </div>
-</template>
+\</template>
 
 <style scoped>
 .apexcharts-canvas:focus,

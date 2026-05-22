@@ -36,9 +36,9 @@ const toggleDropdown = (id) => {
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
-  { key: 'name',  label: 'NAME',   sortable: true },
+  { key: 'name',  label: 'Name',   sortable: true },
   { key: 'url',   label: 'URL',    sortable: true },
-  { key: 'aksi',  label: 'ACTION', sortable: false },
+  { key: 'aksi',  label: 'Action', sortable: false },
 ];
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
@@ -161,30 +161,24 @@ onMounted(fetchSignages);
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-
-      <main class="flex-1 bg-[#F4F6F8] p-4">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
-            <div class="flex items-center justify-between mb-4">
-              <h1 class="text-xl font-semibold text-gray-800">Signage</h1>
-
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">Signage</span>
-              </nav>
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h1 class="text-2xl font-semibold text-gray-800 mb-1">Signage</h1>
+                <p class="text-sm text-gray-500">Kelola dan pantau seluruh data signage yang ada.</p>
+              </div>  
+              <button
+                @click="handleCreateNew"
+                class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
+                       text-[#F7941D] text-sm font-medium rounded-lg
+                       hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
+              >
+                <span class="text-lg leading-none">+</span>
+                Create New Signage
+              </button>              
             </div>
 
             <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
@@ -215,16 +209,6 @@ onMounted(fetchSignages);
               </div>
 
               <div class="flex-1" />
-
-              <button
-                @click="handleCreateNew"
-                class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
-                       text-[#F7941D] text-sm font-medium rounded-lg
-                       hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
-              >
-                <span class="text-lg leading-none">+</span>
-                Create New Signage
-              </button>
             </div>
 
             <div class="flex-1 overflow-hidden">
@@ -240,7 +224,7 @@ onMounted(fetchSignages);
                   <a 
                     :href="row.url" 
                     target="_blank" 
-                    class="text-blue-500 hover:underline"
+                    class="text-black"
                   >
                     {{ row.url }}
                   </a>
@@ -327,12 +311,10 @@ onMounted(fetchSignages);
           </div>
         </div>
       </main>
-    </div>
 
     <Toast
       :show="showToast"
       :message="toastMessage"
       @close="handleCloseToast"
     />
-  </div>
 </template>

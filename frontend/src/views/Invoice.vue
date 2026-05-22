@@ -1,7 +1,5 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import { useRouter } from 'vue-router';
@@ -17,6 +15,10 @@ const currentPage   = ref(1);
 const totalRecords  = ref(0);
 const router        = useRouter();
 
+// 🌟 State untuk Modal Receipt
+const isReceiptModalOpen = ref(false);
+const selectedReceiptUrl = ref('');
+
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
   { key: 'evidence_url',  label: 'RECEIPT',     sortable: false },
@@ -30,6 +32,19 @@ const tableColumns = [
 
 const goToDetail = (row) => {
   router.push(`/master/invoice/detail/${row.id}`);
+};
+
+// 🌟 Fungsi Buka/Tutup Modal Receipt
+const openReceiptModal = (url) => {
+  selectedReceiptUrl.value = url;
+  isReceiptModalOpen.value = true;
+};
+
+const closeReceiptModal = () => {
+  isReceiptModalOpen.value = false;
+  setTimeout(() => {
+    selectedReceiptUrl.value = '';
+  }, 200); 
 };
 
 // ─── Fetch Data ───────────────────────────────────────────────────────────────
@@ -136,203 +151,206 @@ onMounted(fetchInvoices);
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
+  <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col relative w-full">
+    <div class="p-6 flex-1 flex flex-col">
 
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-800 mb-1">Invoice</h1>
+          <p class="text-sm text-gray-500">Kelola dan pantau seluruh data invoice yang ada.</p>
+        </div>                
+      </div>
 
-      <main class="flex-1 bg-[#F4F6F8] p-4">
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
-          <div class="p-6 flex-1 flex flex-col">
+      <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+        <div class="w-full sm:max-w-md">
+          <SearchInput 
+            v-model="searchQuery" 
+            placeholder="Cari Invoice" 
+            @keyup.enter="executeSearch"  
+          />
+        </div>
 
-            <!-- ── Header ── -->
-            <div class="flex items-center justify-between mb-4">
-              <!-- Judul -->
-              <h1 class="text-xl font-semibold text-gray-800">Invoice</h1>
-
-              <!-- Breadcrumb -->
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">Invoice</span>
-              </nav>
-            </div>
-
-            <!-- ── Toolbar: Search + Per-Page ── -->
-            <div class="flex items-center gap-3 mb-4">
-              <!-- Search -->
-              <SearchInput
-                v-model="searchQuery"
-                placeholder="Search"
-                class="w-80"
-                input-class="rounded-sm"
-                @keyup.enter="executeSearch"
-              />
-
-              <!-- Per-page selector -->
-              <select
-                v-model="perPage"
-                class="h-9 px-3 border border-gray-300 rounded text-sm text-gray-600
-                       bg-white focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30
-                       focus:border-[#F7941D] cursor-pointer"
-              >
-                <option :value="10">10</option>
-                <option :value="25">25</option>
-                <option :value="50">50</option>
-                <option :value="100">100</option>
-              </select>
-            </div>
-
-            <!-- ── DataTable ── -->
-            <div class="flex-1 overflow-hidden">
-              <DataTable
-                :columns="tableColumns"
-                :data="invoiceData"
-                :loading="isLoading"
-              >
-                <!-- Custom body slot -->
-                <template #body="{ data }">
-                  <tr
-                    v-for="(row, idx) in data"
-                    :key="row.id ?? idx"
-                    class="hover:bg-orange-50/40 transition-colors"
-                  >
-                    <!-- evidence_url -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      <template v-if="row.evidence_url && row.evidence_url !== '-'">
-                        <a 
-                          :href="row.evidence_url" 
-                          target="_blank" 
-                          title="Klik untuk melihat receipt"
-                          class="inline-block hover:opacity-80 transition-opacity"
-                        >
-                          <img 
-                            :src="row.evidence_url" 
-                            alt="Receipt" 
-                            class="w-5.5 h-6.5"
-                          />
-                        </a>
-                      </template>
-                      
-                      <template v-else>
-                        {{ row.evidence_url }}
-                      </template>
-                    </td>
-                    <!-- NUMBER -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      {{ row.number }}
-                    </td>
-                    <!-- price -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      {{ row.price }}
-                    </td>
-                    <!-- payment_total -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      {{ row.payment_total }}
-                    </td>
-                    <!-- DUE DATE -->
-                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      {{ row.due_date }}
-                    </td>
-                    <!-- STATUS -->
-                    <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
-                      <div class="flex items-center gap-1.5">
-                        <span
-                          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                          :class="row.status === 'paid'
-                            ? 'bg-green-100 text-green-700'
-                            : row.status === 'unpaid'
-                              ? 'bg-red-100 text-red-600'
-                              : 'bg-gray-100 text-gray-500'"
-                        >
-                          {{ row.status }}
-                        </span>
-                        <span
-                          v-if="row.billing && row.billing !== '-'"
-                          class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-600"
-                        >
-                          {{ row.billing }}
-                        </span>
-                      </div>
-                    </td>
-                    <!-- ACTION -->
-                    <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
-                      <button
-                        @click="goToDetail(row)"
-                        title="Lihat Detail Invoice"
-                        class="w-8 h-8 flex items-center justify-center rounded-full
-                               bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors"
-                      >
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
-                                   -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                      </button>
-                    </td>
-                  </tr>
-                </template>
-
-                <!-- Empty State -->
-                <template #empty>
-                  <div class="flex flex-col items-center justify-center py-16 text-gray-400">
-                    <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                    </svg>
-                    <p class="text-sm font-medium text-gray-500">No Records to display</p>
-                  </div>
-                </template>
-              </DataTable>
-            </div>
-
-          </div><!-- /p-6 -->
-
-          <!-- ── Pagination Footer ── -->
-          <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-            <!-- Info -->
-            <span>
-              Showing {{ showingFrom }} to {{ showingTo }} from {{ totalRecords }} records
-            </span>
-
-            <!-- Prev / Next -->
-            <div class="flex items-center gap-1">
-              <button
-                @click="goToPage(currentPage - 1)"
-                :disabled="currentPage === 1"
-                class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                       text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
-                       transition-colors"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-              </button>
-              <button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage >= totalPages"
-                class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                       text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
-                       transition-colors"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </button>
-            </div>
+        <div class="relative shrink-0">
+          <select 
+            v-model="perPage" 
+            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+          >
+            <option :value="5">5</option>
+            <option :value="10">10</option>
+            <option :value="25">25</option>
+            <option :value="50">50</option>
+            <option :value="100">100</option>
+          </select>
+          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+            </svg>
           </div>
+        </div>
+      </div>
 
-        </div><!-- /bg-white card -->
-      </main>
+      <div class="flex-1 overflow-hidden">
+        <DataTable
+          :columns="tableColumns"
+          :data="invoiceData"
+          :loading="isLoading"
+        >
+          <template #body="{ data }">
+            <tr
+              v-for="(row, idx) in data"
+              :key="row.id ?? idx"
+              class="hover:bg-orange-50/40 transition-colors"
+            >
+              <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
+                <template v-if="row.evidence_url && row.evidence_url !== '-'">
+                  <button 
+                    @click="openReceiptModal(row.evidence_url)"
+                    title="Klik untuk melihat receipt"
+                    class="inline-block hover:opacity-80 transition-opacity focus:outline-none"
+                  >
+                    <img 
+                      :src="row.evidence_url" 
+                      alt="Receipt Thumbnail" 
+                      class="w-8 h-8 object-cover rounded shadow-sm border border-gray-200"
+                    />
+                  </button>
+                </template>
+                
+                <template v-else>
+                  {{ row.evidence_url }}
+                </template>
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
+                {{ row.number }}
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
+                {{ row.price }}
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
+                {{ row.payment_total }}
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
+                {{ row.due_date }}
+              </td>
+              <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
+                <div class="flex items-center gap-1.5">
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                    :class="row.status === 'paid'
+                      ? 'bg-green-100 text-green-700'
+                      : row.status === 'unpaid'
+                        ? 'bg-red-100 text-red-600'
+                        : 'bg-gray-100 text-gray-500'"
+                  >
+                    {{ row.status }}
+                  </span>
+                  <span
+                    v-if="row.billing && row.billing !== '-'"
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-600"
+                  >
+                    {{ row.billing }}
+                  </span>
+                </div>
+              </td>
+              <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
+                <button
+                  @click="goToDetail(row)"
+                  title="Lihat Detail Invoice"
+                  class="w-8 h-8 flex items-center justify-center rounded-full
+                         bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
+                             -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </template>
+
+          <template #empty>
+            <div class="flex flex-col items-center justify-center py-16 text-gray-400">
+              <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+              </svg>
+              <p class="text-sm font-medium text-gray-500">No Records to display</p>
+            </div>
+          </template>
+        </DataTable>
+      </div>
+
     </div>
+    
+    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
+      <span>
+        Showing {{ showingFrom }} to {{ showingTo }} from {{ totalRecords }} records
+      </span>
+
+      <div class="flex items-center gap-1">
+        <button
+          @click="goToPage(currentPage - 1)"
+          :disabled="currentPage === 1"
+          class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
+                 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
+                 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        <button
+          @click="goToPage(currentPage + 1)"
+          :disabled="currentPage >= totalPages"
+          class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
+                 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
+                 transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0 scale-95"
+        enter-to-class="opacity-100 scale-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100 scale-100"
+        leave-to-class="opacity-0 scale-95"
+      >
+        <div v-if="isReceiptModalOpen" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
+          <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeReceiptModal"></div>
+
+          <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden z-10 hover:shadow-lg transition-shadow duration-300">
+            
+            <div class="flex items-center justify-between px-6 pt-6 pb-2">
+              <h3 class="text-lg font-bold text-gray-800">Receipt</h3>
+              <button @click="closeReceiptModal" class="text-gray-400 hover:text-gray-800 transition-colors focus:outline-none p-1 rounded-full hover:bg-gray-100">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </button>
+            </div>
+            
+            <div class="p-6 flex justify-center bg-white">
+              <img 
+                :src="selectedReceiptUrl" 
+                alt="Receipt Full Preview" 
+                class="max-w-full max-h-[70vh] object-contain rounded shadow-sm border border-gray-100" 
+              />
+            </div>
+
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
   </div>
 </template>

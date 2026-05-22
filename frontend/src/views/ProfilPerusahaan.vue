@@ -1,12 +1,5 @@
-<template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-      
-      <main class="flex-1 bg-[#F4F6F8] p-4">
+<template>      
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col overflow-y-auto">
             
@@ -187,7 +180,6 @@
           </div>
         </div>
       </main>
-    </div>
 
     <ImageUploadModal
       :isOpen="showUploadModal"
@@ -346,7 +338,6 @@
         </div>
       </div>
     </div>   
-  </div>
 </template>
 
 <style>
@@ -359,7 +350,7 @@ button:focus {
 <script setup>
 import { confirmDelete, showSuccess, showError, showWarning, showToast } from '@/utils/alertHelper'; 
 import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
-import { ref, computed, onMounted, watch } from 'vue'; 
+import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { themeState } from '@/utils/ThemeState'; 
 import { useI18n } from 'vue-i18n';
 
@@ -416,6 +407,11 @@ watch(() => companyProfile.value.headerBg, (newBg) => {
   if (newBg) themeState.headerBg = newBg;
 });
 
+const originalTheme = ref({
+  primaryColor: '#EE9D0F',
+  headerBg: headerbg
+});
+
 const tokenForm = ref({
   name: '',
   scopes: []
@@ -461,6 +457,14 @@ const fetchProfileData = async () => {
       localStorage.setItem('app_tz', companyData.timezone);
     }
     
+    originalTheme.value = {
+      primaryColor: companyProfile.value.primaryColor,
+      headerBg: companyProfile.value.headerBg
+    };
+
+    themeState.primaryColor = originalTheme.value.primaryColor;
+    themeState.headerBg = originalTheme.value.headerBg;
+
   } catch (error) {
     console.error('Gagal memuat profil perusahaan:', error);
   } finally {
@@ -534,6 +538,11 @@ const saveProfile = async () => {
     
     showToast('Profil perusahaan berhasil disimpan!', 'success');
     
+    originalTheme.value = {
+      primaryColor: companyProfile.value.primaryColor,
+      headerBg: companyProfile.value.headerBg
+    };
+
   } catch (error) {
     console.error('Gagal menyimpan profil perusahaan:', error);
     
@@ -675,6 +684,11 @@ const deleteToken = async (id, index) => {
     }
   }
 };
+
+onUnmounted(() => {
+  themeState.primaryColor = originalTheme.value.primaryColor;
+  themeState.headerBg = originalTheme.value.headerBg;
+});
 </script>
 
 <style scoped>

@@ -205,13 +205,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    
-    <Topbar />
-   
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-      <main class="flex-1 bg-[#F4F6F8] p-4">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
             
@@ -358,7 +352,6 @@ onMounted(() => {
 
         </div> 
       </main>
-    </div>
 
     <div v-if="showNotesModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-[550px] p-6 mx-4 relative animate-fade-in-up">
@@ -396,7 +389,7 @@ onMounted(() => {
         
       </div>
     </div>
-    </div>
+
 </template>
 
 <style scoped>
