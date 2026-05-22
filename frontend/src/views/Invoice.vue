@@ -5,7 +5,7 @@ import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import { useRouter } from 'vue-router';
-import { getAllInvoices, confirmInvoice } from '@/services/invoiceService';
+import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const invoiceData   = ref([]);
@@ -19,10 +19,10 @@ const router        = useRouter();
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
-  { key: 'receipt',  label: 'RECEIPT',     sortable: false },
+  { key: 'evidence_url',  label: 'RECEIPT',     sortable: false },
   { key: 'number',   label: 'NUMBER',      sortable: false },
-  { key: 'package',  label: 'PACKAGE',     sortable: false },
-  { key: 'amount',   label: 'AMOUNT (RP)', sortable: false },
+  { key: 'price',  label: 'PACKAGE',     sortable: false },
+  { key: 'payment_total',   label: 'AMOUNT (RP)', sortable: false },
   { key: 'due_date', label: 'DUE DATE',    sortable: false },
   { key: 'status',   label: 'STATUS',      sortable: false },
   { key: 'action',   label: 'ACTION',      sortable: false },
@@ -49,10 +49,10 @@ const fetchInvoices = async () => {
 
     invoiceData.value = items.map(v => ({
       id:       v.id,
-      receipt:  v.receipt_number ?? v.receipt ?? '-',
+      evidence_url:  v.evidence_url_number ?? v.evidence_url ?? '-',
       number:   v.invoice_number ?? v.number  ?? '-',
-      package:  v.package_name   ?? v.package ?? '-',
-      amount:   formatCurrency(v.amount ?? v.total ?? 0),
+      price:  v.price_name   ?? v.price ?? '-',
+      payment_total:   formatCurrency(v.payment_total ?? v.total ?? 0),
       due_date: formatDate(v.due_date ?? v.dueDate ?? null),
       status:   v.status ?? '-',
       billing:  v.billing_type ?? v.billing ?? '-',
@@ -69,7 +69,7 @@ const fetchInvoices = async () => {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const formatDate = (val) => {
-  if (!val) return '-';
+  if (!val) return 'Invalid Date';
   const d = new Date(val);
   if (isNaN(d)) return val;
   return d.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' })
@@ -204,21 +204,38 @@ onMounted(fetchInvoices);
                     :key="row.id ?? idx"
                     class="hover:bg-orange-50/40 transition-colors"
                   >
-                    <!-- RECEIPT -->
-                    <td class="px-4 py-3 text-sm text-gray-700 border-b border-[#EDEDED] font-medium">
-                      {{ row.receipt }}
+                    <!-- evidence_url -->
+                    <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
+                      <template v-if="row.evidence_url && row.evidence_url !== '-'">
+                        <a 
+                          :href="row.evidence_url" 
+                          target="_blank" 
+                          title="Klik untuk melihat receipt"
+                          class="inline-block hover:opacity-80 transition-opacity"
+                        >
+                          <img 
+                            :src="row.evidence_url" 
+                            alt="Receipt" 
+                            class="w-5.5 h-6.5"
+                          />
+                        </a>
+                      </template>
+                      
+                      <template v-else>
+                        {{ row.evidence_url }}
+                      </template>
                     </td>
                     <!-- NUMBER -->
                     <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
                       {{ row.number }}
                     </td>
-                    <!-- PACKAGE -->
+                    <!-- price -->
                     <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      {{ row.package }}
+                      {{ row.price }}
                     </td>
-                    <!-- AMOUNT -->
+                    <!-- payment_total -->
                     <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">
-                      {{ row.amount }}
+                      {{ row.payment_total }}
                     </td>
                     <!-- DUE DATE -->
                     <td class="px-4 py-3 text-sm text-gray-600 border-b border-[#EDEDED]">

@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { getAdminProfile } from '@/services/adminProfileService';
 import { confirmAction } from '@/utils/alertHelper';
+import { themeState } from '@/utils/ThemeState';
 import visitorkulogo from '@/assets/visitorku.png';
 import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
@@ -39,6 +40,29 @@ const profileData = ref({
   email: '-',
   phone: '-',
   profilePict: null
+});
+
+const fetchCompanyTheme = async () => {
+  try {
+    const response = await getProfile();
+    const companyData = response.data || response;
+    
+    if (companyData.brand_color || companyData.primary_color) {
+      themeState.primaryColor = companyData.brand_color || companyData.primary_color;
+    }
+    if (companyData.background_url || companyData.background) {
+      themeState.headerBg = companyData.background_url || companyData.background;
+    }
+  } catch (error) {
+    console.error('Gagal memuat tema perusahaan:', error);
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', closeDropdown);
+  fetchProfileData(); 
+  fetchCompanyTheme(); // 🌟 Panggil fungsinya di sini
+  window.addEventListener('profile-updated', fetchProfileData);
 });
 
 const fetchProfileData = async () => {
@@ -92,13 +116,16 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-50 bg-linear-to-r from-[#EE9D0F] to-[#EE9D0F] h-19 flex items-center justify-between px-6 shadow-sm">    
+  <header 
+    class="sticky top-0 z-50 h-19 flex items-center justify-between px-6 shadow-sm transition-colors duration-300"
+    :style="{ backgroundColor: themeState.primaryColor }"
+  >    
     <div 
-      class="absolute inset-0 pointer-events-none" 
+      class="absolute inset-0 pointer-events-none transition-all duration-300" 
       :style="{ 
-        backgroundImage: `url(${patternBg})`, 
-        backgroundRepeat: 'repeat-x', 
-        backgroundSize: 'auto 100%',
+        backgroundImage: `url(${themeState.headerBg})`, 
+        backgroundRepeat: 'no-repeat', 
+        backgroundSize: 'cover', 
         backgroundPosition: 'center',
         opacity: 0.5
       }"

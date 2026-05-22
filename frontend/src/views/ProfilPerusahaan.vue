@@ -357,12 +357,14 @@ button:focus {
 </style>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { confirmDelete, showSuccess, showError, showWarning, showToast } from '@/utils/alertHelper'; 
+import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
+import { ref, computed, onMounted, watch } from 'vue'; 
+import { themeState } from '@/utils/ThemeState'; 
+
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-import { confirmDelete, showSuccess, showError, showWarning, showToast } from '@/utils/alertHelper'; 
-import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
 import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
@@ -398,6 +400,14 @@ const activeMenuIndex = ref(null);
 const toggleTokenMenu = (index) => {
   activeMenuIndex.value = activeMenuIndex.value === index ? null : index;
 };
+
+watch(() => companyProfile.value.primaryColor, (newColor) => {
+  if (newColor) themeState.primaryColor = newColor;
+});
+
+watch(() => companyProfile.value.headerBg, (newBg) => {
+  if (newBg) themeState.headerBg = newBg;
+});
 
 const tokenForm = ref({
   name: '',
