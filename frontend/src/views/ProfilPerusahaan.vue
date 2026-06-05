@@ -4,35 +4,35 @@
           <div class="p-6 flex-1 flex flex-col overflow-y-auto">
             
             <div class="mb-6">
-              <h1 class="text-2xl font-semibold text-gray-800 mb-1">Profil Perusahaan</h1>
-              <p class="text-sm text-gray-500">Kelola informasi profil perusahaan Anda</p>
+              <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('companyProfile.title') }}</h1>
+              <p class="text-sm text-gray-500">{{ t('companyProfile.subtitle') }}</p>
             </div>
 
             <div class="max-w-225 mx-auto w-full">
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                 <div class="lg:w-55 shrink-0">
-                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Profil</h2>
-                  <p class="text-[13px] text-gray-500 leading-relaxed">Informasi ini digunakan sebagai identitas resmi perusahaan.</p>
+                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">{{ t('companyProfile.profile.heading') }}</h2>
+                  <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.profile.desc') }}</p>
                 </div>
                 <div class="flex-1 space-y-6">
                    <div class="flex items-start gap-4">
                       <div @click="openUploadModal('logo')" class="w-20 h-20 rounded-full bg-linear-to-br from-[#F5A623] to-[#E8920D] shrink-0 relative overflow-hidden cursor-pointer group shadow-md">
                         <img v-if="companyProfile.logoUrl" :src="companyProfile.logoUrl" alt="Logo" class="absolute inset-0 w-full h-full object-cover" />
                         <div v-else class="absolute inset-0 flex items-center justify-center"><span class="text-[30px] font-bold text-white">GM</span></div>
-                        <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-white/90 flex items-center justify-center group-hover:bg-white transition"><span class="text-[11px] font-semibold text-[#EE9D0F]">Ubah</span></div>
+                        <div class="absolute bottom-0 left-0 right-0 h-[20%] bg-white/90 flex items-center justify-center group-hover:bg-white transition"><span class="text-[11px] font-semibold text-[#EE9D0F]">{{ t('companyProfile.profile.changePhoto') }}</span></div>
                       </div>
                       <div class="pt-1 space-y-0.5">
-                        <p class="text-[12px] text-gray-500/70 ">• Ukuran gambar yang direkomendasi: lebar 800px, tinggi 400px</p>
-                        <p class="text-[12px] text-gray-500/70">• Besar file maks.: 2.0MB</p>
-                        <p class="text-[12px] text-gray-500/70">• Format gambar yang diterima : JPG,JPEG,PNG</p>
+                        <p class="text-[12px] text-gray-500/70 ">{{ t('companyProfile.profile.imgRecommended') }}</p>
+                        <p class="text-[12px] text-gray-500/70">{{ t('companyProfile.profile.imgMaxSize') }}</p>
+                        <p class="text-[12px] text-gray-500/70">{{ t('companyProfile.profile.imgFormat') }}</p>
                       </div>
                    </div>
                    <div>
-                    <label class="block text-[13px] font-medium text-gray-700 mb-2">Nama Perusahaan<span class="text-red-400">*</span></label>
-                    <input v-model="companyProfile.name" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition" />
-                   </div>
+                     <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.profile.companyName') }}<span class="text-red-400">*</span></label>
+                     <input v-model="companyProfile.name" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition" />
+                    </div>
                    <div>
-                    <label class="block text-[13px] font-medium text-gray-700 mb-2">Alamat Perusahan<span class="text-red-400">*</span></label>
+                     <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.profile.companyAddress') }}<span class="text-red-400">*</span></label>
                     <textarea v-model="companyProfile.address" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition resize-y min-h-20" rows="3"></textarea>
                    </div>
                 </div>
@@ -41,8 +41,8 @@
 
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                 <div class="lg:w-55 shrink-0">
-                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Warna Brand</h2>
-                  <p class="text-[13px] text-gray-500 leading-relaxed">Pilih tema warna yang diinginkan</p>
+                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">{{ t('companyProfile.brandColor.heading') }}</h2>
+                  <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.brandColor.desc') }}</p>
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center gap-3 mb-3 bg-[#FEF3E2] px-4 py-3 rounded-xl w-fit">
@@ -51,34 +51,34 @@
                     </div>
                     <div><span class="text-[14px] font-mono text-gray-700 tracking-wider">{{ (companyProfile.primaryColor || '#EE9D0F').replace('#', '').toUpperCase() }}</span></div>
                   </div>
-                  <p class="text-[12px] text-gray-500 italic">Pastikan warna memiliki kontras yang cukup.</p>
+                  <p class="text-[12px] text-gray-500 italic">{{ t('companyProfile.brandColor.hint') }}</p>
                 </div>
               </div>
               <hr class="border-gray-200 mb-10" />
 
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                 <div class="lg:w-55 shrink-0">
-                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Sesuaikan Header</h2>
-                  <p class="text-[13px] text-gray-500 leading-relaxed">Anda dapat menyesuaikan header sesuai identitas.</p>
+                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">{{ t('companyProfile.header.heading') }}</h2>
+                  <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.header.desc') }}</p>
                 </div>
                 <div class="flex-1">
                   <div class="w-full rounded-xl overflow-hidden relative cursor-pointer group" @click="openUploadModal('header')">
                     <div class="h-25 w-full bg-linear-to-r from-[#F7941D] to-[#F9A825] flex items-center justify-end px-6 transition-all" :style="companyProfile.headerBg ? { backgroundImage: `url(${companyProfile.headerBg})`, backgroundSize: '100% 100%', backgroundPosition: 'center' } : {}">
                     </div>
                   </div>
-                  <p class="text-[12px] text-[#EE9D0F] mt-2 italic">Pastikan file menggunakan format PNG dengan latar transparan</p>
+                  <p class="text-[12px] text-[#EE9D0F] mt-2 italic">{{ t('companyProfile.header.hint') }}</p>
                 </div>
               </div>
               <hr class="border-gray-200 mb-10" />
 
               <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                 <div class="lg:w-55 shrink-0">
-                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Bahasa &amp; Wilayah</h2>
-                  <p class="text-[13px] text-gray-500 leading-relaxed">Atur bahasa &amp; wilayah</p>
+                  <h2 class="text-[18px] font-semibold text-gray-900 mb-1">{{ t('companyProfile.languageRegion.heading') }}</h2>
+                  <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.languageRegion.desc') }}</p>
                 </div>
                 <div class="flex-1 space-y-5">
                   <div>                       
-                    <label class="block text-[13px] font-medium text-gray-700 mb-2">Bahasa</label>
+                    <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.languageRegion.languageLabel') }}</label>
                     <div class="relative">
                       <select v-model="companyProfile.language" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
                         <option value="Indonesia">Indonesia</option>
@@ -88,7 +88,7 @@
                     </div>
                   </div>
                   <div>
-                    <label class="block text-[13px] font-medium text-gray-700 mb-2">Timezone</label>
+                    <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.languageRegion.timezoneLabel') }}</label>
                     <div class="relative">
                       <select v-model="companyProfile.timezone" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
                         <option value="Asia/Jakarta">Asia/Jakarta</option>
@@ -104,10 +104,10 @@
 
               <div class="mb-0.5">
                 <div class="flex items-center justify-between mb-8">
-                  <h2 class="text-[18px] font-semibold text-gray-900">API Access Token</h2>
+                  <h2 class="text-[18px] font-semibold text-gray-900">{{ t('companyProfile.apiToken.heading') }}</h2>
                   <button @click="openTokenForm" class="inline-flex items-center gap-1.5 text-[#EE9D0F] text-[13px] font-medium hover:underline transition">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#EE9D0F" stroke-width="2"><circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" stroke-linecap="round" /></svg>
-                    Generate API Token
+                    {{ t('companyProfile.apiToken.generateBtn') }}
                   </button>
                 </div>
                 
@@ -115,12 +115,12 @@
                   <div class="flex justify-center mb-4">
                     <img :src="nochathistory" alt="API Icon" class="w-50 h-50 object-contain opacity-80" />
                   </div>
-                  <h3 class="text-[15px] font-semibold text-gray-800 mb-1.5">Generate token untuk memberikan akses API</h3>
-                  <p class="text-[13px] text-gray-500 mb-6">Token digunakan sebagai akses API untuk kebutuhan integrasi sistem.</p>
+                  <h3 class="text-[15px] font-semibold text-gray-800 mb-1.5">{{ t('companyProfile.apiToken.emptyTitle') }}</h3>
+                  <p class="text-[13px] text-gray-500 mb-6">{{ t('companyProfile.apiToken.emptyDesc') }}</p>
                   
                   <button @click="openTokenForm" class="inline-flex items-center gap-2 px-6 py-2.5 border border-[#EE9D0F] text-[#EE9D0F] rounded-lg text-[13px] font-semibold bg-white hover:bg-[#FEF9F0] transition">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#EE9D0F" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" stroke-linecap="round" /></svg>
-                    Generate API Token
+                    {{ t('companyProfile.apiToken.generateBtn') }}
                   </button>
                 </div>
 
@@ -135,9 +135,9 @@
                         </button>
 
                         <div v-if="activeMenuIndex === index" class="absolute right-0 mt-1 bg-white border border-gray-100 rounded-lg shadow-lg z-10 py-1 overflow-hidden min-w-fit">
-                          <button @click="deleteToken(token.id, index)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors whitespace-nowrap">
+                           <button @click="deleteToken(token.id, index)" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors whitespace-nowrap">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                            Hapus Token
+                            {{ t('companyProfile.apiToken.deleteToken') }}
                           </button>
                         </div>
                       </div>
@@ -148,7 +148,7 @@
                     </div>
 
                     <div class="mb-8">
-                      <p class="text-[12px] text-gray-400 mb-1">Scope</p>
+                      <p class="text-[12px] text-gray-400 mb-1">{{ t('companyProfile.apiToken.scope') }}</p>
                       <div v-if="token.scopes && token.scopes.length > 0">
                          <span class="text-[14px] font-bold text-gray-900">
                            {{ token.scopes.join(', ') }}
@@ -157,8 +157,8 @@
                        <p v-else class="text-[14px] font-bold text-gray-900">-</p>
                     </div>
 
-                    <div class="inline-block bg-[#F9FAFB] px-3 py-1.5 rounded-md text-[12px] text-gray-500">
-                       Dibuat oleh <span class="font-bold text-gray-800">Admin</span> pada {{ token.createdAt }}
+                     <div class="inline-block bg-[#F9FAFB] px-3 py-1.5 rounded-md text-[12px] text-gray-500">
+                       {{ t('companyProfile.apiToken.createdBy') }} <span class="font-bold text-gray-800">Admin</span> {{ t('companyProfile.apiToken.createdOn') }} {{ token.createdAt }}
                      </div>
                   </div>
                 </div> <div class="flex justify-end pt-8 pb-4 border-t border-gray-100 mt-10">
@@ -172,7 +172,7 @@
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
                     
-                    {{ isSaving ? 'Menyimpan...' : 'Simpan Perubahan' }}
+                    {{ isSaving ? t('companyProfile.savingBtn') : t('companyProfile.saveBtn') }}
                   </button>
                 </div>
               </div> 
@@ -230,7 +230,7 @@
                 </div>
                 
                 <button @click="toggleScope(index)" class="text-xs font-semibold text-[#F7941D] hover:text-[#d68516] flex items-center gap-1 transition-colors">
-                  {{ scope.isOpen ? 'Tutup' : 'Buka' }}
+                  {{ scope.isOpen ? t('companyProfile.apiToken.scopeModal.close') : t('companyProfile.apiToken.scopeModal.open') }}
                   <svg class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': scope.isOpen }" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </button>
               </div>
@@ -245,7 +245,7 @@
                 </div>
                 <div v-if="scope.isSensitive" class="mt-4 bg-[#FFF8E6] px-4 py-3 rounded-lg flex items-center gap-2 border border-[#FFEAC2]">
                   <svg class="w-5 h-5 text-[#F7941D] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                  <span class="text-xs text-[#d68516] font-medium">Scope ini mengakses data sensitif perusahaan</span>
+                  <span class="text-xs text-[#d68516] font-medium">{{ t('companyProfile.apiToken.scopeModal.sensitiveScope') }}</span>
                 </div>
               </div>
             </div>
@@ -256,10 +256,10 @@
       <template #footer>
         <div class="flex items-center justify-end gap-3 w-full pt-4">
           <button @click="showFormModal = false" class="px-8 py-3 text-sm font-semibold text-[#F7941D] bg-white border-2 border-[#F7941D] hover:bg-[#FFF9F0] rounded-full transition-colors">
-            Cancel
+            {{ t('companyProfile.apiToken.scopeModal.cancel') }}
           </button>
           <button @click="processGenerate" class="px-8 py-3 text-sm font-semibold text-white bg-[#F7941D] hover:bg-[#E8850E] rounded-full transition-colors shadow-md">
-            Generate Token
+            {{ t('companyProfile.apiToken.scopeModal.generateToken') }}
           </button>
         </div>
       </template>
@@ -305,10 +305,10 @@
             <img :src="nochathistory" alt="Success Illustration" class="w-35 h-35 object-contain opacity-90 mx-auto" />
         </div>
 
-        <h3 class="text-[24px] font-bold text-gray-900 mb-2">Token Berhasil Dibuat</h3>
+        <h3 class="text-[24px] font-bold text-gray-900 mb-2">{{ t('companyProfile.apiToken.successModal.title') }}</h3>
         
         <p class="text-[15px] text-gray-500 mb-8">
-          Silakan salin token di bawah ini dan simpan dengan aman.
+          {{ t('companyProfile.apiToken.successModal.desc') }}
         </p>
 
         <div class="w-full bg-[#F4F7FF] border border-[#E0E7FF] rounded-xl p-5 flex items-center justify-between gap-4 mb-8">
@@ -332,7 +332,7 @@
 
         <div class="text-left w-full px-2">
             <p class="text-[13px] text-gray-500 leading-relaxed">
-                <span class="font-bold text-gray-800">Penting:</span> API Access Token ini tidak akan ditampilkan kembali setelah modal ditutup. Jika Anda kehilangan token ini, Anda perlu membuat token baru.
+                <span class="font-bold text-gray-800">{{ t('companyProfile.apiToken.successModal.important') }}</span> {{ t('companyProfile.apiToken.successModal.importantDesc') }}
             </p>
         </div>
       </div>
@@ -352,6 +352,13 @@ import { confirmDelete, showSuccess, showError, showWarning, showToast } from '@
 import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { themeState } from '@/utils/ThemeState'; 
+import { useI18n } from 'vue-i18n';
+
+const { locale, t } = useI18n();
+
+// Mapping antara nilai dropdown (label) dan kode i18n
+const langMap = { 'Indonesia': 'id', 'English': 'en' };
+const langMapReverse = { 'id': 'Indonesia', 'en': 'English' };
 
 import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
@@ -368,7 +375,7 @@ const companyProfile = ref({
   primaryColor: '#EE9D0F',
   headerBg: headerbg,
   logoUrl: null, 
-  language: localStorage.getItem('app_lang') || 'Indonesia',
+  language: langMapReverse[localStorage.getItem('locale')] || localStorage.getItem('app_lang') || 'Indonesia',
   timezone: localStorage.getItem('app_tz') || 'Asia/Jakarta',
   apiToken: null
 });
@@ -437,6 +444,12 @@ const fetchProfileData = async () => {
     if (companyData.language) {
       companyProfile.value.language = companyData.language;
       localStorage.setItem('app_lang', companyData.language);
+      // Sinkronkan locale i18n dengan bahasa yang tersimpan di server
+      const i18nCode = langMap[companyData.language];
+      if (i18nCode) {
+        locale.value = i18nCode;
+        localStorage.setItem('locale', i18nCode);
+      }
     }
     if (companyData.timezone) {
       companyProfile.value.timezone = companyData.timezone;
@@ -630,9 +643,25 @@ const autoSaveLangTz = async () => {
     const payloadLangTz = { language: companyProfile.value.language, timezone: companyProfile.value.timezone };
     localStorage.setItem('app_lang', companyProfile.value.language);
     localStorage.setItem('app_tz', companyProfile.value.timezone);
+
+    // Sinkronkan locale i18n Topbar saat dropdown bahasa diubah
+    const i18nCode = langMap[companyProfile.value.language];
+    if (i18nCode) {
+      locale.value = i18nCode;
+      localStorage.setItem('locale', i18nCode);
+    }
+
     await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
   } catch (error) {}
 };
+
+// Sinkronkan dropdown saat bahasa diubah dari Topbar
+watch(locale, (newLocale) => {
+  const label = langMapReverse[newLocale];
+  if (label && companyProfile.value.language !== label) {
+    companyProfile.value.language = label;
+  }
+});
 
 const deleteToken = async (id, index) => {
   if (!id) { 

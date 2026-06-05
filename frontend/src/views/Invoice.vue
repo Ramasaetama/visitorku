@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
-import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
+import Pagination from '@/components/common/Pagination.vue'; 
 import { useRouter } from 'vue-router';
 import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
 

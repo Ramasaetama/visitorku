@@ -1,5 +1,10 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
+import Sidebar from '@/components/Sidebar.vue';
+import Topbar from '@/components/Topbar.vue';
 import patternBg from '@/assets/Frame 7.svg'; 
 
 // Import fungsi API 
@@ -212,8 +217,13 @@ onMounted(() => {
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="flex flex-col gap-6">
 
+<<<<<<< HEAD
           <div class="bg-white rounded-2xl p-6">
             <h1 class="text-2xl font-semibold text-gray-800 mb-6">Dashboard</h1>
+=======
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h1 class="text-2xl font-semibold text-gray-800 mb-6">{{ t('dashboard.title') }}</h1>
+>>>>>>> a917ca88d165c02de27ddedfd4312079868cfd40
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div class="bg-white rounded-lg p-5 flex items-center gap-4 border border-gray-200 shadow-xs">
                 <div class="w-12 h-12 rounded-full bg-[#FEF4E3] flex items-center justify-center shrink-0">
@@ -225,7 +235,7 @@ onMounted(() => {
                 </div>
                 <div class="flex items-baseline gap-2">
                   <span class="text-xl font-bold text-gray-900 leading-none">{{ counters.visitor_total }}</span>
-                  <span class="text-[14px] text-gray-600 font-medium">Total Visitor</span>
+                  <span class="text-[14px] text-gray-600 font-medium">{{ t('dashboard.totalVisitor') }}</span>
                 </div>
               </div>
 
@@ -239,7 +249,7 @@ onMounted(() => {
                 </div>
                 <div class="flex items-baseline gap-2">
                   <span class="text-xl font-bold text-gray-900 leading-none">{{ counters.visit_total }}</span>
-                  <span class="text-[14px] text-gray-600 font-medium">Total Visit</span>
+                  <span class="text-[14px] text-gray-600 font-medium">{{ t('dashboard.totalVisit') }}</span>
                 </div>
               </div>
 
@@ -251,17 +261,22 @@ onMounted(() => {
                 </div>
                 <div class="flex items-baseline gap-2">
                   <span class="text-xl font-bold text-gray-900 leading-none">{{ counters.user_total }}</span>
-                  <span class="text-[14px] text-gray-600 font-medium">Total User</span>
+                  <span class="text-[14px] text-gray-600 font-medium">{{ t('dashboard.totalUser') }}</span>
                 </div>
               </div>
             </div>
           </div>
 
+<<<<<<< HEAD
           <div class="bg-white rounded-2xl p-6">
             <h2 class="text-[15px] font-bold text-gray-800 mb-4">Satisfaction Index</h2>
+=======
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-[15px] font-bold text-gray-800 mb-4">{{ t('dashboard.satisfactionIndex') }}</h2>
+>>>>>>> a917ca88d165c02de27ddedfd4312079868cfd40
             
             <div v-if="isSatisfactionLoading" class="w-full h-10 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
-              <span class="text-xs text-gray-400">Menghitung data...</span>
+              <span class="text-xs text-gray-400">{{ t('dashboard.calculating') }}</span>
             </div>
 
             <div v-else class="w-full h-10 rounded-lg overflow-hidden flex font-medium text-white text-sm shadow-sm">
@@ -296,8 +311,8 @@ onMounted(() => {
                 </svg>
               </div>
 
-              <div v-if="satisfactionStats.bad === 0 && satisfactionStats.neutral === 0 && satisfactionStats.good === 0" class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
-                Data Tidak Ditemukan
+                <div v-if="satisfactionStats.bad === 0 && satisfactionStats.neutral === 0 && satisfactionStats.good === 0" class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+                {{ t('dashboard.noData') }}
               </div>
             </div>
           </div>
@@ -305,7 +320,7 @@ onMounted(() => {
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col h-[400px]">
               <div class="flex justify-between items-center mb-6 shrink-0">
-                <h2 class="text-[15px] font-bold text-gray-800">Daily Visitor</h2>
+                <h2 class="text-[15px] font-bold text-gray-800">{{ t('dashboard.dailyVisitor') }}</h2>
                 <div class="flex items-center gap-4 text-xs font-medium text-gray-600">
                   <div class="flex items-center gap-1.5">
                     <span class="w-3 h-3 rounded-[2px] bg-[#2D51FD]"></span> Visitor
@@ -317,15 +332,20 @@ onMounted(() => {
               </div>
 
               <div class="flex-1 flex flex-col relative min-h-0">
-                <div v-if="isChartLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">Memuat grafik...</div>
+                <div v-if="isChartLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">{{ t('dashboard.loadingChart') }}</div>
                 <apexchart v-show="!isChartLoading" class="w-full h-full" type="bar" height="100%" width="100%" :options="chartOptions" :series="chartSeries" />
               </div>
             </div>
 
+<<<<<<< HEAD
             <div class="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col h-[400px]">
               <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">Percentage Visitor by Purpose</h2>
+=======
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
+              <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">{{ t('dashboard.percentageByPurpose') }}</h2>
+>>>>>>> a917ca88d165c02de27ddedfd4312079868cfd40
               <div class="flex-1 flex flex-col relative min-h-0">
-                <div v-if="isCategoryLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">Memuat data kategori...</div>
+                <div v-if="isCategoryLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">{{ t('dashboard.loadingCategory') }}</div>
                 <apexchart v-show="!isCategoryLoading" class="w-full h-full" type="donut" height="100%" width="100%" :options="categoryChartOptions" :series="categorySeries" />
               </div>
             </div>
@@ -333,7 +353,7 @@ onMounted(() => {
 
           <div class="bg-white border border-gray-100 p-6 min-h-[350px] flex flex-col">
             <div class="flex justify-between items-center mb-6 shrink-0">
-              <h2 class="text-[15px] font-bold text-gray-800">Monthly Visitor</h2>
+              <h2 class="text-[15px] font-bold text-gray-800">{{ t('dashboard.monthlyVisitor') }}</h2>
               <div class="flex items-center gap-4 text-xs font-medium text-gray-600">
                 <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#2D51FD]"></span> Visitor</div>
                 <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ED9D0F]"></span> Visit</div>
@@ -341,29 +361,34 @@ onMounted(() => {
             </div>
 
             <div class="flex-1 flex flex-col relative min-h-0">
-              <div v-if="isMonthlyChartLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">Memuat grafik bulanan...</div>
+              <div v-if="isMonthlyChartLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">{{ t('dashboard.loadingMonthlyChart') }}</div>
               <apexchart v-show="!isMonthlyChartLoading" class="w-full h-full" type="line" height="100%" width="100%" :options="monthlyChartOptions" :series="monthlyChartSeries" />
             </div>
           </div>
 
+<<<<<<< HEAD
           <div class="bg-white border border-gray-100 p-6">
             <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">Latest Visitor</h2>
+=======
+          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">{{ t('dashboard.latestVisitor') }}</h2>
+>>>>>>> a917ca88d165c02de27ddedfd4312079868cfd40
             <div class="w-full overflow-x-auto hide-scrollbar">
               <table class="w-full text-left border-collapse min-w-[600px]">
                 <thead>
                   <tr class="border-y border-gray-200 bg-[#FEF4E3]" :style="{ backgroundImage: patternBg ? `url(${patternBg})` : 'none', backgroundSize: 'cover' }">
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">Name</th>
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">Purpose</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">{{ t('dashboard.table.name') }}</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">{{ t('dashboard.table.purpose') }}</th>
                     <th @click="toggleSort" class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider cursor-pointer hover:bg-[#FCECD4] transition-colors select-none">
                       <div class="flex items-center gap-1.5 w-max">
-                        Check In
+                        {{ t('dashboard.table.checkIn') }}
                         <svg class="w-3.5 h-3.5 text-gray-800 transition-transform duration-300" :class="{ 'rotate-180': sortOrder === 'asc' }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"></path>
                         </svg>
                       </div>
                     </th>
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">Check Out</th>
-                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider text-center">Face</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider">{{ t('dashboard.table.checkOut') }}</th>
+                    <th class="py-3.5 px-5 text-xs font-bold text-gray-900 uppercase tracking-wider text-center">{{ t('dashboard.table.face') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -371,12 +396,12 @@ onMounted(() => {
                     <td colspan="5" class="py-12 text-center text-gray-400 text-[14px]">
                       <div class="flex flex-col items-center gap-3">
                         <svg class="animate-spin h-6 w-6 text-[#F7941D]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                        Memuat data visitor terbaru...
+                        {{ t('dashboard.loadingLatest') }}
                       </div>
                     </td>
                   </tr>
                   <tr v-else-if="latestVisitors.length === 0">
-                    <td colspan="5" class="py-12 text-center text-gray-400 text-[14px]">Tidak Ada Data Untuk Ditampilkan</td>
+                    <td colspan="5" class="py-12 text-center text-gray-400 text-[14px]">{{ t('dashboard.noLatestData') }}</td>
                   </tr>
                   <tr v-else v-for="visitor in latestVisitors" :key="visitor.id" class="border-b border-gray-100 hover:bg-[#FDF9F2]/50 transition-colors">
                     <td class="py-4 px-5">
