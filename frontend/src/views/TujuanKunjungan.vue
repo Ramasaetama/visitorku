@@ -10,6 +10,9 @@ import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagi
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
 import { ref, onMounted, computed, watch } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
 import { getCategories, getBranches, createCategory, updateCategory, deleteCategory } from '@/services/tujuanService';
@@ -42,13 +45,13 @@ watch(itemsPerPage, () => {
   currentPage.value = 1;
 });
 
-const tableColumns = [
-  { key: 'divisi', label: 'Nama Divisi / Ruangan', sortable: true },
-  { key: 'pic', label: 'Nama PIC', sortable: true },
-  { key: 'jabatan', label: 'Jabatan', sortable: true },
-  { key: 'cabang', label: 'Cabang', sortable: true },
-  { key: 'aksi', label: 'Aksi', sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'divisi',   label: t('purpose.table.division'), sortable: true  },
+  { key: 'pic',      label: t('purpose.table.pic'),      sortable: true  },
+  { key: 'jabatan',  label: t('purpose.table.position'), sortable: true  },
+  { key: 'cabang',   label: t('purpose.table.branch'),   sortable: true  },
+  { key: 'aksi',     label: t('purpose.table.action'),   sortable: false },
+]);
 
 const isLoading = ref(false);
 const showModal = ref(false);
@@ -176,17 +179,17 @@ const handleEditTujuan = (row) => {
 };
 
 const handleDeleteTujuan = async (row) => {
-  const isConfirmed = await confirmDelete(`Tujuan Kunjungan untuk PIC: ${row.pic}`);
+  const isConfirmed = await confirmDelete(`${t('purpose.confirm.deleteLabel')} ${row.pic}`);
 
   if (isConfirmed) {
     try {
       isLoading.value = true;
       await deleteCategory(row.id);
-      showSuccess('Tujuan Kunjungan berhasil dihapus!');
+      showSuccess(t('purpose.success.deleted'));
       fetchDataTujuan();
     } catch (error) {
       console.error('Gagal menghapus data:', error);
-      showError(error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.');
+      showError(error.response?.data?.message || t('purpose.error.deleteFailed'));
     } finally {
       isLoading.value = false;
     }
@@ -209,10 +212,10 @@ const handleSubmitTujuan = async (formData) => {
 
     if (isEditMode.value) {
       await updateCategory(editId.value, payloadCategory);
-      toastMessage.value = 'Tujuan Kunjungan berhasil diperbarui!';
+      toastMessage.value = t('purpose.success.updated');
     } else {
       await createCategory(payloadCategory);
-      toastMessage.value = 'Tujuan Kunjungan berhasil ditambahkan!';
+      toastMessage.value = t('purpose.success.added');
     }
 
     showModal.value = false;
@@ -222,7 +225,7 @@ const handleSubmitTujuan = async (formData) => {
 
   } catch (error) {
     console.log('Detail Penolakan Backend:', error.response?.data);
-    toastMessage.value = error.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.';
+    toastMessage.value = error.response?.data?.message || t('purpose.error.saveFailed');
     showToast.value = true;
   } finally {
     isLoading.value = false; 
@@ -236,18 +239,18 @@ const handleSubmitTujuan = async (formData) => {
         
         <div class="flex items-start justify-between mb-6">
           <div>
-            <h1 class="text-2xl font-semibold text-gray-800 mb-1">Tujuan Kunjungan</h1>
-            <p class="text-sm text-gray-500">Kelola daftar divisi dan penanggung jawab yang dapat dipilih oleh pengunjung.</p>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('purpose.title') }}</h1>
+            <p class="text-sm text-gray-500">{{ t('purpose.subtitle') }}</p>
           </div>
           
           <button 
             @click="handleTambahTujuan"
             class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] 
-                   text-[#F7941D] rounded-sm font-medium text-sm 
+                   text-[#F7941D] rounded-lg font-medium text-sm 
                    hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none"
           >
             <span class="text-lg leading-none">+</span>
-            Tambah Tujuan
+            {{ t('purpose.button.add') }}
           </button>
         </div>
         
@@ -255,14 +258,14 @@ const handleSubmitTujuan = async (formData) => {
           <div class="w-full sm:max-w-md flex-1">
             <SearchInput 
               v-model="searchQuery" 
-              placeholder="Cari berdasarkan nama PIC/Divisi" 
+              :placeholder="t('purpose.searchPlaceholder')"
               @keyup.enter="executeSearch" />
           </div>
 
           <div class="relative shrink-0">
             <select 
               v-model="itemsPerPage" 
-              class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+              class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
             >
               <option :value="5">5</option>
               <option :value="10">10</option>
@@ -279,14 +282,14 @@ const handleSubmitTujuan = async (formData) => {
           
           <button 
             class="flex items-center gap-2 px-4 py-2.5 border-2 border-gray-300 
-                   text-gray-400 rounded-sm font-medium text-[13px] 
+                   text-gray-600 rounded-lg font-medium text-[13px] 
                    hover:bg-gray-50 transition-all focus:outline-none"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
             </svg>
-            Filter lainnya
+            {{ t('purpose.filterBtn') }}
           </button>
         </div>
         
@@ -329,16 +332,16 @@ const handleSubmitTujuan = async (formData) => {
               <EmptyState 
                 v-if="tujuanData.length === 0"
                 :icon="notfound"
-                title="Tujuan Belum Tersedia"
-                description="Tambahkan tujuan terlebih dahulu untuk memulai tujuan kunjungan."
-                buttonText="Tambah Tujuan"
+                :title="t('purpose.empty.noData')"
+                :description="t('purpose.empty.description')"
+                :buttonText="t('purpose.empty.buttonText')"
                 @action="handleTambahTujuan"
               />
               <EmptyState 
                 v-else
                 :icon="notfound"
-                title="No Records to display"
-                :description="`Tidak ada tujuan kunjungan yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                :title="t('userManagement.empty.notFound')"
+                :description="`${t('userManagement.empty.notFoundDesc')} '${appliedSearchQuery}'`"
               />
             </template>
           </DataTable>
@@ -353,11 +356,11 @@ const handleSubmitTujuan = async (formData) => {
       />
       
   </main>
-    
+
   <Modal 
     :show="showModal"
-    :title="isEditMode ? 'Edit Tujuan Kunjungan' : 'Tambah Tujuan Kunjungan'"
-    :description="isEditMode ? 'Ubah informasi divisi dan penanggung jawab.' : 'Masukan informasi divisi dan penanggung jawab yang dapat dipilih oleh pengunjung.'"
+    :title="isEditMode ? t('purpose.modal.editTitle') : t('purpose.modal.addTitle')"
+    :description="isEditMode ? t('purpose.modal.editDesc') : t('purpose.modal.addDesc')"
     width="half"
     @close="handleCloseModal"
   >
@@ -375,20 +378,20 @@ const handleSubmitTujuan = async (formData) => {
           type="button"
           @click="handleCloseModal"
           class="px-5 py-2.5 text-sm font-medium text-gray-600 
-                 border border-gray-300 rounded-sm
+                 border border-gray-300 rounded-lg
                  hover:bg-gray-50 transition-colors focus:outline-none"
         >
-          Batal
+          {{ t('purpose.modal.cancel') }}
         </button>
         <button 
           type="submit"
           form="formTambahTujuan"
           class="px-5 py-2.5 text-sm font-medium text-white 
-                 bg-[#F7941D] rounded-sm
+                 bg-[#F7941D] rounded-lg
                  hover:bg-[#E8850E] transition-colors focus:outline-none"
           :disabled="isLoading"
         >
-          {{ isLoading ? 'Menyimpan...' : 'Simpan Tujuan' }}
+          {{ isLoading ? t('purpose.modal.saving') : t('purpose.modal.save') }}
         </button>
       </div>
     </template>
@@ -407,3 +410,4 @@ button:focus, select:focus {
   box-shadow: none !important;
 }
 </style>
+

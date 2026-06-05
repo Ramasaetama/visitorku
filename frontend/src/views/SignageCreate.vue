@@ -1,11 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
 import { createSignage, uploadSignageFile } from '@/services/signageService';
 import { showSuccess, showError } from '@/utils/alertHelper';
+import { useI18n } from 'vue-i18n';
 
+const { t } = useI18n();
 const router = useRouter();
 
 // ─── Step Management ──────────────────────────────────────────────────────────
@@ -146,7 +146,7 @@ const handleDrop = (e) => {
 const processFile = (file) => {
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
   if (!validTypes.includes(file.type)) {
-    showError('Format file tidak didukung. Gunakan jpg, png, jpeg, atau mp4.');
+    showError(t('signage.error.invalidFormat'));
     return;
   }
 
@@ -207,7 +207,7 @@ const removeFile = (panelIndex) => {
 // ─── Submit ───────────────────────────────────────────────────────────────────
 const handleSubmit = async () => {
   if (!formName.value.trim()) {
-    showError('Nama signage wajib diisi.');
+    showError(t('signage.error.nameRequired'));
     return;
   }
   isSubmitting.value = true;
@@ -262,11 +262,11 @@ const handleSubmit = async () => {
     };
     
     await createSignage(payload);
-    showSuccess('Signage berhasil dibuat.');
+    showSuccess(t('signage.success.created'));
     router.push('/layar-informasi');
   } catch (err) {
     console.error('Gagal membuat signage:', err);
-    showError(err.response?.data?.message || 'Gagal membuat signage.');
+    showError(err.response?.data?.message || t('signage.error.createFailed'));
   } finally {
     isSubmitting.value = false;
   }
@@ -293,9 +293,26 @@ const goBack = () => {
                   </svg>
                 </button>
                 <h1 class="text-xl font-semibold text-gray-800">
-                  {{ currentStep === 1 ? 'Select Layout' : 'Create Signage' }}
+                  {{ currentStep === 1 ? t('signage.create.selectLayout') : t('signage.create.createSignage') }}
                 </h1>
               </div>
+
+              <!-- Breadcrumb -->
+              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>Dashboard</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <router-link to="/layar-informasi" class="hover:text-[#F7941D] transition-colors">{{ t('signage.title') }}</router-link>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-[#F7941D] font-medium">{{ t('signage.create.breadcrumbCreate') }}</span>
+              </nav>
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -334,21 +351,17 @@ const goBack = () => {
 </button>
               </div>
             </div>
-
-            <!-- ══════════════════════════════════════════════════════════ -->
-            <!-- STEP 2: Create Signage Form                               -->
-            <!-- ══════════════════════════════════════════════════════════ -->
             <div v-else class="flex-1 flex flex-col">
               <!-- Name -->
               <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700 mb-1">
-                  Name <span class="text-red-500">*</span>
+                  {{ t('signage.create.fieldName') }} <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="formName"
                   type="text"
-                  placeholder="Enter name here..."
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-sm text-sm
+                  :placeholder="t('signage.create.fieldNamePlaceholder')"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
                          focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
                          transition-colors"
                 />
@@ -356,12 +369,12 @@ const goBack = () => {
 
               <!-- Running Text -->
               <div class="mb-5">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Running Text</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">{{ t('signage.create.fieldRunningText') }}</label>
                 <textarea
                   v-model="formRunningText"
                   rows="3"
-                  placeholder="Enter Running Text Here..."
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-sm text-sm resize-y
+                  :placeholder="t('signage.create.fieldRunningTextPlaceholder')"
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm resize-y
                          focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
                          transition-colors"
                 ></textarea>
@@ -397,7 +410,7 @@ const goBack = () => {
                       ? 'bg-[#FEF3E2] text-[#F7941D] border border-b-0 border-[#F7941D]/40'
                       : 'text-gray-500 hover:bg-gray-50 border border-transparent'"
                   >
-                    Layout {{ pIdx + 1 }}
+                    {{ t('signage.create.layoutPanel', { n: pIdx + 1 }) }}
                   </button>
                 </div>
                 <div class="flex items-center gap-2 text-sm">
@@ -406,7 +419,7 @@ const goBack = () => {
                     @click="changeLayout"
                     class="text-[#F7941D] font-medium hover:underline"
                   >
-                    change
+                    {{ t('signage.create.change') }}
                   </button>
                 </div>
               </div>
@@ -471,8 +484,8 @@ const goBack = () => {
                             d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                   </div>
-                  <p class="text-sm font-medium text-[#F7941D]">Upload a file</p>
-                  <p class="text-xs text-[#F7941D]/60 mt-1">File type: (jpg, png, jpeg, mp4)</p>
+                  <p class="text-sm font-medium text-[#F7941D]">{{ t('signage.create.uploadFile') }}</p>
+                  <p class="text-xs text-[#F7941D]/60 mt-1">{{ t('signage.create.uploadFileHint') }}</p>
                 </div>
 
                 <input
@@ -503,19 +516,20 @@ const goBack = () => {
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                     </svg>
-                    Creating...
+                    {{ t('signage.create.creating') }}
                   </span>
-                  <span v-else>Create</span>
+                  <span v-else>{{ t('signage.create.createBtn') }}</span>
                 </button>
               </div>
             </div>
 
-          </div><!-- /p-6 -->
-        </div><!-- /bg-white card -->
-        <div v-if="showDurationModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+    </div><!-- /p-6 -->
+
+    <!-- Duration Modal -->
+    <div v-if="showDurationModal" class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
       <div class="bg-white rounded-2xl shadow-2xl w-[400px] p-8 text-center transform scale-100 transition-transform">
-        <h2 class="text-[22px] font-bold text-gray-700 mb-2">Image Duration</h2>
-        <p class="text-[15px] text-gray-500 mb-6">Input image duration</p>
+        <h2 class="text-[22px] font-bold text-gray-700 mb-2">{{ t('signage.create.durationModal.title') }}</h2>
+        <p class="text-[15px] text-gray-500 mb-6">{{ t('signage.create.durationModal.desc') }}</p>
 
         <input
           v-model="durationInput"
@@ -529,13 +543,13 @@ const goBack = () => {
             @click="confirmDuration"
             class="px-8 py-2.5 bg-[#F7941D] text-white rounded-sm font-medium hover:bg-[#E8850E] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
           >
-            OK
+            {{ t('signage.create.durationModal.ok') }}
           </button>
           <button
             @click="closeDurationModal"
             class="px-8 py-2.5 bg-[#A3A3A3] text-white rounded-sm font-medium hover:bg-[#8F8F8F] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
           >
-            Cancel
+            {{ t('signage.create.durationModal.cancel') }}
           </button>
         </div>
       </div>

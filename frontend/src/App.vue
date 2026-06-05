@@ -8,7 +8,7 @@ import Sidebar from '@/components/Sidebar.vue'
 const route = useRoute()
 
 const hideLayout = computed(() => {
-  return route.path === '/login' || route.path === '/register' || route.name === 'Login' || route.name === 'Register' || route.meta.hideLayout
+  return route.path === '/login' || route.name === 'Login' || route.path === '/register' || route.name === 'Register' || route.meta.hideLayout
 })
 
 const mainScrollContainer = ref(null)

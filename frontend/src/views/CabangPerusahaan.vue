@@ -9,6 +9,8 @@ import FormTambahCabang from '@/components/cabang/FormTambahCabang.vue';
 import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 import { ref, onMounted, computed, watch } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
@@ -38,10 +40,10 @@ watch(itemsPerPage, () => {
 });
 
 const tableColumns = [
-  { key: 'nama', label: 'Nama Cabang', sortable: true },
-  { key: 'alamat', label: 'Alamat Cabang', sortable: true },
-  { key: 'kontak', label: 'Kontak Cabang', sortable: false },
-  { key: 'aksi', label: 'Aksi', sortable: false },
+  { key: 'nama', label: t('branch.table.name'), sortable: true },
+  { key: 'alamat', label: t('branch.table.address'), sortable: true },
+  { key: 'kontak', label: t('branch.table.contact'), sortable: false },
+  { key: 'aksi', label: t('branch.table.action'), sortable: false },
 ];
 
 const filteredCabangData = computed(() => {
@@ -73,7 +75,7 @@ const fetchBranches = async () => {
     }));
   } catch (error) {
     console.error('Gagal memuat data cabang:', error);
-    toastMessage.value = 'Gagal memuat data cabang';
+    toastMessage.value = t('branch.error.loadFailed');
     showToast.value = true;
   } finally {
     isLoading.value = false;
@@ -105,14 +107,14 @@ const handleSubmitCabang = async (formData) => {
         address: formData.alamatCabang,
         contact: formData.kontakCabang,
       });
-      toastMessage.value = 'Cabang berhasil diperbarui';
+      toastMessage.value = t('branch.success.updated');
     } else {
       await createBranch({
         name: formData.namaCabang,
         address: formData.alamatCabang,
         contact: formData.kontakCabang,
       });
-      toastMessage.value = 'Cabang berhasil ditambahkan';
+      toastMessage.value = t('branch.success.added');
     }
 
     showModal.value = false;
@@ -123,7 +125,7 @@ const handleSubmitCabang = async (formData) => {
   } catch (error) {
     console.error('Gagal menyimpan cabang:', error);
     const backendMessage = error.response?.data?.message || error.response?.data?.error;
-    toastMessage.value = backendMessage || (editingBranch.value ? 'Gagal memperbarui cabang' : 'Gagal menambahkan cabang');
+    toastMessage.value = backendMessage || (editingBranch.value ? t('branch.error.updateFailed') : t('branch.error.addFailed'));
     showToast.value = true;
   }
 };
@@ -179,10 +181,10 @@ const handleDeleteCabang = async (row) => {
   if (isConfirmed) {
     try {
       await deleteBranch(row.id); 
-      showSuccess('Cabang berhasil dihapus.');
+      showSuccess(t('branch.success.deleted'));
       await fetchBranches(); 
     } catch (error) {
-      showError(error.response?.data?.message || 'Gagal menghapus cabang.');
+      showError(error.response?.data?.message || t('branch.error.deleteFailed'));
     }
   }
 };
@@ -194,8 +196,8 @@ const handleDeleteCabang = async (row) => {
     <div class="p-6 flex-1 flex flex-col">
       <div class="flex items-start justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-800 mb-1">Cabang Perusahaan</h1>
-          <p class="text-sm text-gray-500">Kelola lokasi atau unit kerja yang menerima pengunjung.</p>
+          <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('branch.title') }}</h1>
+          <p class="text-sm text-gray-500">{{ t('branch.subtitle') }}</p>
         </div>
         
         <button 
@@ -205,7 +207,7 @@ const handleDeleteCabang = async (row) => {
                  hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none"
         >
           <span class="text-lg leading-none">+</span>
-          Tambah Cabang
+          {{ t('branch.addBtn') }}
         </button>
       </div>
       
@@ -213,7 +215,7 @@ const handleDeleteCabang = async (row) => {
         <div class="w-full sm:max-w-md">
           <SearchInput 
             v-model="searchQuery" 
-            placeholder="Cari Cabang" 
+            :placeholder="t('branch.searchPlaceholder')" 
             @keyup.enter="executeSearch"  
           />
         </div>
@@ -274,16 +276,16 @@ const handleDeleteCabang = async (row) => {
             <EmptyState 
               v-if="cabangData.length === 0"
               :icon="notfound"
-              title="Data Cabang Belum Tersedia"
-              description="Tambahkan minimal satu cabang agar sistem dapat digunakan."
-              buttonText="Tambah Cabang"
+              :title="t('branch.empty.noData')"
+              :description="t('branch.empty.noDataDesc')"
+              :buttonText="t('branch.empty.noDataBtn')"
               @action="handleTambahCabang"
             />
             <EmptyState 
               v-else
               :icon="notfound"
-              title="No Records to display"
-              :description="`Tidak ada cabang yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+              :title="t('branch.empty.notFound')"
+              :description="`${t('branch.empty.notFoundDesc')} '${appliedSearchQuery}'`"
             />
           </template>
         </DataTable>
@@ -302,8 +304,8 @@ const handleDeleteCabang = async (row) => {
 
   <Modal 
     :show="showModal"
-    :title="editingBranch ? 'Edit Cabang' : 'Tambah Cabang'"
-    :description="editingBranch ? 'Ubah informasi cabang.' : 'Masukan informasi cabang yang akan menerima pengunjung.'"
+    :title="editingBranch ? t('branch.modal.editTitle') : t('branch.modal.addTitle')"
+    :description="editingBranch ? t('branch.modal.editDesc') : t('branch.modal.addDesc')"
     width="half"
     @close="handleCloseModal"
   >
@@ -322,7 +324,7 @@ const handleDeleteCabang = async (row) => {
                  border border-gray-300 rounded-sm
                  hover:bg-gray-50 transition-colors focus:outline-none"
         >
-          Batal
+          {{ t('branch.modal.cancel') }}
         </button>
         <button 
           type="submit"
@@ -331,7 +333,7 @@ const handleDeleteCabang = async (row) => {
                  bg-[#F7941D] rounded-sm
                  hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
-          {{ editingBranch ? 'Perbarui Cabang' : 'Simpan Cabang' }}
+          {{ editingBranch ? t('branch.modal.update') : t('branch.modal.save') }}
         </button>
       </div>
     </template>

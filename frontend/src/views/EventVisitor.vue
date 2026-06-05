@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
@@ -22,6 +23,7 @@ import {
   downloadEventExcel,
 } from '@/services/eventService';
 
+const { t } = useI18n();
 const route  = useRoute();
 const router = useRouter();
 const eventId = computed(() => route.params.id);
@@ -43,15 +45,15 @@ const currentPage   = ref(1);
 const totalRecords  = ref(0);
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
-const tableColumns = [
-  { key: 'name',         label: 'Name',         sortable: true  },
-  { key: 'email',        label: 'Email',        sortable: true  },
-  { key: 'phone_number', label: 'Phone Number', sortable: false },
-  { key: 'check_in',    label: 'Check In',     sortable: true  },
-  { key: 'check_out',   label: 'Check Out',    sortable: true  },
-  { key: 'satisfaction', label: 'Satisfaction', sortable: false },
-  { key: 'aksi',        label: 'Action',       sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'name',         label: t('eventVisitor.table.name'),         sortable: true  },
+  { key: 'email',        label: t('eventVisitor.table.email'),        sortable: true  },
+  { key: 'phone_number', label: t('eventVisitor.table.phoneNumber'),  sortable: false },
+  { key: 'check_in',    label: t('eventVisitor.table.checkIn'),      sortable: true  },
+  { key: 'check_out',   label: t('eventVisitor.table.checkOut'),     sortable: true  },
+  { key: 'satisfaction', label: t('eventVisitor.table.satisfaction'), sortable: false },
+  { key: 'aksi',        label: t('eventVisitor.table.action'),       sortable: false },
+]);
 
 // ─── Fetch Event Info ─────────────────────────────────────────────────────────
 const fetchEventInfo = async () => {
@@ -178,7 +180,7 @@ const closeModal = () => { showModal.value = false; };
 
 const handleSubmit = async () => {
   if (!form.value.name || !form.value.email || !form.value.phone_number) {
-    showError('Harap lengkapi semua field yang wajib diisi.');
+    showError(t('eventVisitor.error.requiredFields'));
     return;
   }
   isSaving.value = true;
@@ -186,16 +188,16 @@ const handleSubmit = async () => {
     const payload = { ...form.value, event_id: eventId.value };
     if (isEdit.value) {
       await updateEventVisitor(editingId.value, payload);
-      showSuccess('Visitor berhasil diperbarui.');
+      showSuccess(t('eventVisitor.success.updated'));
     } else {
       await addEventVisitor(payload);
-      showSuccess('Visitor berhasil ditambahkan.');
+      showSuccess(t('eventVisitor.success.added'));
     }
     closeModal();
     await fetchVisitors();
     await fetchCheckInOutCount();
   } catch (err) {
-    showError(err.response?.data?.message || 'Terjadi kesalahan.');
+    showError(err.response?.data?.message || t('eventVisitor.error.generic'));
   } finally {
     isSaving.value = false;
   }
@@ -207,11 +209,11 @@ const handleDelete = async (row) => {
   if (!confirmed) return;
   try {
     await deleteEventVisitor(row.id);
-    showSuccess('Visitor berhasil dihapus.');
+    showSuccess(t('eventVisitor.success.deleted'));
     await fetchVisitors();
     await fetchCheckInOutCount();
   } catch (err) {
-    showError(err.response?.data?.message || 'Gagal menghapus visitor.');
+    showError(err.response?.data?.message || t('eventVisitor.error.deleteFailed'));
   }
 };
 
@@ -223,11 +225,11 @@ const handleFinish = async () => {
   isFinishing.value = true;
   try {
     await finishEvent(eventId.value);
-    showSuccess('Event berhasil diselesaikan.');
+    showSuccess(t('eventVisitor.success.finished'));
     showFinishModal.value = false;
     await fetchEventInfo();
   } catch (err) {
-    showError(err.response?.data?.message || 'Gagal menyelesaikan event.');
+    showError(err.response?.data?.message || t('eventVisitor.error.finishFailed'));
   } finally {
     isFinishing.value = false;
   }
@@ -246,7 +248,7 @@ const handleDownloadExcel = async () => {
     link.remove();
     window.URL.revokeObjectURL(url);
   } catch (err) {
-    showError('Gagal mengunduh file Excel.');
+    showError(t('eventVisitor.error.downloadFailed'));
   }
 };
 
@@ -289,7 +291,7 @@ onMounted(async () => {
                   </svg>
                 </div>
                 <div>
-                  <p class="text-2xl font-bold text-gray-800">{{ checkInCount }} <span class="text-base font-semibold">Check In</span></p>
+                  <p class="text-2xl font-bold text-gray-800">{{ checkInCount }} <span class="text-base font-semibold">{{ t('eventVisitor.checkIn') }}</span></p>
                 </div>
               </div>
 
@@ -300,7 +302,7 @@ onMounted(async () => {
                   </svg>
                 </div>
                 <div>
-                  <p class="text-2xl font-bold text-gray-800">{{ checkOutCount }} <span class="text-base font-semibold">Check Out</span></p>
+                  <p class="text-2xl font-bold text-gray-800">{{ checkOutCount }} <span class="text-base font-semibold">{{ t('eventVisitor.checkOut') }}</span></p>
                 </div>
               </div>
 
@@ -312,14 +314,14 @@ onMounted(async () => {
                   </svg>
                 </div>
                 <div>
-                  <p class="text-2xl font-bold text-gray-800">{{ totalVisitor }} <span class="text-base font-semibold">Total Visitor</span></p>
+                  <p class="text-2xl font-bold text-gray-800">{{ totalVisitor }} <span class="text-base font-semibold">{{ t('eventVisitor.totalVisitor') }}</span></p>
                 </div>
               </div>
             </div>
 
             <!-- Satisfaction Index -->
             <div class="mb-6">
-              <p class="text-sm font-semibold text-gray-700 mb-2">Satisfaction Index</p>
+              <p class="text-sm font-semibold text-gray-700 mb-2">{{ t('eventVisitor.satisfactionIndex') }}</p>
               <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   class="h-full bg-gradient-to-r from-[#F7941D] to-[#F7BC1D] rounded-full transition-all duration-500"
@@ -333,7 +335,7 @@ onMounted(async () => {
               <div class="w-full sm:max-w-md">
                 <SearchInput
                   v-model="searchQuery"
-                  placeholder="Search Visitor"
+                  :placeholder="t('eventVisitor.searchPlaceholder')"
                   @keyup.enter="executeSearch"
                 />
               </div>
@@ -363,7 +365,7 @@ onMounted(async () => {
                 @click="showFinishModal = true"
                 class="flex items-center justify-center gap-2 px-5 py-2 bg-[#FFFFFF] border border-[#FF4C4C] text-[#FF4C4C] text-sm font-medium rounded-md hover:bg-[#FF4C4C] hover:text-white active:scale-95 transition-all focus:outline-none"
               >
-                Finish
+                {{ t('eventVisitor.finish') }}
               </button>
 
               <button
@@ -470,7 +472,7 @@ onMounted(async () => {
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
                     </svg>
-                    <p class="text-sm font-medium text-gray-500">No Records to display</p>
+                    <p class="text-sm font-medium text-gray-500">{{ t('eventVisitor.noRecords') }}</p>
                   </div>
                 </template>
               </DataTable>
@@ -480,7 +482,7 @@ onMounted(async () => {
 
           <!-- Pagination -->
           <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-[13px] text-[#64748B]">
-            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalRecords }} records</span>
+            <span>{{ t('eventVisitor.showing', { from: startIndex, to: endIndex, total: totalRecords }) }}</span>
 
             <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
               <button
@@ -515,7 +517,7 @@ onMounted(async () => {
       <div class="bg-white rounded-sm shadow-xl w-full max-w-md mx-4 relative animate-fade-in-up">
 
         <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
-          <h2 class="text-lg font-semibold text-gray-900">{{ isEdit ? 'Edit Event Visitor' : 'Add Event Visitor' }}</h2>
+          <h2 class="text-lg font-semibold text-gray-900">{{ isEdit ? t('eventVisitor.modal.editTitle') : t('eventVisitor.modal.addTitle') }}</h2>
           <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
               <path d="M6 18L18 6M6 6l12 12"/>
@@ -529,7 +531,7 @@ onMounted(async () => {
             <input
               v-model="form.name"
               type="text"
-              placeholder="Enter name here..."
+              :placeholder="t('eventVisitor.modal.namePlaceholder')"
               class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
             />
           </div>
@@ -538,7 +540,7 @@ onMounted(async () => {
             <input
               v-model="form.email"
               type="email"
-              placeholder="Enter email here..."
+              :placeholder="t('eventVisitor.modal.emailPlaceholder')"
               class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
             />
           </div>
@@ -547,7 +549,7 @@ onMounted(async () => {
             <input
               v-model="form.phone_number"
               type="text"
-              placeholder="Enter phone number here..."
+              :placeholder="t('eventVisitor.modal.phonePlaceholder')"
               class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
             />
           </div>
@@ -558,14 +560,14 @@ onMounted(async () => {
             @click="closeModal"
             class="px-6 py-2 border border-gray-300 rounded-lg text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors focus:outline-none"
           >
-            Cancel
+            {{ t('eventVisitor.modal.cancel') }}
           </button>
           <button
             @click="handleSubmit"
             :disabled="isSaving"
             class="px-6 py-2 bg-[#F7941D] text-white rounded-lg font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {{ isSaving ? 'Loading...' : 'Submit' }}
+            {{ isSaving ? t('eventVisitor.modal.loading') : t('eventVisitor.modal.submit') }}
           </button>
         </div>
       </div>
@@ -580,9 +582,9 @@ onMounted(async () => {
             <path stroke-linecap="round" d="M12 8v4M12 16h.01"/>
           </svg>
         </div>
-        <h2 class="text-xl font-bold text-gray-800 mb-2">Finish Event?</h2>
+        <h2 class="text-xl font-bold text-gray-800 mb-2">{{ t('eventVisitor.finishModal.title') }}</h2>
         <p class="text-sm text-gray-500 mb-6">
-          Finish event "<span class="font-semibold">{{ eventInfo?.name }}</span>".
+          {{ t('eventVisitor.finishModal.desc') }} "<span class="font-semibold">{{ eventInfo?.name }}</span>".
         </p>
         <div class="flex items-center justify-center gap-3">
           <button
@@ -590,13 +592,13 @@ onMounted(async () => {
             :disabled="isFinishing"
             class="px-6 py-2.5 bg-[#F7941D] text-white rounded-lg font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50"
           >
-            {{ isFinishing ? 'Processing...' : 'Yes' }}
+            {{ isFinishing ? t('eventVisitor.finishModal.processing') : t('eventVisitor.finishModal.yes') }}
           </button>
           <button
             @click="showFinishModal = false"
             class="px-6 py-2.5 bg-gray-200 text-gray-600 rounded-lg font-medium text-sm hover:bg-gray-300 transition-colors focus:outline-none"
           >
-            Cancel
+            {{ t('eventVisitor.finishModal.cancel') }}
           </button>
         </div>
       </div>

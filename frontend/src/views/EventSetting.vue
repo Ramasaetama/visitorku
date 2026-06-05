@@ -1,11 +1,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import { showSuccess, showError, confirmDelete } from '@/utils/alertHelper';
 import { getEventById } from '@/services/eventService';
 import api from '@/services/api';
+
+const { t } = useI18n();
 
 const route   = useRoute();
 const router  = useRouter();
@@ -114,7 +117,7 @@ const removeFeedbackField = async (index) => {
 const saveRegister = async () => {
   const invalid = registerFields.value.find(f => !f.name.trim());
   if (invalid) {
-    showError('Semua nama field harus diisi.');
+    showError(t('eventSetting.error.emptyName'));
     return;
   }
   isSavingRegister.value = true;
@@ -132,10 +135,10 @@ const saveRegister = async () => {
     } else {
       await api.post(`/admin/event/${eventId.value}/form`, payload);
     }
-    showSuccess('Form Register berhasil disimpan.');
+    showSuccess(t('eventSetting.success.register'));
     await fetchRegisterFields();
   } catch (err) {
-    showError(err.response?.data?.message || 'Gagal menyimpan Form Register.');
+    showError(err.response?.data?.message || t('eventSetting.error.saveFailed'));
   } finally {
     isSavingRegister.value = false;
   }
@@ -145,7 +148,7 @@ const saveRegister = async () => {
 const saveFeedback = async () => {
   const invalid = feedbackFields.value.find(f => !f.name.trim());
   if (invalid) {
-    showError('Semua nama field harus diisi.');
+    showError(t('eventSetting.error.emptyName'));
     return;
   }
   isSavingFeedback.value = true;
@@ -163,10 +166,10 @@ const saveFeedback = async () => {
     } else {
       await api.post(`/admin/event/${eventId.value}/feedback-form`, payload);
     }
-    showSuccess('Form Feedback berhasil disimpan.');
+    showSuccess(t('eventSetting.success.feedback'));
     await fetchFeedbackFields();
   } catch (err) {
-    showError(err.response?.data?.message || 'Gagal menyimpan Form Feedback.');
+    showError(err.response?.data?.message || t('eventSetting.error.saveFailed'));
   } finally {
     isSavingFeedback.value = false;
   }
@@ -204,8 +207,23 @@ onMounted(async () => {
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                   </svg>
                 </button>
-                <h1 class="text-xl font-semibold text-gray-800">Form Setting</h1>
+                <h1 class="text-xl font-semibold text-gray-800">{{ t('eventSetting.title') }}</h1>
               </div>
+              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span>{{ t('eventSetting.breadcrumb.dashboard') }}</span>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <button @click="router.push('/event')" class="hover:text-[#F7941D] transition-colors">{{ t('eventSetting.breadcrumb.event') }}</button>
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span class="text-[#F7941D] font-medium">{{ t('eventSetting.breadcrumb.setting') }}</span>
+              </nav>
             </div>
 
             <!-- Tabs -->
@@ -217,7 +235,7 @@ onMounted(async () => {
                   ? 'bg-[#FEF3E2] text-[#F7941D] border border-b-0 border-[#F7941D]/40 rounded-t-sm'
                       : 'text-gray-500 hover:bg-gray-50 border border-transparent'"
               >
-                Registers
+                {{ t('eventSetting.tabs.register') }}
               </button>
               <button
                 @click="activeTab = 'feedback'"
@@ -226,7 +244,7 @@ onMounted(async () => {
                       ? 'bg-[#FEF3E2] text-[#F7941D] border border-b-0 border-[#F7941D]/40 rounded-t-sm'
                       : 'text-gray-500 hover:bg-gray-50 border border-transparent'"
               >
-                Feedback
+                {{ t('eventSetting.tabs.feedback') }}
               </button>
             </div>
 
@@ -244,7 +262,7 @@ onMounted(async () => {
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                         d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                 </svg>
-                <p class="text-sm font-medium text-gray-400">Belum ada field. Klik "Add Form" untuk menambahkan.</p>
+                <p class="text-sm font-medium text-gray-400">{{ t('eventSetting.emptyHint') }}</p>
               </div>
 
               <!-- Field Row -->
@@ -268,7 +286,7 @@ onMounted(async () => {
                         :class="field.required ? 'translate-x-6' : 'translate-x-1'"
                       />
                     </button>
-                    <span class="text-sm font-medium text-gray-600">Required</span>
+                    <span class="text-sm font-medium text-gray-600">{{ t('eventSetting.required') }}</span>
                   </div>
 
                   <!-- Delete Button -->
@@ -276,7 +294,7 @@ onMounted(async () => {
                     @click="handleRemove(index)"
                     class="w-8 h-8 flex items-center justify-center rounded-lg text-red-400 hover:bg-red-50 hover:text-red-500 transition-colors focus:outline-none"
                     style="border-radius: 8px;"
-                    title="Hapus Field"
+                    :title="t('eventSetting.deleteTitle')"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                       <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
@@ -289,7 +307,7 @@ onMounted(async () => {
                   <input
                     v-model="field.name"
                     type="text"
-                    placeholder="Enter the column name"
+                    :placeholder="t('eventSetting.fieldPlaceholder')"
                     class="flex-1 text-sm text-gray-700 placeholder-gray-300 border-none outline-none bg-transparent"
                   />
                   <div class="shrink-0 relative">
@@ -320,7 +338,7 @@ onMounted(async () => {
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path d="M12 5v14M5 12h14"/>
                   </svg>
-                  Add Form
+                  {{ t('eventSetting.addForm') }}
                 </button>
 
                 <button
@@ -332,7 +350,7 @@ onMounted(async () => {
                   <svg v-if="isSaving" class="w-4 h-4 animate-spin" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
                   </svg>
-                  {{ isSaving ? 'Saving...' : 'Save Changes' }}
+                  {{ isSaving ? t('eventSetting.saving') : t('eventSetting.saveChanges') }}
                 </button>
                 
               </div>

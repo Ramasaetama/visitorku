@@ -12,6 +12,9 @@ import globeIcon from '@/assets/proicons_globe.svg'
 import adminprofile from '@/assets/adminprofile.png'
 import deleteIcon from '@/assets/delete.svg'
 
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
+
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import { getAdditionalData, updateAdditionalData } 
   from '@/services/pengaturanFormService'
@@ -159,8 +162,9 @@ const saveField = async () => {
     showModal.value = false;
     
     toastMessage.value = editingFieldIndex.value !== null 
-      ? `Field berhasil diperbarui` 
-      : `Field berhasil ditambahkan`;
+      ? t('visitorForm.success.updated') 
+      : t('visitorForm.success.added');
+
     showToast.value = true;
     
   } catch (error) {
@@ -208,16 +212,16 @@ const deleteField = async (index) => {
             <!-- Page Header -->
             <div class="flex items-start justify-between mb-6">
               <div>
-                <h1 class="text-2xl font-semibold text-gray-800 mb-1">Custom Field</h1>
+                <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('visitorForm.title') }}</h1>
                 <p class="text-sm text-gray-500">
-                  Tambahkan field untuk mengumpulkan informasi visitor sesuai kebutuhan Anda.
+                  {{ t('visitorForm.subtitle') }}
                 </p>
               </div>
               <button
                 @click.stop="openModal"
                 class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all"
               >
-                <span class="text-lg leading-none">+</span> Create new field
+                <span class="text-lg leading-none">+</span>  {{ t('visitorForm.createBtn') }}
               </button>
             </div>
 
@@ -226,8 +230,8 @@ const deleteField = async (index) => {
               <table class="w-full">
                 <thead>
                   <tr class="border-b-2 border-gray-200">
-                    <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4 w-1/2">Field Name</th>
-                    <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4">Type</th>
+                    <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4 w-1/2">{{ t('visitorForm.table.fieldName') }}</th>
+                    <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4">{{ t('visitorForm.table.type') }}</th>
                     <th class="py-3 px-4 w-16"></th>
                   </tr>
                 </thead>
@@ -239,7 +243,7 @@ const deleteField = async (index) => {
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
-                        Field default
+                        {{ t('visitorForm.badge.default') }}
                       </span>
                     </td>
                   </tr>
@@ -271,7 +275,7 @@ const deleteField = async (index) => {
                           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                           </svg>
-                          Custom Field
+                          {{ t('visitorForm.badge.custom') }}
                         </span>
                       </td>
                     </tr>
@@ -313,7 +317,7 @@ const deleteField = async (index) => {
                         @click.stop="openModal"
                         class="text-[#F7941D] text-sm font-medium hover:underline"
                       >
-                        + Create field
+                        {{ t('visitorForm.createLink') }}
                       </button>
                     </td>
                   </tr>
@@ -326,28 +330,28 @@ const deleteField = async (index) => {
     <!-- CREATE FIELD MODAL -->
     <Modal
       :show="showModal"
-      :title="editingFieldIndex !== null ? 'Edit Field' : 'Create Field'"  width="half"
+      :title="editingFieldIndex !== null ? t('visitorForm.modal.editTitle') : t('visitorForm.modal.addTitle')"  width="half"
       @close="closeModal"
     >
       <!-- General Section -->
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-gray-900 mb-4">General</h3>
+        <h3 class="text-base font-semibold text-gray-900 mb-4">{{ t('visitorForm.modal.sectionGeneral') }}</h3>
         <Input
           v-model="formData.fieldName"
-          label="Field Name"
-          placeholder="Contoh: Nama Lengkap"
+          :label="t('visitorForm.modal.fieldNameLabel')"
+          :placeholder="t('visitorForm.modal.fieldNamePlaceholder')"
           required
         />
       </div>
 
       <!-- Field Type Section -->
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-gray-900 mb-4">Field Type</h3>
+        <h3 class="text-base font-semibold text-gray-900 mb-4">{{ t('visitorForm.modal.sectionType') }}</h3>
 
         <!-- Field Type Dropdown -->
         <div class="mb-4">
           <label class="text-body-4 font-semibold font-poppins text-gray-900 mb-1 block">
-            Field Name<span class="text-red-500">*</span>
+            {{ t('visitorForm.modal.fieldTypeLabel') }}<span class="text-red-500">*</span>
           </label>
           <div class="relative">
             <select
@@ -369,20 +373,20 @@ const deleteField = async (index) => {
         <!-- Placeholder Text -->
         <Input
           v-model="formData.placeholder"
-          label="Placeholder Text"
-          placeholder="Contoh: Masukkan nama lengkap"
+          :label="t('visitorForm.modal.placeholderLabel')"
+          :placeholder="t('visitorForm.modal.placeholderPlaceholder')"
           required
         />
       </div>
 
       <!-- Settings Section -->
       <div>
-        <h3 class="text-base font-semibold text-gray-900 mb-4">Settings</h3>
+        <h3 class="text-base font-semibold text-gray-900 mb-4">{{ t('visitorForm.modal.sectionSettings') }}</h3>
         <div class="flex items-start gap-3">
           <Toggle v-model="formData.required" />
           <div>
-            <p class="text-sm font-semibold text-gray-900">Required</p>
-            <p class="text-xs text-gray-500 mt-0.5">Aktifkan jika informasi ini harus diisi oleh setiap visitor</p>
+            <p class="text-sm font-semibold text-gray-900">{{ t('visitorForm.modal.requiredLabel') }}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{{ t('visitorForm.modal.requiredDesc') }}</p>
           </div>
         </div>
       </div>
@@ -395,7 +399,7 @@ const deleteField = async (index) => {
             @click="closeModal"
             class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm  hover:bg-gray-50 transition-colors"
           >
-            Cancel
+            {{ t('visitorForm.modal.cancel') }}
           </button>
           
           <button
@@ -409,7 +413,7 @@ const deleteField = async (index) => {
                 : 'text-white bg-gray-300 cursor-not-allowed'
             ]"
           >
-            {{ editingFieldIndex !== null ? 'Save Changes' : 'Create Field' }}
+            {{ editingFieldIndex !== null ? t('visitorForm.modal.save') : t('visitorForm.modal.create') }}
           </button>
         </div>
       </template>

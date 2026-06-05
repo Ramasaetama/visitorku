@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
@@ -13,6 +14,7 @@ import {
   downloadEventFeedbackExcel,
 } from '@/services/eventService';
 
+const { t } = useI18n();
 const route  = useRoute();
 const router = useRouter();
 const eventId = computed(() => route.params.id);
@@ -31,12 +33,12 @@ const currentPage   = ref(1);
 const totalRecords  = ref(0);
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
-const tableColumns = [
-  { key: 'name',         label: 'NAME',         sortable: true  },
-  { key: 'notes',        label: 'NOTES',        sortable: false },
-  { key: 'satisfaction', label: 'SATISFACTION', sortable: false },
-  { key: 'aksi',         label: 'ACTION',       sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'name',         label: t('eventFeedback.table.name'),         sortable: true  },
+  { key: 'notes',        label: t('eventFeedback.table.notes'),        sortable: false },
+  { key: 'satisfaction', label: t('eventFeedback.table.satisfaction'), sortable: false },
+  { key: 'aksi',         label: t('eventFeedback.table.action'),       sortable: false },
+]);
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('name');
@@ -135,7 +137,7 @@ const handleDownloadExcel = async () => {
     link.remove();
     window.URL.revokeObjectURL(url);
   } catch (err) {
-    showError('Gagal mengunduh file Excel.');
+    showError(t('eventFeedback.error.downloadFailed'));
   }
 };
 
@@ -202,7 +204,7 @@ onMounted(async () => {
               <div class="w-full sm:max-w-md">
                 <SearchInput
                   v-model="searchQuery"
-                  placeholder="Search Feedback"
+                  :placeholder="t('eventFeedback.searchPlaceholder')"
                   @keyup.enter="executeSearch"
                 />
               </div>
@@ -303,7 +305,7 @@ onMounted(async () => {
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
                     </svg>
-                    <p class="text-sm font-medium text-gray-500">No Records to display</p>
+                    <p class="text-sm font-medium text-gray-500">{{ t('eventFeedback.noRecords') }}</p>
                   </div>
                 </template>
               </DataTable>
@@ -313,7 +315,7 @@ onMounted(async () => {
 
           <!-- Pagination -->
           <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-[13px] text-[#64748B]">
-            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalRecords }} records</span>
+            <span>{{ t('eventFeedback.showing', { from: startIndex, to: endIndex, total: totalRecords }) }}</span>
 
             <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
               <button
