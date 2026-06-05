@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
@@ -12,6 +13,9 @@ import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagi
 import SettingIcon from '@/assets/settings-3-line.svg';
 import DeleteIcon from '@/assets/delete.svg';
 import EditIcon from '@/assets/edit-box-line.svg';
+import EmptyState from '@/components/common/EmptyState.vue';
+import notfound from '@/assets/notfound.svg';
+
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import {
   getAllEvents,
@@ -20,6 +24,7 @@ import {
   deleteEvent,
 } from '@/services/eventService';
 
+const { t } = useI18n();
 const router = useRouter();
 
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -32,14 +37,14 @@ const currentPage  = ref(1);
 const totalRecords = ref(0);
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
-const tableColumns = [
-  { key: 'name',             label: 'Name',             sortable: true,  width: 'w-[20%]' },
-  { key: 'start_at',         label: 'Event Start',      sortable: true,  width: 'w-[16%]' },
-  { key: 'finish_at',        label: 'Event Finish',     sortable: true,  width: 'w-[16%]' },
-  { key: 'url_registration', label: 'URL Registration', sortable: false, width: 'w-[16%]' },
-  { key: 'location_url',     label: 'URL Location',     sortable: false, width: 'w-[16%]' },
-  { key: 'aksi',             label: 'Action',           sortable: false, width: 'w-[16%]' },
-];
+const tableColumns = computed(() => [
+  { key: 'name',             label: t('event.table.name'),            sortable: true,  width: 'w-[20%]' },
+  { key: 'start_at',         label: t('event.table.eventStart'),      sortable: true,  width: 'w-[16%]' },
+  { key: 'finish_at',        label: t('event.table.eventFinish'),     sortable: true,  width: 'w-[16%]' },
+  { key: 'url_registration', label: t('event.table.urlRegistration'), sortable: false, width: 'w-[16%]' },
+  { key: 'location_url',     label: t('event.table.urlLocation'),     sortable: false, width: 'w-[16%]' },
+  { key: 'aksi',             label: t('event.table.action'),          sortable: false, width: 'w-[16%]' },
+]);
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('name');
@@ -166,13 +171,13 @@ const validateDates = () => {
   const regFinish   = form.value.registration_finish_at ? new Date(form.value.registration_finish_at) : null;
 
   if (eventStart && eventFinish && eventFinish <= eventStart) {
-    dateErrors.value.event_finish_at = 'Waktu selesai event harus setelah waktu mulai event.';
+    dateErrors.value.event_finish_at = t('event.validation.finishAfterStart');
   }
   if (regStart && regFinish && regFinish <= regStart) {
-    dateErrors.value.registration_finish_at = 'Waktu selesai registrasi harus setelah waktu mulai registrasi.';
+    dateErrors.value.registration_finish_at = t('event.validation.regFinishAfterStart');
   }
   if (regStart && eventStart && regStart >= eventStart) {
-    dateErrors.value.registration_start_at = 'Waktu mulai registrasi harus sebelum waktu mulai event.';
+    dateErrors.value.registration_start_at = t('event.validation.regStartBeforeEvent');
   }
 };
 
@@ -227,13 +232,13 @@ const closeModal = () => {
 
 const handleSubmit = async () => {
   if (!form.value.name || !form.value.description || !form.value.start_at || !form.value.finish_at || !form.value.registration_start_at || !form.value.registration_finish_at) {
-    showError('Harap lengkapi semua field yang wajib diisi.');
+    showError(t('event.validation.requiredFields'));
     return;
   }
 
   validateDates();
   if (hasDateErrors.value) {
-    showError('urutan tanggal yang dimasukkan salah.');
+    showError(t('event.validation.invalidDates'));
     return;
   }
 
@@ -242,15 +247,15 @@ const handleSubmit = async () => {
     const payload = { ...form.value };
     if (isEdit.value) {
       await updateEvent(editingId.value, payload);
-      showSuccess('Event berhasil diperbarui.');
+      showSuccess(t('event.success.updated'));
     } else {
       await createEvent(payload);
-      showSuccess('Event berhasil ditambahkan.');
+      showSuccess(t('event.success.added'));
     }
     closeModal();
     await fetchEvents();
   } catch (err) {
-    showError(err.response?.data?.message || 'Terjadi kesalahan.');
+    showError(err.response?.data?.message || t('event.error.generic'));
   } finally {
     isSaving.value = false;
   }
@@ -262,10 +267,10 @@ const handleDelete = async (row) => {
   if (!confirmed) return;
   try {
     await deleteEvent(row.id);
-    showSuccess('Event berhasil dihapus.');
+    showSuccess(t('event.success.deleted'));
     await fetchEvents();
   } catch (err) {
-    showError(err.response?.data?.message || 'Gagal menghapus event.');
+    showError(err.response?.data?.message || t('event.error.deleteFailed'));
   }
 };
 
@@ -275,7 +280,7 @@ const goToEventSetting  = (row) => router.push(`/event/${row.id}/setting`);
 
 const copyUrl = (url) => {
   if (url && url !== '-') {
-    navigator.clipboard.writeText(url).then(() => showSuccess('URL berhasil disalin!'));
+    navigator.clipboard.writeText(url).then(() => showSuccess(t('event.success.urlCopied')));
   }
 };
 
@@ -286,6 +291,7 @@ onMounted(fetchEvents);
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col">
 
+<<<<<<< HEAD
       <div class="flex items-start justify-between mb-6">
         <div>
           <h1 class="text-2xl font-semibold text-gray-800 mb-1">Event</h1>
@@ -310,6 +316,195 @@ onMounted(fetchEvents);
             @keyup.enter="executeSearch"
           />
         </div>
+=======
+            <!-- Header -->
+            <div class="flex items-start justify-between mb-6">
+              <div>
+                <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('event.title') }}</h1>
+                <p class="text-sm text-gray-500">{{ t('event.subtitle') }}</p>
+              </div>  
+              <button
+                @click="openAddModal"
+                class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
+                       text-[#F7941D] text-sm font-medium rounded-lg
+                       hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
+              >
+                <span class="text-lg leading-none">+</span>
+                {{ t('event.createButton') }}
+              </button>              
+            </div>
+
+            <!-- Toolbar -->
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+              <div class="w-full sm:max-w-md">
+                <SearchInput
+                  v-model="searchQuery"
+                  :placeholder="t('event.searchPlaceholder')"
+                  @keyup.enter="executeSearch"
+                />
+              </div>
+
+              <div class="relative shrink-0">
+                <select
+                  v-model="perPage"
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+                >
+                  <option :value="5">5</option>
+                  <option :value="10">10</option>
+                  <option :value="25">25</option>
+                  <option :value="50">50</option>
+                  <option :value="100">100</option>
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="flex-1" />
+            </div>
+
+            <!-- Table -->
+            <div class="flex-1 overflow-hidden">
+              <DataTable
+                :columns="tableColumns"
+                :data="eventData"
+                :loading="isLoading"
+                :sort-key="sortKey"
+                :sort-order="sortOrder"
+                @sort="handleSort"
+              >
+                <template #url_location="{ row }">
+                  <div v-if="row.location_url && row.location_url !== ''" class="flex items-center gap-2">
+                    <a
+                      :href="row.location_url"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-[13px] text-blue-500 truncate max-w-[150px] hover:underline"
+                      :title="row.location_url"
+                    >{{ row.location_url }}</a>
+                    <button
+                      @click="copyUrl(row.location_url)"
+                      class="shrink-0 w-[26px] h-[26px] rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
+                      title="Copy URL Lokasi"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <span v-else class="text-gray-400">-</span>
+                </template>
+
+                <template #url_registration="{ row }">
+                  <div v-if="row.url_registration && row.url_registration !== '-'" class="flex items-center gap-2">
+                    <a 
+                      :href="row.url_registration" 
+                      target="_blank" 
+                      class="text-[13px] text-gray-800 truncate max-w-40"
+                    >
+                      {{ row.url_registration }}
+                    </a>
+                    <button
+                      @click="copyUrl(row.url_registration)"
+                      class="shrink-0 w-6.5 h-6.5 rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
+                      title="Copy URL"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <span v-else class="text-gray-400">-</span>
+                </template>
+
+                <template #location_url="{ row }">
+                  <div v-if="row.location_url && row.location_url !== '-'" class="flex items-center gap-2">
+                    <a 
+                      :href="row.location_url" 
+                      target="_blank" 
+                      class="text-[13px] text-gray-800 truncate max-w-40"
+                    >
+                      {{ row.location_url }}
+                    </a>
+                    <button
+                      @click="copyUrl(row.location_url)"
+                      class="shrink-0 w-6.5 h-6.5 rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
+                      title="Copy URL"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                      </svg>
+                    </button>
+                  </div>
+                  <span v-else class="text-gray-400">-</span>
+                </template>
+
+              <template #aksi="{ row }">
+  <div class="flex items-center gap-2">
+
+    <!-- Visitor -->
+    <button
+      @click="goToEventVisitor(row)"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      style="background: #EEF2FF;"
+      title="Event Visitor"
+    >
+      <svg class="w-4.5 h-4.5 text-[#4075FF]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+    </button>
+
+    <!-- Setting -->
+    <button
+      @click="goToEventSetting(row)"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      style="background: #FFF7E6;"
+      title="Event Setting"
+    >
+      <svg class="w-4.5 h-4.5 text-[#F7941D]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+
+    <!-- Edit -->
+    <button
+      @click="openEditModal(row)"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      style="background: #E6F4FF;"
+      title="Edit Event"
+    >
+      <img :src="EditIcon" alt="Edit" class="w-4.5 h-4.5" />
+    </button>
+
+    <!-- Delete -->
+    <button
+      @click="handleDelete(row)"
+      class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
+      style="background: #FFEEEE;"
+      title="Delete Event"
+    >
+      <img :src="DeleteIcon" alt="Delete" class="w-4.5 h-4.5" />
+    </button>
+
+  </div>
+</template>
+
+                <template #empty>
+                  <EmptyState
+                    :icon="notfound"
+                    :title="t('event.noRecords')"
+                  />
+                </template>
+              </DataTable>
+            </div>
+>>>>>>> 15c0d84 (style: menyamakan icon empty state di halaman signage dan event)
 
         <div class="relative shrink-0">
           <select
@@ -327,6 +522,7 @@ onMounted(fetchEvents);
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
             </svg>
           </div>
+<<<<<<< HEAD
         </div>
       </div>
 
@@ -361,6 +557,183 @@ onMounted(fetchEvents);
             </div>
             <span v-else class="text-gray-400">-</span>
           </template>
+=======
+
+          <!-- Pagination -->
+          <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-[13px] text-[#64748B]">
+            <span>{{ t('event.showing', { from: startIndex, to: endIndex, total: totalRecords }) }}</span>
+
+            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+              <button
+                @click="goToPage(currentPage - 1)"
+                :disabled="currentPage === 1"
+                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+              </button>
+
+              <button
+                v-for="page in visiblePages"
+                :key="page"
+                @click="goToPage(page)"
+                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
+                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
+              >
+                {{ page }}
+              </button>
+
+              <button
+                @click="goToPage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+    <!-- ─── Add / Edit Event Modal (side-over) ─── -->
+    <Modal
+      :show="showModal"
+      :title="isEdit ? t('event.modal.editTitle') : t('event.modal.addTitle')"
+      :description="isEdit ? t('event.modal.editDesc') : t('event.modal.addDesc')"
+      width="half"
+      @close="closeModal"
+    >
+      <!-- Body Form -->
+      <div class="space-y-5">
+        <!-- Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.eventName') }} <span class="text-red-500">*</span></label>
+          <input
+            v-model="form.name"
+            type="text"
+            :placeholder="t('event.modal.eventNamePlaceholder')"
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.description') }} <span class="text-red-500">*</span></label>
+          <textarea
+            v-model="form.description"
+            rows="3"
+            :placeholder="t('event.modal.descriptionPlaceholder')"
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Location -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.location') }}</label>
+          <textarea
+            v-model="form.location"
+            rows="2"
+            :placeholder="t('event.modal.locationPlaceholder')"
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          ></textarea>
+        </div>
+
+        <!-- Location URL -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.locationUrl') }}</label>
+          <input
+            v-model="form.location_url"
+            type="text"
+            :placeholder="t('event.modal.locationUrlPlaceholder')"
+            class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          />
+        </div>
+
+        <!-- Event Start At -->
+        <DateTimePicker
+          v-model="form.start_at"
+          :label="t('event.modal.startAt')"
+          :required="true"
+        />
+
+        <!-- Event Finish At -->
+        <div>
+          <DateTimePicker
+            v-model="form.finish_at"
+            :label="t('event.modal.finishAt')"
+            :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.event_finish_at }"
+          />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.event_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.event_finish_at }}
+            </p>
+          </Transition>
+        </div>
+
+        <!-- Registration Start At -->
+        <div>
+          <DateTimePicker
+            v-model="form.registration_start_at"
+            :label="t('event.modal.regStartAt')"
+            :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_start_at }"
+          />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.registration_start_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.registration_start_at }}
+            </p>
+          </Transition>
+        </div>
+
+        <!-- Registration Finish At -->
+        <div>
+          <DateTimePicker
+            v-model="form.registration_finish_at"
+            :label="t('event.modal.regFinishAt')"
+            :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_finish_at }"
+          />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.registration_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.registration_finish_at }}
+            </p>
+          </Transition>
+        </div>
+      </div>
+
+      <!-- Footer Slot -->
+      <template #footer>
+        <div class="flex items-center justify-end gap-3">
+          <button
+            type="button"
+            @click="closeModal"
+            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          >
+            {{ t('event.modal.cancel') }}
+          </button>
+          <button
+            type="button"
+            @click="handleSubmit"
+            :disabled="isSaving || hasDateErrors"
+            :title="hasDateErrors ? t('event.modal.checkDates') : ''"
+            class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            :class="hasDateErrors ? 'bg-gray-400' : 'bg-[#F7941D] hover:bg-[#E8850E]'"
+          >
+            {{ isSaving ? t('event.modal.saving') : (isEdit ? t('event.modal.update') : t('event.modal.add')) }}
+          </button>
+        </div>
+      </template>
+    </Modal>
+>>>>>>> 15c0d84 (style: menyamakan icon empty state di halaman signage dan event)
 
           <template #url_registration="{ row }">
             <div v-if="row.url_registration && row.url_registration !== '-'" class="flex items-center gap-2">
