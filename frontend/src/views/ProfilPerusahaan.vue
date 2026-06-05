@@ -1,6 +1,6 @@
-<template>      
-  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
+<template> 
+  <div class="w-full h-full flex flex-col">   
+    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-6 flex-1 flex flex-col overflow-y-auto">
             
             <div class="mb-6">
@@ -102,7 +102,7 @@
               </div>
               <hr class="border-gray-200 mb-10" />
 
-              <div class="mb-10">
+              <div class="mb-0.5">
                 <div class="flex items-center justify-between mb-8">
                   <h2 class="text-[18px] font-semibold text-gray-900">API Access Token</h2>
                   <button @click="openTokenForm" class="inline-flex items-center gap-1.5 text-[#EE9D0F] text-[13px] font-medium hover:underline transition">
@@ -178,7 +178,6 @@
               </div> 
             </div>
           </div>
-        </div>
       </main>
 
     <ImageUploadModal
@@ -337,7 +336,8 @@
             </p>
         </div>
       </div>
-    </div>   
+    </div>  
+  </div> 
 </template>
 
 <style>
@@ -365,7 +365,7 @@ const companyProfile = ref({
   id: '', 
   name: '',
   address: '',
-  primaryColor: '',
+  primaryColor: '#EE9D0F',
   headerBg: headerbg,
   logoUrl: null, 
   language: localStorage.getItem('app_lang') || 'Indonesia',
@@ -433,8 +433,7 @@ const fetchProfileData = async () => {
     companyProfile.value.address = companyData.address || '';
     companyProfile.value.logoUrl = companyData.picture_url || companyData.logo || null; 
     companyProfile.value.headerBg = companyData.background_url || companyData.background || headerbg;
-    companyProfile.value.primaryColor = companyData.brand_color || companyData.primary_color || '';
-    
+    companyProfile.value.primaryColor = companyData.primary_color || companyData.primary_color || '#EE9D0F';      
     if (companyData.language) {
       companyProfile.value.language = companyData.language;
       localStorage.setItem('app_lang', companyData.language);
@@ -508,10 +507,11 @@ const saveProfile = async () => {
       return;
     }
 
+    // 🌟 FIX: Masukkan primary_color ke dalam payload agar terbaca oleh Swagger/Backend
     const payloadProfile = {
       name: companyProfile.value.name,
       address: companyProfile.value.address,
-      // Hapus pengiriman email & phone karena ini endpoint company
+      primary_color: companyProfile.value.primaryColor,
     };
     
     // TEMBAK KE ENDPOINT COMPANY

@@ -7,9 +7,9 @@ import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import FormTambahPengguna from '@/components/pengguna/FormTambahPengguna.vue';
 import FormPermissionPengguna from '@/components/pengguna/FormPermissionPengguna.vue'; 
+import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
-
 
 import keyline from '@/assets/icons/key-line.svg';
 import editIcon from '@/assets/icons/edit-box-line.svg';
@@ -85,35 +85,13 @@ const sortedData = computed(() => {
   });
 });
 
+// LOGIKA PAGINATION FRONTEND SLICE
 const totalItems = computed(() => filteredData.value.length);
-const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
-const startIndex = computed(() => totalItems.value === 0 ? 0 : ((currentPage.value - 1) * itemsPerPage.value) + 1);
-const endIndex = computed(() => Math.min(currentPage.value * itemsPerPage.value, totalItems.value));
-
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
   return sortedData.value.slice(start, end);
 });
-
-const visiblePages = computed(() => {
-  const maxVisible = 5; 
-  let start = Math.max(1, currentPage.value - 2);
-  let end = start + maxVisible - 1;
-  if (end > totalPages.value) {
-    end = totalPages.value;
-    start = Math.max(1, end - maxVisible + 1);
-  }
-  let pages = [];
-  for (let i = start; i <= end; i++) pages.push(i);
-  return pages;
-});
-
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
-    currentPage.value = page;
-  }
-};
 
 const fetchAllData = async () => {
   isLoading.value = true;
@@ -142,7 +120,7 @@ const fetchAllData = async () => {
         branch_id: user.branch_id || '', 
         branch_name: namaCabang,
         permissions: user.permissions || [],
-        is_owner: user.is_owner || false // Mapping atribut is_owner dari API
+        is_owner: user.is_owner || false
       };
     });
   } catch (error) {
@@ -152,27 +130,8 @@ const fetchAllData = async () => {
   }
 };
 
-const activeDropdown = ref(null);
-const dropdownPos = ref({ top: 0, left: 0 });
-
-const toggleDropdown = (event, id) => {
-  if (activeDropdown.value === id) {
-    activeDropdown.value = null;
-  } else {
-    const rect = event.currentTarget.getBoundingClientRect();
-    dropdownPos.value = {
-      top: rect.bottom + 6,
-      left: rect.left 
-    };
-    activeDropdown.value = id;
-  }
-};
-
 onMounted(() => {
   fetchAllData();
-  window.addEventListener('scroll', () => {
-    if (activeDropdown.value) activeDropdown.value = null;
-  }, true);
 });
 
 const showModal = ref(false);
@@ -212,7 +171,6 @@ const handleSubmitPengguna = async (formData) => {
 };
 
 const handleEditPengguna = (row) => {
-  activeDropdown.value = null; 
   editingUser.value = {
     id: row.id,
     name: row.name,
@@ -225,7 +183,6 @@ const handleEditPengguna = (row) => {
 };
 
 const handlePermission = (row) => {
-  activeDropdown.value = null; 
   editingPermissionUser.value = {
     id: row.id,
     name: row.name,
@@ -247,7 +204,6 @@ const handleSubmitPermission = async (data) => {
 };
 
 const handleDeletePengguna = async (row) => {
-  activeDropdown.value = null; 
   const isConfirmed = await confirmDelete('Pengguna');
   if (isConfirmed) {
     try {
@@ -267,209 +223,182 @@ const handleCloseToast = () => {
 
 <template>
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-        <div class="bg-white rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden relative">
-          <div class="p-6 flex-1 flex flex-col min-h-0">
-            
-            <div class="flex items-start justify-between mb-6 shrink-0">
-              <div>
-                <h1 class="text-2xl font-semibold text-gray-800 mb-1">Manajemen Pengguna</h1>
-                <p class="text-sm text-gray-500">Kelola Informasi Pengguna.</p>
-              </div>
-              <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
-                <span class="text-lg leading-none">+</span> Tambah Pengguna
-              </button>
+    <div class="bg-white rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden relative">
+      <div class="p-6 flex-1 flex flex-col min-h-0">
+        
+        <div class="flex items-start justify-between mb-6 shrink-0">
+          <div>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-1">Manajemen Pengguna</h1>
+            <p class="text-sm text-gray-500">Kelola Informasi Pengguna.</p>
+          </div>
+          <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
+            <span class="text-lg leading-none">+</span> Tambah Pengguna
+          </button>
+        </div>
+        
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4 shrink-0">
+          <div class="w-full sm:max-w-md flex-1">
+            <SearchInput v-model="searchQuery" placeholder="Cari Pengguna" @keyup.enter="executeSearch" />
+          </div>
+          <div class="relative shrink-0">
+            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
+              <option :value="5">5</option>
+              <option :value="10">10</option>
+              <option :value="25">25</option>
+              <option :value="50">50</option>
+              <option :value="100">100</option>
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+              </svg>
             </div>
-            
-            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4 shrink-0">
-              <div class="w-full sm:max-w-md flex-1">
-                <SearchInput v-model="searchQuery" placeholder="Cari Pengguna" @keyup.enter="executeSearch" />
-              </div>
-              <div class="relative shrink-0">
-                <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
-                  <option :value="5">5</option>
-                  <option :value="10">10</option>
-                  <option :value="25">25</option>
-                  <option :value="50">50</option>
-                  <option :value="100">100</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
+          </div>
+        </div>
+        
+        <div class="flex-1 overflow-auto">
+          <DataTable 
+            :columns="tableColumns"               
+            :data="paginatedData" 
+            :loading="isLoading"
+            :sort-key="sortKey"
+            :sort-order="sortOrder"
+            @sort="handleSort"
+          >
+            <template #aksi="{ row }">
+              <div class="flex items-center gap-2">
+                <button
+                  v-if="!row.is_owner"
+                  @click="handlePermission(row)"
+                  class="w-[30px] h-[30px] rounded bg-[#F7941D] flex items-center justify-center hover:bg-[#E8850E] transition-colors focus:outline-none"
+                  title="Hak Akses"
+                >
+                  <img :src="keyline" class="w-[15px] h-[15px] brightness-0 invert" alt="permission" />
+                </button>
+
+                <button
+                  @click="handleEditPengguna(row)"
+                  class="w-[30px] h-[30px] rounded bg-[#3B82F6] flex items-center justify-center hover:bg-[#2563EB] transition-colors focus:outline-none"
+                  title="Edit Data"
+                >
+                  <img :src="editIcon" class="w-[15px] h-[15px] brightness-0 invert" alt="edit" />
+                </button>
+
+                <button 
+                  @click="handleDeletePengguna(row)"
+                  class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none"
+                  title="Hapus"
+                >
+                  <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
                   </svg>
-                </div>
+                </button>
               </div>
-            </div>
-            
-            <div class="flex-1 overflow-auto">
-              <DataTable 
-                :columns="tableColumns"               
-                :data="paginatedData" 
-                :loading="isLoading"
-                :sort-key="sortKey"
-                :sort-order="sortOrder"
-                @sort="handleSort"
-              >
-                <!-- SESUDAH -->
-<template #aksi="{ row }">
-  <div class="flex items-center gap-2">
+            </template>
 
-   <!-- Tombol Permission - icon putih di atas orange -->
-<button
-  v-if="!row.is_owner"
-  @click="handlePermission(row)"
-  class="w-[30px] h-[30px] rounded bg-[#F7941D] flex items-center justify-center hover:bg-[#E8850E] transition-colors focus:outline-none"
->
-  <img :src="keyline" class="w-[15px] h-[15px] brightness-0 invert" alt="permission" />
-</button>
-
-<!-- Tombol Edit - icon putih di atas biru -->
-<button
-  @click="handleEditPengguna(row)"
-  class="w-[30px] h-[30px] rounded bg-[#3B82F6] flex items-center justify-center hover:bg-[#2563EB] transition-colors focus:outline-none"
->
-  <img :src="editIcon" class="w-[15px] h-[15px] brightness-0 invert" alt="edit" />
-</button>
-
-                    <button 
-                      @click="handleDeletePengguna(row)"
-                      class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none"
-                    >
-                      <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
-                      </svg>
-                    </button>
-
-                  </div>
-                </template>
-
-                <template #empty>
-                  <EmptyState 
-                    v-if="penggunaData.length === 0"
-                    :icon="notfound"
-                    title="Data Pengguna Belum Tersedia"
-                    description="Tambahkan minimal satu pengguna agar sistem dapat digunakan."
-                    buttonText="Tambah Pengguna"
-                    @action="handleTambahPengguna"
-                  />
-                  <EmptyState 
-                    v-else
-                    :icon="notfound"
-                    title="No Records to display"
-                    :description="`Tidak ada pengguna yang cocok dengan kata kunci '${appliedSearchQuery}'`"
-                  />
-                </template>
-              </DataTable>
-            </div>
-            
-          </div>
-          
-          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B] shrink-0 bg-white rounded-b-2xl">
-            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalItems }} records</span>
-            
-            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-              <button 
-                @click="goToPage(currentPage - 1)" 
-                :disabled="currentPage === 1"
-                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
-              </button>
-              
-              <button 
-                v-for="page in visiblePages" 
-                :key="page"
-                @click="goToPage(page)"
-                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
-                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
-              >
-                {{ page }}
-              </button>
-
-              <button 
-                @click="goToPage(currentPage + 1)" 
-                :disabled="currentPage === totalPages"
-                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-        </div> 
-      </main>
-    
-    <Modal 
-      :show="showModal"
-      :title="editingUser ? 'Edit Pengguna' : 'Tambah Pengguna'"
-      :description="editingUser ? 'Ubah informasi pengguna.' : 'Masukan informasi pengguna baru ke dalam sistem.'"
-      width="half"
-      @close="handleCloseModal"
-    >
-      <FormTambahPengguna 
-        :initialData="editingUser"
-        :branches="branchesData" @submit="handleSubmitPengguna"
-        @cancel="handleCloseModal"
-      />
-      
-      <template #footer>
-        <div class="flex items-center justify-end gap-3">
-          <button 
-            type="button"
-            @click="handleCloseModal"
-            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
-          >
-            Batal
-          </button>
-          <button 
-            type="submit"
-            form="formTambahPengguna"
-            class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
-          >
-            {{ editingUser ? 'Perbarui Pengguna' : 'Tambah Pengguna' }}
-          </button>
+            <template #empty>
+              <EmptyState 
+                v-if="penggunaData.length === 0"
+                :icon="notfound"
+                title="Data Pengguna Belum Tersedia"
+                description="Tambahkan minimal satu pengguna agar sistem dapat digunakan."
+                buttonText="Tambah Pengguna"
+                @action="handleTambahPengguna"
+              />
+              <EmptyState 
+                v-else
+                :icon="notfound"
+                title="No Records to display"
+                :description="`Tidak ada pengguna yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+              />
+            </template>
+          </DataTable>
         </div>
-      </template>
-    </Modal>
-
-    <Modal 
-      :show="showPermissionModal"
-      :title="'Hak Akses: ' + (editingPermissionUser?.name || 'Pengguna')"
-      description="Atur dan kelola level akses menu pengguna di dalam sistem."
-      width="half"
-      @close="showPermissionModal = false"
-    >
-      <FormPermissionPengguna 
-        v-if="showPermissionModal"
-        :initialPermissions="editingPermissionUser?.permissions"
-        @submit="handleSubmitPermission"
-      />
+        
+      </div>
       
-      <template #footer>
-        <div class="flex items-center justify-end gap-3">
-          <button 
-            type="button"
-            @click="showPermissionModal = false"
-            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
-          >
-            Batal
-          </button>
-          <button 
-            type="submit"
-            form="formPermissionPengguna"
-            class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
-          >
-            Simpan Hak Akses
-          </button>
-        </div>
-      </template>
-    </Modal>
+      <div class="bg-white rounded-b-2xl">
+        <Pagination
+          v-model:current-page="currentPage"
+          :total-data="totalItems"
+          :per-page="itemsPerPage"
+        />
+      </div>
+
+    </div> 
+  </main>
     
-    <Toast 
-      :show="showToast"
-      :message="toastMessage"
-      @close="handleCloseToast"
+  <Modal 
+    :show="showModal"
+    :title="editingUser ? 'Edit Pengguna' : 'Tambah Pengguna'"
+    :description="editingUser ? 'Ubah informasi pengguna.' : 'Masukan informasi pengguna baru ke dalam sistem.'"
+    width="half"
+    @close="handleCloseModal"
+  >
+    <FormTambahPengguna 
+      :initialData="editingUser"
+      :branches="branchesData" @submit="handleSubmitPengguna"
+      @cancel="handleCloseModal"
     />
     
+    <template #footer>
+      <div class="flex items-center justify-end gap-3">
+        <button 
+          type="button"
+          @click="handleCloseModal"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+        >
+          Batal
+        </button>
+        <button 
+          type="submit"
+          form="formTambahPengguna"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
+        >
+          {{ editingUser ? 'Perbarui Pengguna' : 'Tambah Pengguna' }}
+        </button>
+      </div>
+    </template>
+  </Modal>
+
+  <Modal 
+    :show="showPermissionModal"
+    :title="'Hak Akses: ' + (editingPermissionUser?.name || 'Pengguna')"
+    description="Atur dan kelola level akses menu pengguna di dalam sistem."
+    width="half"
+    @close="showPermissionModal = false"
+  >
+    <FormPermissionPengguna 
+      v-if="showPermissionModal"
+      :initialPermissions="editingPermissionUser?.permissions"
+      @submit="handleSubmitPermission"
+    />
+    
+    <template #footer>
+      <div class="flex items-center justify-end gap-3">
+        <button 
+          type="button"
+          @click="showPermissionModal = false"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+        >
+          Batal
+        </button>
+        <button 
+          type="submit"
+          form="formPermissionPengguna"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
+        >
+          Simpan Hak Akses
+        </button>
+      </div>
+    </template>
+  </Modal>
+  
+  <Toast 
+    :show="showToast"
+    :message="toastMessage"
+    @close="handleCloseToast"
+  />
 </template>
 
 <style scoped>

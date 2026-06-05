@@ -157,10 +157,8 @@ onMounted(async () => {
 
 <template>
   <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
 
     <div class="flex flex-1 items-stretch">
-      <Sidebar />
 
       <main class="flex-1 bg-[#F4F6F8] p-4">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">

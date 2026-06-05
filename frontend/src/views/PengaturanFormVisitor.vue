@@ -204,7 +204,6 @@ const deleteField = async (index) => {
 
 <template>
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
             <!-- Page Header -->
             <div class="flex items-start justify-between mb-6">
@@ -322,7 +321,6 @@ const deleteField = async (index) => {
               </table>
             </div>
           </div>
-        </div>
       </main>
 
     <!-- CREATE FIELD MODAL -->

@@ -212,7 +212,7 @@ onMounted(() => {
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
         <div class="flex flex-col gap-6">
 
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="bg-white rounded-2xl p-6">
             <h1 class="text-2xl font-semibold text-gray-800 mb-6">Dashboard</h1>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div class="bg-white rounded-lg p-5 flex items-center gap-4 border border-gray-200 shadow-xs">
@@ -257,7 +257,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="bg-white rounded-2xl p-6">
             <h2 class="text-[15px] font-bold text-gray-800 mb-4">Satisfaction Index</h2>
             
             <div v-if="isSatisfactionLoading" class="w-full h-10 bg-gray-100 rounded-lg animate-pulse flex items-center justify-center">
@@ -303,7 +303,7 @@ onMounted(() => {
           </div>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col h-[400px]">
               <div class="flex justify-between items-center mb-6 shrink-0">
                 <h2 class="text-[15px] font-bold text-gray-800">Daily Visitor</h2>
                 <div class="flex items-center gap-4 text-xs font-medium text-gray-600">
@@ -322,7 +322,7 @@ onMounted(() => {
               </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
+            <div class="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col h-[400px]">
               <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">Percentage Visitor by Purpose</h2>
               <div class="flex-1 flex flex-col relative min-h-0">
                 <div v-if="isCategoryLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">Memuat data kategori...</div>
@@ -331,7 +331,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 min-h-[350px] flex flex-col">
+          <div class="bg-white border border-gray-100 p-6 min-h-[350px] flex flex-col">
             <div class="flex justify-between items-center mb-6 shrink-0">
               <h2 class="text-[15px] font-bold text-gray-800">Monthly Visitor</h2>
               <div class="flex items-center gap-4 text-xs font-medium text-gray-600">
@@ -346,7 +346,7 @@ onMounted(() => {
             </div>
           </div>
 
-          <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <div class="bg-white border border-gray-100 p-6">
             <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">Latest Visitor</h2>
             <div class="w-full overflow-x-auto hide-scrollbar">
               <table class="w-full text-left border-collapse min-w-[600px]">
@@ -381,8 +381,8 @@ onMounted(() => {
                   <tr v-else v-for="visitor in latestVisitors" :key="visitor.id" class="border-b border-gray-100 hover:bg-[#FDF9F2]/50 transition-colors">
                     <td class="py-4 px-5">
                       <div class="flex items-center gap-3.5">
-                        <img v-if="visitor.picture_url" :src="visitor.picture_url" alt="" class="w-7 h-7 rounded-sm object-cover border border-gray-100 shrink-0 shadow-xs" />
-                        <div v-else class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 text-sm font-bold shrink-0 border border-gray-200 shadow-xs">
+                        <img v-if="visitor.picture_url" :src="visitor.picture_url" alt="" class="w-7 h-7 rounded-sm object-cover border border-gray-100 shrink-0" />
+                        <div v-else class="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center text-gray-500 text-sm font-bold shrink-0 border border-gray-200">
                           {{ visitor.name ? visitor.name.charAt(0).toUpperCase() : '?' }}
                         </div>
                         <span class="text-[13px] text-gray-800">{{ visitor.name }}</span>
@@ -413,7 +413,7 @@ onMounted(() => {
 
         </div>
       </main>
-\</template>
+</template>
 
 <style scoped>
 .apexcharts-canvas:focus,

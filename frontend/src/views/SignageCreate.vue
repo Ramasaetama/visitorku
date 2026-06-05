@@ -278,13 +278,6 @@ const goBack = () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-
-      <main class="flex-1 bg-[#F4F6F8] p-4">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
@@ -563,9 +556,5 @@ const goBack = () => {
           </button>
         </div>
       </div>
-    </div>
-      </main>
-    </div>
-  </div>
-  
+    </div>  
 </template>

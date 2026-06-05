@@ -1,4 +1,4 @@
-n<script setup>
+<script setup>
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useI18n } from 'vue-i18n';
@@ -65,11 +65,10 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
 </script>
 
 <template>
-  <!-- EXPANDED sidebar (md ke atas) -->
-  <aside class="hidden md:flex w-[260px] bg-[#F4F6F8] flex-col p-4 gap-4 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">
-    <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
+  <aside class="hidden md:flex w-65 bg-[#F4F6F8] flex-col mr-4 mb-4 ml-4 gap-4 font-['Poppins'] h-[calc(100%-1rem)] overflow-y-auto hide-scrollbar shrink-0 overscroll-contain">
+      <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <div class="mb-6">
-        <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">{{ t('sidebar.mainMenu') }}</h3>
+        <h3 class="text-[16px] font-semibold text-[#1E293B] mb-5 tracking-wide">{{ t('sidebar.mainMenu') }}</h3>
         <div class="space-y-1">
           <router-link
             v-for="item in mainMenuItems"
@@ -82,14 +81,14 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
                 : 'text-[#64748B] hover:bg-gray-50 font-normal'
             ]"
           >
-            <img :src="item.icon" alt="" class="w-[18px] h-[18px] flex-shrink-0" :class="{ 'filter-orange': isActive(item.path) }" />
+            <img :src="item.icon" alt="" class="w-4.5 h-4.5 shrink-0" :class="{ 'filter-orange': isActive(item.path) }" />
             <span>{{ t('sidebar.' + item.key) }}</span>
           </router-link>
         </div>
       </div>
 
       <div>
-        <h3 class="text-[11px] font-semibold text-[#1E293B] mb-3 tracking-wide">{{ t('sidebar.masterData') }}</h3>
+        <h3 class="text-[16px] font-semibold text-[#1E293B] mb-5 tracking-wide">{{ t('sidebar.masterData') }}</h3>
         <div class="space-y-1">
           <router-link
             v-for="item in masterDataItems"
@@ -102,7 +101,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
                 : 'text-[#64748B] hover:bg-gray-50 font-normal'
             ]"
           >
-            <img :src="item.icon" alt="" class="w-[18px] h-[18px] flex-shrink-0" :class="{ 'filter-orange': isActive(item.path) }" />
+            <img :src="item.icon" alt="" class="w-4.5 h-4.5 shrink-0" :class="{ 'filter-orange': isActive(item.path) }" />
             <span>{{ t('sidebar.' + item.key) }}</span>
           </router-link>
         </div>
@@ -127,13 +126,13 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
       </div>
       <div class="space-y-2.5">
         <div v-for="(item, index) in quickGuideItems" :key="index" class="flex items-center gap-2.5">
-          <img :src="item.completed ? checkOnIcon : checkOffIcon" alt="" class="w-[18px] h-[18px]" />
+          <img :src="item.completed ? checkOnIcon : checkOffIcon" alt="" class="w-4.5 h-4.5" />
           <span :class="['text-[12px]', item.completed ? 'text-[#22C55E] font-medium' : 'text-gray-400']">{{ t('sidebar.' + item.nameKey) }}</span>
         </div>
       </div>
     </div>
 
-    <div class="bg-gradient-to-br from-[#FFF8F0] to-[#FFEDD5] rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 border border-[#FFE4C4]">
+    <div class="bg-linear-to-br from-[#FFF8F0] to-[#FFEDD5] rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 border border-[#FFE4C4]">
       <div class="flex items-center justify-between mb-4">
         <span class="text-[13px] font-semibold text-[#1E293B]">{{ t('sidebar.visitorPackage') }}</span>
         <div class="flex items-center gap-1 bg-[#F7941D] rounded-full px-2.5 py-1">
@@ -165,10 +164,8 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
     </div>
   </aside>
 
-  <!-- COLLAPSED sidebar — hanya icon (di bawah md / mobile) -->
-  <aside class="flex md:hidden w-[56px] bg-[#F4F6F8] flex-col items-center py-3 gap-1 font-['Poppins'] sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto hide-scrollbar">
-    <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-2 w-full flex flex-col items-center gap-1">
-      <!-- Main Menu icons -->
+  <aside class="flex md:hidden w-14 bg-[#F4F6F8] flex-col items-center py-3 gap-1 font-['Poppins'] h-full overflow-y-auto hide-scrollbar shrink-0 overscroll-contain">
+        <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-2 w-full flex flex-col items-center gap-1">
       <router-link
         v-for="item in mainMenuItems"
         :key="'m-' + item.key"
@@ -184,15 +181,13 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
         <img
           :src="item.icon"
           :alt="t('sidebar.' + item.key)"
-          class="w-[20px] h-[20px]"
+          class="w-5 h-5"
           :class="{ 'filter-orange': isActive(item.path) }"
         />
       </router-link>
 
-      <!-- Divider -->
       <div class="w-8 h-px bg-gray-200 my-1"></div>
 
-      <!-- Master Data icons -->
       <router-link
         v-for="item in masterDataItems"
         :key="'d-' + item.key"
@@ -208,7 +203,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
         <img
           :src="item.icon"
           :alt="t('sidebar.' + item.key)"
-          class="w-[20px] h-[20px]"
+          class="w-5 h-5"
           :class="{ 'filter-orange': isActive(item.path) }"
         />
       </router-link>

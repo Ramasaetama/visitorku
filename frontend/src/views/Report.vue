@@ -1,8 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
+import ExcelIcon from '@/assets/icon/file-excel-line.svg';
 
 import {
   downloadVisitorExcel,
@@ -107,13 +106,6 @@ const handleDownloadVisit = async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-
-      <main class="flex-1 p-5 overflow-y-auto">
 
         <!-- ── Page Header ──────────────────────────────────────────────── -->
         <div class="bg-white rounded-2xl shadow-sm px-6 py-4 flex items-center justify-between mb-5">
@@ -133,23 +125,6 @@ const handleDownloadVisit = async () => {
             </button>
             <h1 class="text-[17px] font-bold text-gray-800">Visitor Report</h1>
           </div>
-
-          <!-- Breadcrumb -->
-          <nav class="hidden sm:flex items-center gap-1.5 text-sm text-gray-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-            <span>Dashboard</span>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <span>Visitor</span>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <span class="text-[#F7941D] font-semibold">Report</span>
-          </nav>
         </div>
 
         <!-- ── Two Report Cards ─────────────────────────────────────────── -->
@@ -162,12 +137,7 @@ const handleDownloadVisit = async () => {
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
               <h2 class="text-[15px] font-bold text-gray-800">Visitor Report</h2>
               <div class="w-8 h-8 rounded-lg bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
+                <img :src="ExcelIcon" alt="Excel Icon" class="w-4 h-4" />
               </div>
             </div>
 
@@ -243,12 +213,7 @@ const handleDownloadVisit = async () => {
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
               <h2 class="text-[15px] font-bold text-gray-800">Visit Report</h2>
               <div class="w-8 h-8 rounded-lg bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                     stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
+                <img :src="ExcelIcon" alt="Excel Icon" class="w-4 h-4" />
               </div>
             </div>
 
@@ -316,10 +281,7 @@ const handleDownloadVisit = async () => {
             </div>
           </div>
 
-        </div><!-- /grid -->
-      </main>
-    </div>
-  </div>
+        </div>
 </template>
 
 <style scoped>

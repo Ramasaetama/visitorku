@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
+import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
 import { useRouter } from 'vue-router';
 import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
 
@@ -106,27 +107,7 @@ const handleConfirm = async (row) => {
   }
 };
 
-// ─── Pagination ───────────────────────────────────────────────────────────────
-const totalPages = computed(() =>
-  Math.max(1, Math.ceil(totalRecords.value / perPage.value))
-);
-
-const showingFrom = computed(() => {
-  if (totalRecords.value === 0) return 0;
-  return (currentPage.value - 1) * perPage.value + 1;
-});
-
-const showingTo = computed(() =>
-  Math.min(currentPage.value * perPage.value, totalRecords.value)
-);
-
-const goToPage = (page) => {
-  if (page < 1 || page > totalPages.value) return;
-  currentPage.value = page;
-  fetchInvoices();
-};
-
-// ─── Search ───────────────────────────────────────────────────────────────────
+// ─── Search & Watchers ────────────────────────────────────────────────────────
 const executeSearch = () => {
   appliedSearch.value = searchQuery.value;
   currentPage.value = 1;
@@ -142,7 +123,14 @@ watch(searchQuery, (val) => {
 });
 
 watch(perPage, () => {
-  currentPage.value = 1;
+  if(currentPage.value !== 1) {
+    currentPage.value = 1;
+  } else {
+    fetchInvoices();
+  }
+});
+
+watch(currentPage, () => {
   fetchInvoices();
 });
 
@@ -285,36 +273,11 @@ onMounted(fetchInvoices);
 
     </div>
     
-    <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-      <span>
-        Showing {{ showingFrom }} to {{ showingTo }} from {{ totalRecords }} records
-      </span>
-
-      <div class="flex items-center gap-1">
-        <button
-          @click="goToPage(currentPage - 1)"
-          :disabled="currentPage === 1"
-          class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
-                 transition-colors"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-          </svg>
-        </button>
-        <button
-          @click="goToPage(currentPage + 1)"
-          :disabled="currentPage >= totalPages"
-          class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                 text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
-                 transition-colors"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </button>
-      </div>
-    </div>
+    <Pagination
+      v-model:current-page="currentPage"
+      :total-data="totalRecords"
+      :per-page="perPage"
+    />
 
     <Teleport to="body">
       <Transition
@@ -325,7 +288,7 @@ onMounted(fetchInvoices);
         leave-from-class="opacity-100 scale-100"
         leave-to-class="opacity-0 scale-95"
       >
-        <div v-if="isReceiptModalOpen" class="fixed inset-0 z-9999 flex items-center justify-center p-4">
+        <div v-if="isReceiptModalOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeReceiptModal"></div>
 
           <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden z-10 hover:shadow-lg transition-shadow duration-300">

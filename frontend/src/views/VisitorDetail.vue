@@ -57,12 +57,6 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
-    <Topbar />
-
-    <div class="flex flex-1 items-stretch">
-      <Sidebar />
-      <main class="flex-1 bg-[#F4F6F8] p-4">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-8 flex-1 flex flex-col overflow-y-auto">
             
@@ -76,7 +70,7 @@ onMounted(() => {
             </div>
 
             <div v-if="!isLoading" class="flex flex-col md:flex-row gap-6 mb-10">
-              <div class="w-[150px] h-[180px] shrink-0 rounded-2xl overflow-hidden bg-[#F4F6F8] border border-gray-100">
+              <div class="w-37.5 h-45 shrink-0 rounded-2xl overflow-hidden bg-[#F4F6F8] border border-gray-100">
                 <img v-if="visitorInfo.photo_profile" :src="visitorInfo.photo_profile" class="w-full h-full object-cover" alt="Profile" />
                 <div v-else class="w-full h-full flex items-center justify-center text-sm font-medium text-gray-500">
                   Profile
@@ -163,7 +157,4 @@ onMounted(() => {
 
           </div>
         </div>
-      </main>
-    </div> 
-  </div>
 </template>
