@@ -11,7 +11,7 @@
     <div class="absolute bottom-0 left-0 right-0 h-[55%] bg-gray-100"></div>
 
     <div class="relative z-10 px-4">
-      <div class="bg-white rounded-2xl shadow-xl p-12 max-w-md w-full text-center">
+      <div class="bg-white rounded-sm shadow-xl p-12 max-w-md w-full text-center">
         <div class="w-16 h-16 mx-auto mb-6">
           <svg class="animate-spin w-16 h-16 text-[#EE9D0F]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -41,7 +41,7 @@
           <button
             type="button"
             @click="errorMessage = ''"
-            class="absolute -top-2 -left-2 w-5 h-5 rounded-full bg-red-500 flex items-center justify-center shadow-md z-20 border-none cursor-pointer hover:bg-red-600 transition-colors p-0"
+            class="absolute -top-2 -left-2 w-5 h-5 rounded-sm bg-red-500 flex items-center justify-center shadow-md z-20 border-none cursor-pointer hover:bg-red-600 transition-colors p-0"
           >
             <svg class="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
               <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -49,7 +49,7 @@
           </button>
 
           <div class="bg-white shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-lg py-4 px-5 border-b-[4px] border-red-500 flex items-center gap-3 relative">
-            <div class="shrink-0 w-6 h-6 rounded-full border-[1.5px] border-red-500 flex items-center justify-center">
+            <div class="shrink-0 w-6 h-6 rounded-sm border-[1.5px] border-red-500 flex items-center justify-center">
               <svg class="w-3.5 h-3.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>

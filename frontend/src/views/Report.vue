@@ -114,7 +114,7 @@ const handleDownloadVisit = async () => {
           <div class="flex items-center gap-3">
             <button
               @click="router.back()"
-              class="w-8 h-8 flex items-center justify-center rounded-full
+              class="w-8 h-8 flex items-center justify-center rounded-sm
                      bg-[#FFF1E6] text-[#F7941D]
                      hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none"
             >
@@ -136,7 +136,7 @@ const handleDownloadVisit = async () => {
             <!-- Card Header -->
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
               <h2 class="text-[15px] font-bold text-gray-800">Visitor Report</h2>
-              <div class="w-8 h-8 rounded-lg bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
+              <div class="w-8 h-8 rounded-sm bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
                 <img :src="ExcelIcon" alt="Excel Icon" class="w-4 h-4" />
               </div>
             </div>
@@ -152,7 +152,7 @@ const handleDownloadVisit = async () => {
                 <input
                   v-model="visitorDateFrom"
                   type="date"
-                  class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm text-gray-600
+                  class="w-full h-11 px-4 border border-gray-200 rounded-sm text-sm text-gray-600
                          focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20
                          transition-colors"
                 />
@@ -166,7 +166,7 @@ const handleDownloadVisit = async () => {
                 <input
                   v-model="visitorDateTo"
                   type="date"
-                  class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm text-gray-600
+                  class="w-full h-11 px-4 border border-gray-200 rounded-sm text-sm text-gray-600
                          focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20
                          transition-colors"
                 />
@@ -177,7 +177,7 @@ const handleDownloadVisit = async () => {
                 @click="handleDownloadVisitor"
                 :disabled="isDownloadingVisitor"
                 class="flex items-center gap-2 px-5 py-2.5 bg-[#F7941D] text-white
-                       rounded-lg text-sm font-semibold hover:bg-[#E8850E] transition-colors
+                       rounded-sm text-sm font-semibold hover:bg-[#E8850E] transition-colors
                        disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none mt-1"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -192,7 +192,7 @@ const handleDownloadVisit = async () => {
               <!-- Error Banner Visitor -->
               <div
                 v-if="visitorError"
-                class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600"
+                class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-sm px-4 py-3 text-sm text-red-600"
               >
                 <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -212,7 +212,7 @@ const handleDownloadVisit = async () => {
             <!-- Card Header -->
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
               <h2 class="text-[15px] font-bold text-gray-800">Visit Report</h2>
-              <div class="w-8 h-8 rounded-lg bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
+              <div class="w-8 h-8 rounded-sm bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
                 <img :src="ExcelIcon" alt="Excel Icon" class="w-4 h-4" />
               </div>
             </div>
@@ -228,7 +228,7 @@ const handleDownloadVisit = async () => {
                 <input
                   v-model="visitDateFrom"
                   type="date"
-                  class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm text-gray-600
+                  class="w-full h-11 px-4 border border-gray-200 rounded-sm text-sm text-gray-600
                          focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20
                          transition-colors"
                 />
@@ -242,7 +242,7 @@ const handleDownloadVisit = async () => {
                 <input
                   v-model="visitDateTo"
                   type="date"
-                  class="w-full h-11 px-4 border border-gray-200 rounded-lg text-sm text-gray-600
+                  class="w-full h-11 px-4 border border-gray-200 rounded-sm text-sm text-gray-600
                          focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20
                          transition-colors"
                 />
@@ -253,7 +253,7 @@ const handleDownloadVisit = async () => {
                 @click="handleDownloadVisit"
                 :disabled="isDownloadingVisit"
                 class="flex items-center gap-2 px-5 py-2.5 bg-[#F7941D] text-white
-                       rounded-lg text-sm font-semibold hover:bg-[#E8850E] transition-colors
+                       rounded-sm text-sm font-semibold hover:bg-[#E8850E] transition-colors
                        disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none mt-1"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -267,7 +267,7 @@ const handleDownloadVisit = async () => {
               <!-- Error Banner Visit -->
               <div
                 v-if="visitError"
-                class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600"
+                class="flex items-start gap-2 bg-red-50 border border-red-200 rounded-sm px-4 py-3 text-sm text-red-600"
               >
                 <svg class="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2"
                      stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">

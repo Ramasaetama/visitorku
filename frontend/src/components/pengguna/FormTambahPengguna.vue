@@ -108,7 +108,7 @@ defineExpose({ resetForm });
         v-model="formData.name"
         type="text" required
         placeholder="Contoh: Budi Santoso"
-        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
+        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
       />
     </div>
 
@@ -119,7 +119,7 @@ defineExpose({ resetForm });
           v-model="formData.email"
           type="email" required
           placeholder="Contoh: budi@mail.com"
-          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
+          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
         />
       </div>
       <div>
@@ -128,7 +128,7 @@ defineExpose({ resetForm });
           v-model="formData.phone_number"
           type="tel" required
           placeholder="Contoh: 08123456789"
-          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
+          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
         />
       </div>
     </div>
@@ -138,7 +138,7 @@ defineExpose({ resetForm });
       <select 
         v-model="formData.branch_id"
         required
-        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors cursor-pointer appearance-none"
+        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm text-gray-700 bg-white focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors cursor-pointer appearance-none"
       >
         <option value="" disabled>Pilih Cabang</option>
         <option 
@@ -157,7 +157,7 @@ defineExpose({ resetForm });
         v-model="formData.address"
         required rows="2"
         placeholder="Masukkan alamat lengkap pengguna"
-        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm placeholder-gray-400 resize-none focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
+        class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 resize-none focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
       ></textarea>
     </div>
 
@@ -168,7 +168,7 @@ defineExpose({ resetForm });
           v-model="formData.password"
           type="password"
           :placeholder="props.initialData ? 'Kosongkan jika tak diubah' : 'Masukkan password'"
-          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
+          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
         />
       </div>
       <div>
@@ -177,7 +177,7 @@ defineExpose({ resetForm });
           v-model="formData.c_password"
           type="password"
           :placeholder="props.initialData ? 'Ulangi jika mengubah password' : 'Ulangi password'"
-          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
+          class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
         />
       </div>
     </div>

@@ -19,7 +19,7 @@ defineProps({
   },
   inputClass: {
     type: String,
-    default: 'rounded-lg'
+    default: 'rounded-sm'
   }
 });
 

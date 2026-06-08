@@ -62,7 +62,7 @@ const cancelForm = () => {
       <select 
         v-model="formData.cabang"
         required
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
@@ -88,7 +88,7 @@ const cancelForm = () => {
         type="text"
         required
         placeholder="Contoh: Finance"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
@@ -105,7 +105,7 @@ const cancelForm = () => {
         type="text"
         required
         placeholder="Contoh: Andi Pratama"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
@@ -123,7 +123,7 @@ const cancelForm = () => {
         type="text"
         required
         placeholder="Contoh: Network Engineer"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
@@ -140,7 +140,7 @@ const cancelForm = () => {
         type="email"
         required
         placeholder="Contoh: andi@perusahaan.com"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
@@ -157,7 +157,7 @@ const cancelForm = () => {
         type="tel"
         required
         placeholder="Contoh: 0812 3456 7890"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"

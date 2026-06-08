@@ -201,7 +201,7 @@ const handleDeleteCabang = async (row) => {
         <button 
           @click="handleTambahCabang"
           class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] 
-                 text-[#F7941D] rounded-lg font-medium text-sm 
+                 text-[#F7941D] rounded-sm font-medium text-sm 
                  hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none"
         >
           <span class="text-lg leading-none">+</span>
@@ -221,7 +221,7 @@ const handleDeleteCabang = async (row) => {
         <div class="relative shrink-0">
           <select 
             v-model="itemsPerPage" 
-            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -319,7 +319,7 @@ const handleDeleteCabang = async (row) => {
           type="button"
           @click="handleCloseModal"
           class="px-5 py-2.5 text-sm font-medium text-gray-600 
-                 border border-gray-300 rounded-lg
+                 border border-gray-300 rounded-sm
                  hover:bg-gray-50 transition-colors focus:outline-none"
         >
           Batal
@@ -328,7 +328,7 @@ const handleDeleteCabang = async (row) => {
           type="submit"
           form="formTambahCabang"
           class="px-5 py-2.5 text-sm font-medium text-white 
-                 bg-[#F7941D] rounded-lg
+                 bg-[#F7941D] rounded-sm
                  hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
           {{ editingBranch ? 'Perbarui Cabang' : 'Simpan Cabang' }}

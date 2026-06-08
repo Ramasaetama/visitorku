@@ -231,7 +231,7 @@ const handleCloseToast = () => {
             <h1 class="text-2xl font-semibold text-gray-800 mb-1">Manajemen Pengguna</h1>
             <p class="text-sm text-gray-500">Kelola Informasi Pengguna.</p>
           </div>
-          <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
+          <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
             <span class="text-lg leading-none">+</span> Tambah Pengguna
           </button>
         </div>
@@ -241,7 +241,7 @@ const handleCloseToast = () => {
             <SearchInput v-model="searchQuery" placeholder="Cari Pengguna" @keyup.enter="executeSearch" />
           </div>
           <div class="relative shrink-0">
-            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
+            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
               <option :value="5">5</option>
               <option :value="10">10</option>
               <option :value="25">25</option>
@@ -346,14 +346,14 @@ const handleCloseToast = () => {
         <button 
           type="button"
           @click="handleCloseModal"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
         >
           Batal
         </button>
         <button 
           type="submit"
           form="formTambahPengguna"
-          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-sm hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
           {{ editingUser ? 'Perbarui Pengguna' : 'Tambah Pengguna' }}
         </button>
@@ -379,14 +379,14 @@ const handleCloseToast = () => {
         <button 
           type="button"
           @click="showPermissionModal = false"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
         >
           Batal
         </button>
         <button 
           type="submit"
           form="formPermissionPengguna"
-          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-sm hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
           Simpan Hak Akses
         </button>

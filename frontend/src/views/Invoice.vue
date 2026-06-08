@@ -161,7 +161,7 @@ onMounted(fetchInvoices);
         <div class="relative shrink-0">
           <select 
             v-model="perPage" 
-            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -291,7 +291,7 @@ onMounted(fetchInvoices);
         <div v-if="isReceiptModalOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="closeReceiptModal"></div>
 
-          <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden z-10 hover:shadow-lg transition-shadow duration-300">
+          <div class="relative bg-white rounded-sm shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden z-10 hover:shadow-lg transition-shadow duration-300">
             
             <div class="flex items-center justify-between px-6 pt-6 pb-2">
               <h3 class="text-lg font-bold text-gray-800">Receipt</h3>

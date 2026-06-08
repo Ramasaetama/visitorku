@@ -64,16 +64,6 @@ const fetchCompanyTheme = async () => {
   }
 };
 
-<<<<<<< HEAD
-=======
-onMounted(() => {
-  document.addEventListener('click', closeDropdown);
-  fetchProfileData();
-  fetchCompanyTheme();
-  window.addEventListener('profile-updated', fetchProfileData);
-});
-
->>>>>>> a917ca88d165c02de27ddedfd4312079868cfd40
 const fetchProfileData = async () => {
   try {
     const response = await getAdminProfile();
@@ -104,16 +94,12 @@ const closeDropdown = (e) => {
   }
 };
 
-<<<<<<< HEAD
 onMounted(() => {
   document.addEventListener('click', closeDropdown);
   fetchProfileData(); 
   fetchCompanyTheme(); 
   window.addEventListener('profile-updated', fetchProfileData);
 });
-=======
-
->>>>>>> a917ca88d165c02de27ddedfd4312079868cfd40
 
 onUnmounted(() => {
   document.removeEventListener('click', closeDropdown);
@@ -178,7 +164,7 @@ const handleLogout = async () => {
           >
             <div
               v-if="isLangDropdownOpen"
-              class="absolute right-0 top-10 w-44 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50"
+              class="absolute right-0 top-10 w-44 bg-white rounded-sm border border-gray-100 overflow-hidden z-50"
               @click.stop
             >
               <div class="px-3 py-2 bg-linear-to-r from-[#FFF8F0] to-[#FFEDD5] border-b border-[#FFE4C4]">
@@ -208,7 +194,7 @@ const handleLogout = async () => {
         </div>
         
         <div 
-          class="profile-section flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity"
+          class="profile-section flex items-center gap-2.5 cursor-pointer"
           @click="toggleDropdown"
         >
           <span class="text-white text-[16px] font-medium">{{ profileData.name }}</span>
@@ -244,7 +230,7 @@ const handleLogout = async () => {
           >
             <div 
               v-if="isDropdownOpen"
-              class="absolute right-0 top-11.25 w-72 bg-white rounded-xl shadow-lg border border-gray-100 p-5 z-50 cursor-default"
+              class="absolute right-0 top-11.25 w-72 bg-white rounded-lg shadow-lg border border-gray-100 p-5 z-500 cursor-default"
               @click.stop
             >
               <div class="flex flex-col items-center text-center">
@@ -253,11 +239,11 @@ const handleLogout = async () => {
                   v-if="profileData.profilePict"
                   :src="profileData.profilePict"
                   alt="Profile Large" 
-                  class="w-16 h-16 rounded-full object-cover mb-3 border border-gray-200" 
+                  class="w-16 h-16 rounded-full object-cover mb-3 border border-white" 
                 />
                 <div 
                   v-else 
-                  class="w-16 h-16 bg-[#FFF4E5] text-[#F7941D] rounded-xl flex items-center justify-center text-3xl font-medium mb-3"
+                  class="w-16 h-16 bg-[#FFF4E5] text-[#F7941D] rounded-sm flex items-center justify-center text-3xl font-medium mb-3"
                 >
                   {{ profileData.name !== 'Loading...' ? profileData.name.charAt(0).toLowerCase() : 'a' }}
                 </div>
@@ -277,7 +263,7 @@ const handleLogout = async () => {
                 <div class="flex items-center gap-3 w-full mt-5">
                   <button 
                     @click="router.push('/edit-profile'); isDropdownOpen = false;"
-                    class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-blue-500 text-blue-500 rounded-lg text-sm font-medium hover:bg-blue-50 transition"
+                    class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-blue-500 text-blue-500 rounded-sm text-sm font-medium hover:bg-blue-50 transition"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     {{ t('topbar.editProfile') }}
@@ -285,7 +271,7 @@ const handleLogout = async () => {
                   
                   <button 
                     @click="handleLogout"
-                    class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-red-500 text-red-500 rounded-lg text-sm font-medium hover:bg-red-50 transition"
+                    class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-red-500 text-red-500 rounded-sm text-sm font-medium hover:bg-red-50 transition"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     {{ t('topbar.logout') }}

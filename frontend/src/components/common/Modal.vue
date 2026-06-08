@@ -87,7 +87,7 @@ const widthClasses = {
                 <!-- Close Button (X) -->
                 <button 
                   @click="$emit('close')"
-                  class="absolute top-6 right-6 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
+                  class="absolute top-6 right-6 p-1.5 rounded-sm text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
                 >
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>

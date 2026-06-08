@@ -46,11 +46,9 @@ const goBack = () => {
           
           <div class="flex items-center justify-between mb-6 border-b pb-4">
             <div class="flex items-center gap-4">
-              <button @click="goBack" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                </svg>
-              </button>
+              <button @click="goBack" class="w-8 h-8 flex items-center justify-center bg-[#FEF4E3] text-[#F7941D] rounded-sm hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
+                </button>
               <h1 class="text-xl font-semibold text-gray-800">Invoice Detail</h1>
             </div>
 
@@ -58,7 +56,7 @@ const goBack = () => {
               v-if="invoiceUrl" 
               :href="invoiceUrl" 
               target="_blank" 
-              class="flex items-center gap-2 px-4 py-2 bg-[#F7941D] text-white text-sm font-medium rounded-lg hover:bg-orange-600 transition-colors"
+              class="flex items-center gap-2 px-4 py-2 bg-[#F7941D] text-white text-sm font-medium rounded-sm hover:bg-orange-600 transition-colors"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -76,7 +74,7 @@ const goBack = () => {
               <p>Memuat dokumen invoice...</p>
             </div>
 
-          <div v-else-if="invoiceUrl" class="w-full h-[700px] border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
+          <div v-else-if="invoiceUrl" class="w-full h-[700px] border border-gray-200 rounded-sm overflow-hidden bg-gray-50">
               <iframe 
                 :src="`https://docs.google.com/viewer?url=${invoiceUrl}&embedded=true`" 
                 width="100%" 

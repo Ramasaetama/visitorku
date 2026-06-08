@@ -29,11 +29,11 @@
                    </div>
                    <div>
                      <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.profile.companyName') }}<span class="text-red-400">*</span></label>
-                     <input v-model="companyProfile.name" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition" />
+                     <input v-model="companyProfile.name" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition" />
                     </div>
                    <div>
                      <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.profile.companyAddress') }}<span class="text-red-400">*</span></label>
-                    <textarea v-model="companyProfile.address" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition resize-y min-h-20" rows="3"></textarea>
+                    <textarea v-model="companyProfile.address" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-primary-500 transition resize-y min-h-20" rows="3"></textarea>
                    </div>
                 </div>
               </div>
@@ -45,8 +45,8 @@
                   <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.brandColor.desc') }}</p>
                 </div>
                 <div class="flex-1">
-                  <div class="flex items-center gap-3 mb-3 bg-[#FEF3E2] px-4 py-3 rounded-xl w-fit">
-                    <div class="w-10.5 h-10.5 rounded-full border border-gray-200 cursor-pointer relative overflow-hidden shrink-0" :style="{ backgroundColor: companyProfile.primaryColor }" @click="$refs.colorInput.click()">
+                  <div class="flex items-center gap-3 mb-3 bg-[#FEF3E2] px-4 py-3 rounded-sm w-fit">
+                    <div class="w-10.5 h-10.5 rounded-sm border border-gray-200 cursor-pointer relative overflow-hidden shrink-0" :style="{ backgroundColor: companyProfile.primaryColor }" @click="$refs.colorInput.click()">
                       <input ref="colorInput" v-model="companyProfile.primaryColor" type="color" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" />
                     </div>
                     <div><span class="text-[14px] font-mono text-gray-700 tracking-wider">{{ (companyProfile.primaryColor || '#EE9D0F').replace('#', '').toUpperCase() }}</span></div>
@@ -62,7 +62,7 @@
                   <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.header.desc') }}</p>
                 </div>
                 <div class="flex-1">
-                  <div class="w-full rounded-xl overflow-hidden relative cursor-pointer group" @click="openUploadModal('header')">
+                  <div class="w-full rounded-sm overflow-hidden relative cursor-pointer group" @click="openUploadModal('header')">
                     <div class="h-25 w-full bg-linear-to-r from-[#F7941D] to-[#F9A825] flex items-center justify-end px-6 transition-all" :style="companyProfile.headerBg ? { backgroundImage: `url(${companyProfile.headerBg})`, backgroundSize: '100% 100%', backgroundPosition: 'center' } : {}">
                     </div>
                   </div>
@@ -80,7 +80,7 @@
                   <div>                       
                     <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.languageRegion.languageLabel') }}</label>
                     <div class="relative">
-                      <select v-model="companyProfile.language" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
+                      <select v-model="companyProfile.language" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
                         <option value="Indonesia">Indonesia</option>
                         <option value="English">English</option>
                       </select>
@@ -90,7 +90,7 @@
                   <div>
                     <label class="block text-[13px] font-medium text-gray-700 mb-2">{{ t('companyProfile.languageRegion.timezoneLabel') }}</label>
                     <div class="relative">
-                      <select v-model="companyProfile.timezone" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
+                      <select v-model="companyProfile.timezone" @change="autoSaveLangTz" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 bg-white appearance-none focus:outline-none focus:border-primary-500 transition pr-10">
                         <option value="Asia/Jakarta">Asia/Jakarta</option>
                         <option value="Asia/Makassar">Asia/Makassar</option>
                         <option value="Asia/Jayapura">Asia/Jayapura</option>
@@ -111,21 +111,21 @@
                   </button>
                 </div>
                 
-                <div v-if="existingTokens.length === 0" class="text-center py-12 px-6 bg-linear-to-b from-gray-50 to-white rounded-xl border border-dashed border-gray-200">
+                <div v-if="existingTokens.length === 0" class="text-center py-12 px-6 bg-linear-to-b from-gray-50 to-white rounded-sm border border-dashed border-gray-200">
                   <div class="flex justify-center mb-4">
                     <img :src="nochathistory" alt="API Icon" class="w-50 h-50 object-contain opacity-80" />
                   </div>
                   <h3 class="text-[15px] font-semibold text-gray-800 mb-1.5">{{ t('companyProfile.apiToken.emptyTitle') }}</h3>
                   <p class="text-[13px] text-gray-500 mb-6">{{ t('companyProfile.apiToken.emptyDesc') }}</p>
                   
-                  <button @click="openTokenForm" class="inline-flex items-center gap-2 px-6 py-2.5 border border-[#EE9D0F] text-[#EE9D0F] rounded-lg text-[13px] font-semibold bg-white hover:bg-[#FEF9F0] transition">
+                  <button @click="openTokenForm" class="inline-flex items-center gap-2 px-6 py-2.5 border border-[#EE9D0F] text-[#EE9D0F] rounded-sm text-[13px] font-semibold bg-white hover:bg-[#FEF9F0] transition">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#EE9D0F" stroke-width="1.5"><circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" stroke-linecap="round" /></svg>
                     {{ t('companyProfile.apiToken.generateBtn') }}
                   </button>
                 </div>
 
                 <div v-else class="mt-4 max-h-112.5 overflow-y-auto pr-2 space-y-6">
-                  <div v-for="(token, index) in existingTokens" :key="token.id" class="border border-gray-100 p-6 rounded-2xl bg-white shadow-sm relative">
+                  <div v-for="(token, index) in existingTokens" :key="token.id" class="border border-gray-100 p-6 rounded-sm bg-white shadow-sm relative">
                     <div class="flex justify-between items-start mb-3">
                       <h3 class="text-[15px] font-bold text-gray-900">{{ token.name }}</h3>
                       
@@ -165,7 +165,7 @@
                   <button 
                     @click="saveProfile" 
                     :disabled="isSaving"
-                    class="px-8 py-3.5 bg-[#EE9D0F] hover:bg-[#d6850d] text-white rounded-xl text-[14px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                    class="px-8 py-3.5 bg-[#EE9D0F] hover:bg-[#d6850d] text-white rounded-sm text-[14px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <svg v-if="isSaving" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -204,7 +204,7 @@
             v-model="tokenForm.name"
             type="text" 
             placeholder="Type a name"
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F7941D]/20 focus:border-[#F7941D] transition"
+            class="w-full px-4 py-3 border border-gray-300 rounded-sm text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#F7941D]/20 focus:border-[#F7941D] transition"
           />
         </div>
 
@@ -255,10 +255,10 @@
 
       <template #footer>
         <div class="flex items-center justify-end gap-3 w-full pt-4">
-          <button @click="showFormModal = false" class="px-8 py-3 text-sm font-semibold text-[#F7941D] bg-white border-2 border-[#F7941D] hover:bg-[#FFF9F0] rounded-full transition-colors">
+          <button @click="showFormModal = false" class="px-8 py-3 text-sm font-semibold text-[#F7941D] bg-white border-2 border-[#F7941D] hover:bg-[#FFF9F0] rounded-sm transition-colors">
             {{ t('companyProfile.apiToken.scopeModal.cancel') }}
           </button>
-          <button @click="processGenerate" class="px-8 py-3 text-sm font-semibold text-white bg-[#F7941D] hover:bg-[#E8850E] rounded-full transition-colors shadow-md">
+          <button @click="processGenerate" class="px-8 py-3 text-sm font-semibold text-white bg-[#F7941D] hover:bg-[#E8850E] rounded-sm transition-colors shadow-md">
             {{ t('companyProfile.apiToken.scopeModal.generateToken') }}
           </button>
         </div>
@@ -311,7 +311,7 @@
           {{ t('companyProfile.apiToken.successModal.desc') }}
         </p>
 
-        <div class="w-full bg-[#F4F7FF] border border-[#E0E7FF] rounded-xl p-5 flex items-center justify-between gap-4 mb-8">
+        <div class="w-full bg-[#F4F7FF] border border-[#E0E7FF] rounded-sm p-5 flex items-center justify-between gap-4 mb-8">
            <code class="text-[15px] text-gray-800 font-medium font-mono truncate select-all">
              {{ generatedToken }}
            </code>

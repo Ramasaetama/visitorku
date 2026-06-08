@@ -176,7 +176,7 @@ onMounted(fetchSignages);
         <button
           @click="handleCreateNew"
           class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
-                 text-[#F7941D] text-sm font-medium rounded-lg
+                 text-[#F7941D] text-sm font-medium rounded-sm
                  hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
         >
           <span class="text-lg leading-none">+</span>
@@ -196,7 +196,7 @@ onMounted(fetchSignages);
         <div class="relative shrink-0">
           <select 
             v-model="perPage" 
-            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>

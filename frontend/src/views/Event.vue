@@ -294,7 +294,7 @@ onMounted(fetchEvents);
         <button
           @click="openAddModal"
           class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
-                 text-[#F7941D] text-sm font-medium rounded-lg
+                 text-[#F7941D] text-sm font-medium rounded-sm
                  hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
         >
           <span class="text-lg leading-none">+</span>
@@ -314,7 +314,7 @@ onMounted(fetchEvents);
         <div class="relative shrink-0">
           <select
             v-model="perPage"
-            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -490,7 +490,7 @@ onMounted(fetchEvents);
           v-model="form.name"
           type="text"
           placeholder="Masukkan nama event..."
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
         />
       </div>
 
@@ -500,7 +500,7 @@ onMounted(fetchEvents);
           v-model="form.description"
           rows="3"
           placeholder="Masukkan deskripsi event..."
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
@@ -510,7 +510,7 @@ onMounted(fetchEvents);
           v-model="form.location"
           rows="2"
           placeholder="Masukkan lokasi event..."
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
@@ -520,7 +520,7 @@ onMounted(fetchEvents);
           v-model="form.location_url"
           type="text"
           placeholder="Masukkan URL lokasi..."
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
         />
       </div>
 
@@ -535,7 +535,7 @@ onMounted(fetchEvents);
           v-model="form.finish_at"
           label="Waktu Selesai Event"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.event_finish_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.event_finish_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.event_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -552,7 +552,7 @@ onMounted(fetchEvents);
           v-model="form.registration_start_at"
           label="Waktu Mulai Registrasi"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_start_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_start_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.registration_start_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -569,7 +569,7 @@ onMounted(fetchEvents);
           v-model="form.registration_finish_at"
           label="Waktu Selesai Registrasi"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_finish_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_finish_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.registration_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -587,7 +587,7 @@ onMounted(fetchEvents);
         <button
           type="button"
           @click="closeModal"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
         >
           Batal
         </button>
@@ -596,7 +596,7 @@ onMounted(fetchEvents);
           @click="handleSubmit"
           :disabled="isSaving || hasDateErrors"
           :title="hasDateErrors ? 'Periksa kembali urutan tanggal' : ''"
-          class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-5 py-2.5 text-sm font-medium text-white rounded-sm transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           :class="hasDateErrors ? 'bg-gray-400' : 'bg-[#F7941D] hover:bg-[#E8850E]'"
         >
           {{ isSaving ? 'Menyimpan...' : (isEdit ? 'Perbarui Event' : 'Tambah Event') }}

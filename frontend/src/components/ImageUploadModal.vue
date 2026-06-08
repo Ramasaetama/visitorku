@@ -37,7 +37,7 @@
           @dragleave.prevent="isDragging = false"
           @drop.prevent="handleDrop"
           :class="[
-            'border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all',
+            'border-2 border-dashed rounded-sm p-8 text-center cursor-pointer transition-all',
             isDragging ? 'border-[#EE9D0F] bg-[#FEF9F0]' : 'border-gray-300 hover:border-[#EE9D0F] hover:bg-gray-50'
           ]"
         >
@@ -78,7 +78,7 @@
         <div class="flex gap-3 mt-6">
           <button
             @click="closeModal"
-            class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-xl text-[14px] font-semibold hover:bg-gray-50 transition"
+            class="flex-1 px-4 py-3 border border-gray-300 text-gray-700 rounded-sm text-[14px] font-semibold hover:bg-gray-50 transition"
           >
             Batal
           </button>
@@ -86,7 +86,7 @@
             @click="confirmUpload"
             :disabled="!selectedFile"
             :class="[
-              'flex-1 px-4 py-3 rounded-xl text-[14px] font-semibold text-white transition',
+              'flex-1 px-4 py-3 rounded-sm text-[14px] font-semibold text-white transition',
               selectedFile
                 ? 'bg-[#EE9D0F] hover:bg-[#D88C0E] shadow-md hover:shadow-lg'
                 : 'bg-gray-300 cursor-not-allowed'

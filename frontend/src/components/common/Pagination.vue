@@ -73,7 +73,7 @@ const changePage = (page) => {
         type="button"
         @click.prevent="changePage(1)"
         :disabled="currentPage === 1"
-        class="px-3.5 py-1.5 border border-gray-200 rounded-sm text-[13px] font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none"
+        class="px-3.5 py-1.5 border border-[#F7941D] rounded-sm text-[13px] font-medium text-[#F7941D] bg-white hover:bg-[#FFF9F0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none"
       >
         Pertama
       </button>

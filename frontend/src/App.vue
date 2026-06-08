@@ -1,7 +1,6 @@
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue' 
+import { computed, ref, watch } from 'vue' 
 import { useRoute } from 'vue-router'
-import { useAutoLogout } from '@/router/composables/useAutoLogout'
 
 import Topbar from '@/components/Topbar.vue'
 import Sidebar from '@/components/Sidebar.vue'
@@ -9,22 +8,10 @@ import Sidebar from '@/components/Sidebar.vue'
 const route = useRoute()
 
 const hideLayout = computed(() => {
-  return route.path === '/login' || route.name === 'Login' || route.meta.hideLayout
+  return route.path === '/login' || route.path === '/register' || route.name === 'Login' || route.name === 'Register' || route.meta.hideLayout
 })
-
-const { initAutoLogout, destroyAutoLogout } = useAutoLogout(15)
 
 const mainScrollContainer = ref(null)
-
-onMounted(() => {
-  if (localStorage.getItem('token')) {
-    initAutoLogout()
-  }
-})
-
-onUnmounted(() => {
-  destroyAutoLogout()
-})
 
 watch(
   () => route.path,
@@ -53,4 +40,3 @@ watch(
     </div>
   </div>
 </template>
-

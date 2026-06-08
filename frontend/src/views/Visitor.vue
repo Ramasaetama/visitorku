@@ -194,7 +194,7 @@ onMounted(() => {
               <button 
                 @click="handleReport"
                 class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] 
-                       text-[#38CA99] rounded-lg font-medium text-sm 
+                       text-[#38CA99] rounded-sm font-medium text-sm 
                        hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
               >
                 <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -219,7 +219,7 @@ onMounted(() => {
               <div class="relative shrink-0">
                 <select 
                   v-model="itemsPerPage" 
-                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                  class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
                 >
                   <option :value="5">5</option>
                   <option :value="10">10</option>
@@ -317,20 +317,20 @@ onMounted(() => {
           v-model="notesText"
           rows="6"
           placeholder="Enter Address Here..."
-          class="w-full border border-gray-300 rounded-lg p-3 text-gray-700 text-sm focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] resize-none"
+          class="w-full border border-gray-300 rounded-sm p-3 text-gray-700 text-sm focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] resize-none"
         ></textarea>
 
         <div class="flex justify-end gap-3 mt-6">
           <button
             @click="closeNotesModal"
-            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors focus:outline-none"
+            class="px-6 py-2 border border-gray-300 rounded-sm text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors focus:outline-none"
           >
             Cancel
           </button>
           <button
             @click="saveNotes"
             :disabled="isSavingNotes"
-            class="px-6 py-2 bg-[#F7941D] text-white rounded-lg font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-6 py-2 bg-[#F7941D] text-white rounded-sm font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {{ isSavingNotes ? 'Loading...' : 'Submit' }}
           </button>

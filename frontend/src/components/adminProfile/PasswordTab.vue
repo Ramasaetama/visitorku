@@ -8,20 +8,20 @@
 
     <div>
       <label class="block text-[13px] font-medium text-gray-700 mb-2">Current Password <span class="text-red-500">*</span></label>
-      <input v-model="form.current_password" type="password" placeholder="Enter Current Password here..." class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
+      <input v-model="form.current_password" type="password" placeholder="Enter Current Password here..." class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
     </div>
 
     <div>
       <label class="block text-[13px] font-medium text-gray-700 mb-2">New Password <span class="text-red-500">*</span></label>
-      <input v-model="form.new_password" type="password" placeholder="Enter New Password here..." class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
+      <input v-model="form.new_password" type="password" placeholder="Enter New Password here..." class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
     </div>
 
     <div>
       <label class="block text-[13px] font-medium text-gray-700 mb-2">Confirm New Password <span class="text-red-500">*</span></label>
-      <input v-model="form.c_new_password" type="password" placeholder="Enter Confirm New Password here..." class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
+      <input v-model="form.c_new_password" type="password" placeholder="Enter Confirm New Password here..." class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
     </div>
 
-    <button @click="save" :disabled="isSaving" class="px-6 py-2.5 bg-[#F7941D] hover:bg-[#E8850E] text-white font-medium rounded-lg text-sm transition disabled:opacity-70 disabled:cursor-not-allowed">
+    <button @click="save" :disabled="isSaving" class="px-6 py-2.5 bg-[#F7941D] hover:bg-[#E8850E] text-white font-medium rounded-sm text-sm transition disabled:opacity-70 disabled:cursor-not-allowed">
       {{ isSaving ? 'Saving...' : 'Save Changes' }}
     </button>
   </div>

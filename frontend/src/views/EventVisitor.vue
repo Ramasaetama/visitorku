@@ -278,26 +278,11 @@ onMounted(async () => {
                 </button>
                 <h1 class="text-xl font-semibold text-gray-800">{{ eventInfo?.name ?? 'Event Visitor' }}</h1>
               </div>
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <button @click="router.push('/event')" class="hover:text-[#F7941D] transition-colors">Event</button>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">Event Visitor</span>
-              </nav>
             </div>
 
             <!-- Stats Cards -->
             <div class="grid grid-cols-3 gap-4 mb-6">
-              <div class="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-3 shadow-sm">
+              <div class="bg-white border border-gray-100 rounded-md p-4 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-[#FEF4E3] flex items-center justify-center shrink-0">
                   <svg class="w-5 h-5 text-[#F7941D]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -308,7 +293,7 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <div class="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-3 shadow-sm">
+              <div class="bg-white border border-gray-100 rounded-md p-4 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-[#FEF4E3] flex items-center justify-center shrink-0">
                   <svg class="w-5 h-5 text-[#F7941D]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
@@ -319,7 +304,7 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <div class="bg-white border border-gray-100 rounded-xl p-4 flex items-center gap-3 shadow-sm">
+              <div class="bg-white border border-gray-100 rounded-md p-4 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-[#FEF4E3] flex items-center justify-center shrink-0">
                   <svg class="w-5 h-5 text-[#F7941D]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
@@ -356,7 +341,7 @@ onMounted(async () => {
               <div class="relative shrink-0">
                 <select
                   v-model="perPage"
-                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                  class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
                 >
                   <option :value="5">5</option>
                   <option :value="10">10</option>
@@ -376,14 +361,14 @@ onMounted(async () => {
               <!-- Finish Event Button -->
               <button
                 @click="showFinishModal = true"
-                class="flex items-center justify-center gap-2 px-5 py-2 bg-[#FF4C4C] text-white text-sm font-medium rounded-lg hover:bg-red-600 active:scale-95 transition-all focus:outline-none"
+                class="flex items-center justify-center gap-2 px-5 py-2 bg-[#FFFFFF] border border-[#FF4C4C] text-[#FF4C4C] text-sm font-medium rounded-md hover:bg-[#FF4C4C] hover:text-white active:scale-95 transition-all focus:outline-none"
               >
                 Finish
               </button>
 
               <button
                 @click="goToFeedback"
-                class="w-[38px] h-[38px] border border-[#4075FF] flex items-center justify-center text-[#4075FF] hover:bg-[#EEF2FF] transition-colors focus:outline-none"
+                class="w-[38px] h-[38px] border border-[#4075FF] flex items-center justify-center text-[#4075FF] hover:bg-[#4075FF] transition-colors focus:outline-none"
                 style="border-radius: 10px; background: transparent;"
                 title="View Feedback"
               >
@@ -527,7 +512,7 @@ onMounted(async () => {
 
     <!-- ─── Add / Edit Visitor Modal ─── -->
     <div v-if="showModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 relative animate-fade-in-up">
+      <div class="bg-white rounded-sm shadow-xl w-full max-w-md mx-4 relative animate-fade-in-up">
 
         <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
           <h2 class="text-lg font-semibold text-gray-900">{{ isEdit ? 'Edit Event Visitor' : 'Add Event Visitor' }}</h2>

@@ -88,7 +88,7 @@ defineExpose({ resetForm });
         type="text"
         required
         placeholder="Contoh: Kantor Pusat Jakarta"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
@@ -105,7 +105,7 @@ defineExpose({ resetForm });
         required
         rows="4"
         placeholder="Masukkan alamat lengkap cabang"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 resize-none
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"
@@ -121,7 +121,7 @@ defineExpose({ resetForm });
         v-model="formData.kontakCabang"
         type="text"
         placeholder="Contoh: 021-123456 / Nama PIC"
-        class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm
+        class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]
                transition-colors"

@@ -144,7 +144,6 @@ const satisfactionLabel = (val) => {
   if (val === 3) return 'Happy';
   if (val === 2) return 'Neutral';
   if (val === 1) return 'Sad';
-  return '-';
 };
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
@@ -211,7 +210,7 @@ onMounted(async () => {
               <div class="relative shrink-0">
                 <select
                   v-model="perPage"
-                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                  class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
                 >
                   <option :value="5">5</option>
                   <option :value="10">10</option>
@@ -231,7 +230,7 @@ onMounted(async () => {
               <!-- Download Report -->
               <button
                 @click="handleDownloadExcel"
-                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] text-[#38CA99] rounded-lg font-medium text-sm hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
+                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] text-[#38CA99] rounded-sm font-medium text-sm hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
               >
                 <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />

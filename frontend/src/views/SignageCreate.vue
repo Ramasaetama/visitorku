@@ -286,7 +286,7 @@ const goBack = () => {
               <div class="flex items-center gap-3">
                 <button
                   @click="currentStep === 1 ? goBack() : changeLayout()"
-                  class="w-8 h-8 flex items-center justify-center bg-[#FEF3E2] rounded-full hover:bg-[#FDDCB5] transition-colors"
+                  class="w-8 h-8 flex items-center justify-center bg-[#FEF3E2] rounded-sm hover:bg-[#FDDCB5] transition-colors"
                 >
                   <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
@@ -296,23 +296,6 @@ const goBack = () => {
                   {{ currentStep === 1 ? 'Select Layout' : 'Create Signage' }}
                 </h1>
               </div>
-
-              <!-- Breadcrumb -->
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <router-link to="/layar-informasi" class="hover:text-[#F7941D] transition-colors">Signage</router-link>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">Create</span>
-              </nav>
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -324,7 +307,7 @@ const goBack = () => {
   v-for="layout in layoutOptions"
   :key="layout.id"
   @click="selectLayout(layout.id)"
-  class="group relative border-2 rounded-lg overflow-hidden transition-all duration-200 hover:border-[#F7941D] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30"
+  class="group relative border-2 rounded-sm overflow-hidden transition-all duration-200 hover:border-[#F7941D] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30"
   :class="selectedLayout === layout.id ? 'border-[#F7941D] shadow-md' : 'border-gray-200'"
 >
   <!-- Layout Visual Preview -->
@@ -365,7 +348,7 @@ const goBack = () => {
                   v-model="formName"
                   type="text"
                   placeholder="Enter name here..."
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-sm text-sm
                          focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
                          transition-colors"
                 />
@@ -378,7 +361,7 @@ const goBack = () => {
                   v-model="formRunningText"
                   rows="3"
                   placeholder="Enter Running Text Here..."
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm resize-y
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-sm text-sm resize-y
                          focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
                          transition-colors"
                 ></textarea>
@@ -409,7 +392,7 @@ const goBack = () => {
                     v-for="(panel, pIdx) in selectedLayoutObj?.panels || []"
                     :key="pIdx"
                     @click="setActivePanel(pIdx)"
-                    class="rounded-t-md px-4 py-2 text-sm font-medium transition-all"
+                    class="rounded-t-sm px-4 py-2 text-sm font-medium transition-all"
                     :class="activePanel === pIdx
                       ? 'bg-[#FEF3E2] text-[#F7941D] border border-b-0 border-[#F7941D]/40'
                       : 'text-gray-500 hover:bg-gray-50 border border-transparent'"
@@ -433,12 +416,12 @@ const goBack = () => {
                 <!-- Wrapper-->
                 <div
                   class="p-[10px] gap-2 w-full border border-[#F7941D]/40 min-h-[80px] flex flex-wrap justify-start items-start text-[#F7941D]"
-                  :class="activePanel === 0 ? 'rounded-md rounded-tl-none' : 'rounded-md rounded-tr-none'"
+                  :class="activePanel === 0 ? 'rounded-sm rounded-tl-none' : 'rounded-sm rounded-tr-none'"
                 >
 
                 <!-- Show preview if file uploaded for this panel -->
                 <div v-if="panelPreviews[activePanel]" class="relative">
-                  <div class="border-2 border-dashed border-[#F7941D] rounded-lg overflow-hidden bg-gray-50">
+                  <div class="border-2 border-dashed border-[#F7941D] rounded-sm overflow-hidden bg-gray-50">
                     <!-- Image preview -->
                     <img
                       v-if="panelPreviews[activePanel].type.startsWith('image/')"
@@ -457,7 +440,7 @@ const goBack = () => {
                   <!-- Remove button -->
                   <button
                     @click="removeFile(activePanel)"
-                    class="absolute top-2 right-2 w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-full
+                    class="absolute top-2 right-2 w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-sm
                            hover:bg-red-600 transition-colors shadow-md"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -473,14 +456,14 @@ const goBack = () => {
                   @dragover="handleDragOver"
                   @dragleave="handleDragLeave"
                   @drop="handleDrop"
-                  class="border-2 border-dashed rounded-lg p-6 cursor-pointer transition-all flex flex-col items-center justify-center max-w-[200px] min-h-[160px]"
+                  class="border-2 border-dashed rounded-sm p-6 cursor-pointer transition-all flex flex-col items-center justify-center max-w-[200px] min-h-[160px]"
 
                   :class="isDragging
                     ? 'border-[#F7941D] bg-[#FCEBCF]'
                     : 'border-[#F7941D]/50 bg-[#FFFAF5] hover:border-[#F7941D] hover:bg-[#FCEBCF]'"
                 >
                   <!-- Camera Icon -->
-                  <div class="w-14 h-14 flex items-center justify-center bg-white rounded-xl shadow-sm mb-3">
+                  <div class="w-14 h-14 flex items-center justify-center bg-white rounded-sm shadow-sm mb-3">
                     <svg class="w-8 h-8 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                             d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
@@ -510,7 +493,7 @@ const goBack = () => {
                 <button
                   @click="handleSubmit"
                   :disabled="isSubmitting || !formName.trim()"
-                  class="px-8 py-2.5 text-sm font-semibold text-white bg-[#F7941D] rounded-lg
+                  class="px-8 py-2.5 text-sm font-semibold text-white bg-[#F7941D] rounded-sm
                          hover:bg-[#E8850E] transition-colors
                          disabled:opacity-50 disabled:cursor-not-allowed
                          active:scale-95"
@@ -538,19 +521,19 @@ const goBack = () => {
           v-model="durationInput"
           type="number"
           min="1"
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] text-center mb-8 font-semibold text-gray-700 text-lg shadow-sm"
+          class="w-full px-4 py-3 border border-gray-300 rounded-sm focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] text-center mb-8 font-semibold text-gray-700 text-lg shadow-sm"
         />
 
         <div class="flex items-center justify-center gap-4">
           <button
             @click="confirmDuration"
-            class="px-8 py-2.5 bg-[#F7941D] text-white rounded-lg font-medium hover:bg-[#E8850E] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
+            class="px-8 py-2.5 bg-[#F7941D] text-white rounded-sm font-medium hover:bg-[#E8850E] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
           >
             OK
           </button>
           <button
             @click="closeDurationModal"
-            class="px-8 py-2.5 bg-[#A3A3A3] text-white rounded-lg font-medium hover:bg-[#8F8F8F] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
+            class="px-8 py-2.5 bg-[#A3A3A3] text-white rounded-sm font-medium hover:bg-[#8F8F8F] transition-all focus:outline-none shadow-md hover:shadow-lg w-32"
           >
             Cancel
           </button>

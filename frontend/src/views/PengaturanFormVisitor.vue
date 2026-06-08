@@ -215,7 +215,7 @@ const deleteField = async (index) => {
               </div>
               <button
                 @click.stop="openModal"
-                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all"
+                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all"
               >
                 <span class="text-lg leading-none">+</span> Create new field
               </button>
@@ -235,7 +235,7 @@ const deleteField = async (index) => {
                   <!-- Default Fields Section -->
                   <tr>
                     <td colspan="3" class="pt-4 pb-2 px-4">
-                      <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                      <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                         </svg>
@@ -267,7 +267,7 @@ const deleteField = async (index) => {
                   <template v-if="customFields.length > 0">
                     <tr>
                       <td colspan="3" class="pt-6 pb-2 px-4">
-                        <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+                        <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
                           <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                           </svg>
@@ -352,7 +352,7 @@ const deleteField = async (index) => {
           <div class="relative">
             <select
               v-model="formData.fieldType"
-              class="w-full px-4 py-3 border border-gray-300 rounded-4xl font-poppins text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors bg-white appearance-none pr-10"
+              class="w-full px-4 py-3 border border-gray-300 rounded-sm font-poppins text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors bg-white appearance-none pr-10"
             >
               <option v-for="opt in fieldTypeOptions" :key="opt.value" :value="opt.value">
                 {{ opt.label }}
@@ -393,7 +393,7 @@ const deleteField = async (index) => {
           <button
             type="button"
             @click="closeModal"
-            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm  hover:bg-gray-50 transition-colors"
           >
             Cancel
           </button>
@@ -403,7 +403,7 @@ const deleteField = async (index) => {
             @click="saveField" 
             :disabled="!isFormValid"
             :class="[
-              'px-5 py-2.5 text-sm font-medium rounded-lg transition-colors',
+              'px-5 py-2.5 text-sm font-medium rounded-sm transition-colors',
               isFormValid
                 ? 'text-white bg-[#F7941D] hover:bg-[#E8850E]'
                 : 'text-white bg-gray-300 cursor-not-allowed'

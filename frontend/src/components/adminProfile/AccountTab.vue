@@ -8,25 +8,25 @@
 
     <div>
       <label class="block text-[13px] font-medium text-gray-700 mb-2">Name <span class="text-red-500">*</span></label>
-      <input v-model="form.name" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
+      <input v-model="form.name" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
     </div>
 
     <div>
       <label class="block text-[13px] font-medium text-gray-700 mb-2">Email <span class="text-red-500">*</span></label>
-      <input v-model="form.email" type="email" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
+      <input v-model="form.email" type="email" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
     </div>
 
     <div>
       <label class="block text-[13px] font-medium text-gray-700 mb-2">Phone Number <span class="text-red-500">*</span></label>
-      <input v-model="form.phone_number" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
+      <input v-model="form.phone_number" type="text" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition" />
     </div>
 
     <div>
       <label class="block text-[13px] font-medium text-gray-700 mb-2">Address <span class="text-red-500">*</span></label>
-      <textarea v-model="form.address" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-xl text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition resize-y"></textarea>
+      <textarea v-model="form.address" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-sm text-[14px] text-gray-800 focus:outline-none focus:border-[#F7941D] transition resize-y"></textarea>
     </div>
 
-    <button @click="save" :disabled="isSaving" class="px-6 py-2.5 bg-[#F7941D] hover:bg-[#E8850E] text-white font-medium rounded-lg text-sm transition disabled:opacity-70 disabled:cursor-not-allowed">
+    <button @click="save" :disabled="isSaving" class="px-6 py-2.5 bg-[#F7941D] hover:bg-[#E8850E] text-white font-medium rounded-sm text-sm transition disabled:opacity-70 disabled:cursor-not-allowed">
       {{ isSaving ? 'Saving...' : 'Save Changes' }}
     </button>
   </div>

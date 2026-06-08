@@ -75,7 +75,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
             :key="item.key"
             :to="item.path"
             :class="[
-              'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all text-[13px] no-underline',
+              'flex items-center gap-3 px-3 py-2.5 rounded-sm cursor-pointer transition-all text-[13px] no-underline',
               isActive(item.path)
                 ? 'bg-[#FEF3E2] text-[#F7941D] font-medium'
                 : 'text-[#64748B] hover:bg-gray-50 font-normal'
@@ -95,7 +95,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
             :key="item.key"
             :to="item.path"
             :class="[
-              'flex items-center gap-3 px-3 py-2.5 rounded-lg cursor-pointer transition-all text-[13px] no-underline',
+              'flex items-center gap-3 px-3 py-2.5 rounded- cursor-pointer transition-all text-[13px] no-underline',
               isActive(item.path)
                 ? 'bg-[#FEF3E2] text-[#F7941D] font-medium'
                 : 'text-[#64748B] hover:bg-gray-50 font-normal'
@@ -108,7 +108,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
       </div>
     </div>
 
-    <div v-if="shouldShowQuickGuide" class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
+    <div v-if="shouldShowQuickGuide" class="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <div class="flex items-center justify-between mb-2">
         <span class="text-[#F7941D] text-[12px] font-semibold">{{ t('sidebar.quickGuide') }}</span>
         <button @click="showQuickGuide = false" class="text-gray-400 hover:text-gray-600 p-1">
@@ -158,21 +158,21 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
           <div class="h-full bg-[#F7941D] rounded-full w-1/6"></div>
         </div>
       </div>
-      <button class="w-full border-2 border-[#F7941D] text-[#F7941D] text-[12px] font-semibold py-2.5 rounded-xl hover:bg-[#F7941D] hover:text-white transition-all">
+      <button class="w-full border-2 border-[#F7941D] text-[#F7941D] text-[12px] font-semibold py-2.5 rounded-sm hover:bg-[#F7941D] hover:text-white transition-all">
         {{ t('sidebar.upgradePackage') }}
       </button>
     </div>
   </aside>
 
   <aside class="flex md:hidden w-14 bg-[#F4F6F8] flex-col items-center py-3 gap-1 font-['Poppins'] h-full overflow-y-auto hide-scrollbar shrink-0 overscroll-contain">
-        <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-2 w-full flex flex-col items-center gap-1">
+        <div class="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-2 w-full flex flex-col items-center gap-1">
       <router-link
         v-for="item in mainMenuItems"
         :key="'m-' + item.key"
         :to="item.path"
         :title="t('sidebar.' + item.key)"
         :class="[
-          'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
+          'flex items-center justify-center w-9 h-9 rounded-sm transition-all',
           isActive(item.path)
             ? 'bg-[#FEF3E2]'
             : 'hover:bg-gray-100'
@@ -194,7 +194,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
         :to="item.path"
         :title="t('sidebar.' + item.key)"
         :class="[
-          'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
+          'flex items-center justify-center w-9 h-9 rounded-sm transition-all',
           isActive(item.path)
             ? 'bg-[#FEF3E2]'
             : 'hover:bg-gray-100'

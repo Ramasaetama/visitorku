@@ -11,7 +11,7 @@
       :disabled="disabled"
       :rows="rows"
       :class="[
-        'w-full px-4 py-3 border rounded-2xl font-poppins text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-colors resize-none',
+        'w-full px-4 py-3 border rounded-sm font-poppins text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#F7941D] focus:border-[#F7941D] transition-colors resize-none',
         error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-primary-500',
         disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'
       ]"

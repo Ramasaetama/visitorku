@@ -122,24 +122,8 @@ watch(currentPage, () => {
 });
 
 // ─── Report Export ────────────────────────────────────────────────────────────
-const isExporting = ref(false);
-const handleReport = async () => {
-  isExporting.value = true;
-  try {
-    const response = await exportVisitReport({ search: appliedSearch.value || undefined });
-    const url  = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href  = url;
-    link.setAttribute('download', `visit-report-${Date.now()}.xlsx`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  } catch (err) {
-    console.error('Gagal mengunduh laporan:', err);
-  } finally {
-    isExporting.value = false;
-  }
+const handleReport = () => {
+  router.push('/report');
 };
 
 onMounted(fetchVisits);
@@ -158,7 +142,7 @@ onMounted(fetchVisits);
         <button 
           @click="handleReport"
           class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] 
-                 text-[#38CA99] rounded-lg font-medium text-sm 
+                 text-[#38CA99] rounded-sm font-medium text-sm 
                  hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
         >
           <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -183,7 +167,7 @@ onMounted(fetchVisits);
         <div class="relative shrink-0">
           <select 
             v-model="perPage" 
-            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
