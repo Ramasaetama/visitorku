@@ -232,6 +232,8 @@ export default {
       generic: 'An error occurred.',
       deleteFailed: 'Failed to delete event.',
     },
+    urlInvalidProtocol: 'URL must start with http:// or https://.',
+    urlInvalidFormat: 'URL must be in the format https://www.example.com'
   },
   eventVisitor: {
     title: 'Event Visitor',

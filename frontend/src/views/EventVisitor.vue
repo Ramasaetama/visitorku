@@ -33,7 +33,21 @@ const eventInfo   = ref(null);
 const checkInCount  = ref(0);
 const checkOutCount = ref(0);
 const totalVisitor  = ref(0);
-const satisfactionIndex = ref(0);
+const satisfactionStats = computed(() => {
+  const items = visitorData.value;
+  let bad = 0, neutral = 0, good = 0, total = 0;
+  items.forEach(v => {
+    if (v.satisfaction === 1) { bad++;     total++; }
+    if (v.satisfaction === 2) { neutral++; total++; }
+    if (v.satisfaction === 3) { good++;    total++; }
+  });
+  if (total === 0) return { bad: 0, neutral: 0, good: 0 };
+  return {
+    bad:     Math.round((bad     / total) * 100),
+    neutral: Math.round((neutral / total) * 100),
+    good:    Math.round((good    / total) * 100),
+  };
+});
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const visitorData   = ref([]);
@@ -72,7 +86,7 @@ const fetchCheckInOutCount = async () => {
     checkInCount.value  = data.check_in  ?? data.checkin  ?? 0;
     checkOutCount.value = data.check_out ?? data.checkout ?? 0;
     totalVisitor.value  = data.total     ?? data.total_visitor ?? 0;
-    satisfactionIndex.value = data.satisfaction_index ?? data.satisfaction ?? 0;
+
   } catch (err) {
     console.error('Gagal memuat check-in/out count:', err);
   }
@@ -319,16 +333,56 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- Satisfaction Index -->
-            <div class="mb-6">
-              <p class="text-sm font-semibold text-gray-700 mb-2">{{ t('eventVisitor.satisfactionIndex') }}</p>
-              <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  class="h-full bg-gradient-to-r from-[#F7941D] to-[#F7BC1D] rounded-full transition-all duration-500"
-                  :style="{ width: `${Math.min(satisfactionIndex, 100)}%` }"
-                ></div>
-              </div>
-            </div>
+<!-- Satisfaction Index -->
+<div class="mb-6">
+  <p class="text-sm font-semibold text-gray-700 mb-2">{{ t('eventVisitor.satisfactionIndex') }}</p>
+
+  <div class="w-full h-10 rounded-sm overflow-hidden flex font-medium text-white text-sm">
+
+    <div v-if="satisfactionStats.bad > 0"
+      :style="{ width: satisfactionStats.bad + '%' }"
+      class="bg-[#EF4444] h-full flex items-center justify-between px-3 transition-all duration-500">
+      <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke-width="2.5"/>
+        <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+        <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+        <path d="M8 16c1.5-2 4.5-2 6 0" stroke-linecap="round"/>
+      </svg>
+      <span v-if="satisfactionStats.bad > 5">{{ satisfactionStats.bad }}%</span>
+    </div>
+
+    <div v-if="satisfactionStats.neutral > 0"
+      :style="{ width: satisfactionStats.neutral + '%' }"
+      class="bg-[#F59E0B] h-full flex items-center justify-between px-3 transition-all duration-500">
+      <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke-width="2.5"/>
+        <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+        <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+        <line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round" stroke-width="1.5"/>
+      </svg>
+      <span v-if="satisfactionStats.neutral > 5">{{ satisfactionStats.neutral }}%</span>
+    </div>
+
+    <div v-if="satisfactionStats.good > 0"
+      :style="{ width: satisfactionStats.good + '%' }"
+      class="bg-[#10B981] h-full flex items-center justify-between px-3 transition-all duration-500">
+      <span v-if="satisfactionStats.good > 5">{{ satisfactionStats.good }}%</span>
+      <svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" stroke-width="2.5"/>
+        <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+        <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+        <path d="M8 14.5c1.5 2 4.5 2 6 0" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div v-if="satisfactionStats.bad === 0 && satisfactionStats.neutral === 0 && satisfactionStats.good === 0"
+      class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
+      No Data
+    </div>
+
+  </div>
+</div>
+ 
 
             <!-- Toolbar -->
             <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
@@ -444,6 +498,17 @@ onMounted(async () => {
 
                 <template #aksi="{ row }">
                   <div class="flex items-center gap-2">
+                    <!-- View Detail -->
+                    <button
+                      @click="router.push(`/event/visitor/${row.id}`)"
+                      class="w-[30px] h-[30px] rounded bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors focus:outline-none"
+                      title="View Detail"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M2 12c0 0 4-8 10-8s10 8 10 8-4 8-10 8-10-8-10-8z"/>
+                        <circle cx="12" cy="12" r="3.5"/>
+                      </svg>
+                    </button>
                     <button
                       @click="openEditModal(row)"
                       class="w-[30px] h-[30px] rounded bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"

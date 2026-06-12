@@ -288,7 +288,7 @@ onMounted(async () => {
 
                 <template #aksi="{ row }">
                   <button
-                    @click="router.push(`/event/feedback/${row.id}`)"
+                    @click="router.push({ path: `/event/feedback/${row.id}`, state: { feedbackRow: JSON.stringify(row.raw) } })"
                     class="w-[30px] h-[30px] rounded bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors focus:outline-none"
                     title="View Detail"
                   >

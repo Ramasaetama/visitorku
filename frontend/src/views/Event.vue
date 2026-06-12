@@ -9,7 +9,7 @@ import SearchInput from '@/components/common/SearchInput.vue';
 import DateTimePicker from '@/components/common/DateTimePicker.vue';
 import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
-import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
+import Pagination from '@/components/common/Pagination.vue'; 
 import SettingIcon from '@/assets/settings-3-line.svg';
 import DeleteIcon from '@/assets/delete.svg';
 import EditIcon from '@/assets/edit-box-line.svg';
@@ -142,13 +142,20 @@ const editingId    = ref(null);
 const showToast    = ref(false);
 const toastMessage = ref('');
 
-// ─── Form & Validasi Tanggal ──────────────────────────────────────────────────
-const dateErrors = ref({
-  event_finish_at:        '',
-  registration_finish_at: '',
-  registration_start_at:  '',
-});
+const urlError = ref('');
+const urlTouched = ref(false);
 
+const isValidUrl = (urlString) => {
+  if (!urlString) return false;
+  try {
+    const url = new URL(urlString);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (err) {
+    return false;
+  }
+};
+
+// ─── Form & Validasi Tanggal ──────────────────────────────────────────────────
 const form = ref({
   name:                  '',
   description:           '',
@@ -159,6 +166,28 @@ const form = ref({
   registration_start_at: '',
   registration_finish_at:'',
 });
+
+const dateErrors = ref({
+  event_finish_at:        '',
+  registration_finish_at: '',
+  registration_start_at:  '',
+});
+
+// watch URL — harus setelah form di-declare
+watch(
+  () => form.value.location_url,
+  (newVal) => {
+    if (!urlTouched.value) return; // hanya validasi setelah field disentuh
+    if (!newVal) {
+      urlError.value = 'URL Lokasi wajib diisi.';
+    } else if (!isValidUrl(newVal)) {
+      urlError.value = 'Format URL tidak valid (harus menyertakan http:// atau https://).';
+    } else {
+      urlError.value = '';
+    }
+  }
+);
+
 
 const validateDates = () => {
   dateErrors.value.event_finish_at = '';
@@ -205,7 +234,9 @@ const openAddModal = () => {
     registration_start_at: '', registration_finish_at: '',
   };
   dateErrors.value = { event_finish_at: '', registration_finish_at: '', registration_start_at: '' };
-  showModal.value = true;
+  urlError.value   = '';
+  urlTouched.value = false;
+  showModal.value  = true;
 };
 
 const openEditModal = (row) => {
@@ -223,7 +254,9 @@ const openEditModal = (row) => {
     registration_finish_at: toInputDatetime(r.registration_finish_at),
   };
   dateErrors.value = { event_finish_at: '', registration_finish_at: '', registration_start_at: '' };
-  showModal.value = true;
+  urlError.value   = '';
+  urlTouched.value = false;
+  showModal.value  = true;
 };
 
 const closeModal = () => {
@@ -231,11 +264,31 @@ const closeModal = () => {
 };
 
 const handleSubmit = async () => {
-  if (!form.value.name || !form.value.description || !form.value.start_at || !form.value.finish_at || !form.value.registration_start_at || !form.value.registration_finish_at) {
+  // Tandai field URL sudah disentuh agar error muncul
+  urlTouched.value = true;
+
+  if (
+    !form.value.name || 
+    !form.value.description || 
+    !form.value.start_at || 
+    !form.value.finish_at || 
+    !form.value.registration_start_at || 
+    !form.value.registration_finish_at ||
+    !form.value.location_url 
+  ) {
+    if (!form.value.location_url) {
+      urlError.value = 'URL Lokasi wajib diisi.';
+    }
     showError(t('event.validation.requiredFields'));
     return;
   }
 
+  if (!isValidUrl(form.value.location_url)) {
+    urlError.value = 'Format URL tidak valid (harus menyertakan http:// atau https://).';
+    showError('Terdapat input URL yang tidak valid.');
+    return;
+  }
+  
   validateDates();
   if (hasDateErrors.value) {
     showError(t('event.validation.invalidDates'));
@@ -349,28 +402,7 @@ onMounted(fetchEvents);
           :sort-order="sortOrder"
           @sort="handleSort"
         >
-          <template #url_location="{ row }">
-            <div v-if="row.location_url && row.location_url !== ''" class="flex items-center gap-2">
-              <a
-                :href="row.location_url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-[13px] text-blue-500 truncate max-w-[150px] hover:underline"
-                :title="row.location_url"
-              >{{ row.location_url }}</a>
-              <button
-                @click="copyUrl(row.location_url)"
-                class="shrink-0 w-[26px] h-[26px] rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
-                title="Copy URL Lokasi"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                </svg>
-              </button>
-            </div>
-            <span v-else class="text-gray-400">-</span>
-          </template>
+
 
           <template #url_registration="{ row }">
             <div v-if="row.url_registration && row.url_registration !== '-'" class="flex items-center gap-2">
@@ -396,18 +428,26 @@ onMounted(fetchEvents);
           </template>
 
           <template #location_url="{ row }">
-            <div v-if="row.location_url && row.location_url !== '-'" class="flex items-center gap-2">
-              <a 
-                :href="row.location_url" 
-                target="_blank" 
-                class="text-[13px] text-gray-800 truncate max-w-40"
-              >
-                {{ row.location_url }}
-              </a>
+            <div v-if="row.location_url && row.location_url !== '-' && row.location_url !== ''" class="flex items-center gap-2">
+              <!-- Jika valid URL (http/https), tampilkan sebagai link -->
+              <a
+                v-if="isValidUrl(row.location_url)"
+                :href="row.location_url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[13px] text-blue-500 truncate max-w-[130px] hover:underline"
+                :title="row.location_url"
+              >{{ row.location_url }}</a>
+              <!-- Jika bukan URL valid, tampilkan sebagai teks biasa -->
+              <span
+                v-else
+                class="text-[13px] text-gray-500 truncate max-w-[130px]"
+                :title="row.location_url"
+              >{{ row.location_url }}</span>
               <button
                 @click="copyUrl(row.location_url)"
                 class="shrink-0 w-6.5 h-6.5 rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
-                title="Copy URL"
+                title="Copy URL Lokasi"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
@@ -527,13 +567,26 @@ onMounted(fetchEvents);
 
       <!-- Location URL -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.locationUrl') }}</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">
+          {{ t('event.modal.locationUrl') }} <span class="text-red-500">*</span>
+        </label>
         <input
           v-model="form.location_url"
           type="text"
           :placeholder="t('event.modal.locationUrlPlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          class="w-full bg-[#F8FAFC] border rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 transition-colors"
+          :class="urlError && urlTouched ? 'border-red-400 focus:border-red-400 focus:ring-red-400/20' : 'border-gray-200 focus:border-[#F7941D] focus:ring-[#F7941D]/20'"
+          @blur="urlTouched = true"
+          @input="urlTouched = true"
         />
+        <Transition name="err-fade">
+          <p v-if="urlError && urlTouched" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+            </svg>
+            {{ urlError }}
+          </p>
+        </Transition>
       </div>
 
       <!-- Event Start At -->
@@ -612,7 +665,7 @@ onMounted(fetchEvents);
           type="button"
           @click="handleSubmit"
           :disabled="isSaving || hasDateErrors"
-          :title="hasDateErrors ? t('event.modal.checkDates') : ''"
+          :title="hasDateErrors ? 'Mohon periksa kembali input tanggal Anda' : ''"
           class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           :class="hasDateErrors ? 'bg-gray-400' : 'bg-[#F7941D] hover:bg-[#E8850E]'"
         >

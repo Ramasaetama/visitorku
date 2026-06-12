@@ -222,6 +222,7 @@ export default {
       finishAfterStart: 'Waktu selesai event harus setelah waktu mulai event.',
       regFinishAfterStart: 'Waktu selesai registrasi harus setelah waktu mulai registrasi.',
       regStartBeforeEvent: 'Waktu mulai registrasi harus sebelum waktu mulai event.',
+      invalidUrl: 'Format URL tidak valid. Harus dimulai dengan https:// atau http://',
     },
     success: {
       added: 'Event berhasil ditambahkan.',

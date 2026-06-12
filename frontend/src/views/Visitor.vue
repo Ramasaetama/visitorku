@@ -1,16 +1,19 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
+import Sidebar from '@/components/Sidebar.vue';
+import { getAllVisits, exportVisitReport } from '@/services/visitService';
 
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
-import Pagination from '@/components/common/Pagination.vue';
 import notfound from '@/assets/notfound.svg';
 
+import Modal from '@/components/common/Modal.vue';  
 import { getVisitor, updateVisitorNotes } from '@/services/visitorService';
 import { showError } from '@/utils/alertHelper';
 
@@ -48,16 +51,8 @@ const currentPage = ref(1);
 const itemsPerPage = ref(10); 
 const totalItems = ref(0); 
 
-// 🌟 FIX 2: Watcher halaman agar otomatis ambil data tiap ganti page/size
 watch(itemsPerPage, () => {
-  if (currentPage.value !== 1) {
-    currentPage.value = 1; // Akan memicu watcher currentPage di bawah
-  } else {
-    fetchVisitors();
-  }
-});
-
-watch(currentPage, () => {
+  currentPage.value = 1;
   fetchVisitors();
 });
 
@@ -127,7 +122,37 @@ const sortedData = computed(() => {
   });
 });
 
+// PAGINATION UI 
+const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
+const startIndex = computed(() => totalItems.value === 0 ? 0 : ((currentPage.value - 1) * itemsPerPage.value) + 1);
+const endIndex = computed(() => Math.min(currentPage.value * itemsPerPage.value, totalItems.value));
+
+const visiblePages = computed(() => {
+  const maxVisible = 5; 
+  let start = Math.max(1, currentPage.value - 2);
+  let end = start + maxVisible - 1;
+
+  if (end > totalPages.value) {
+    end = totalPages.value;
+    start = Math.max(1, end - maxVisible + 1);
+  }
+
+  let pages = [];
+  for (let i = start; i <= end; i++) {
+    pages.push(i);
+  }
+  return pages;
+});
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
+    currentPage.value = page;
+    fetchVisitors(); 
+  }
+};
+
 // MODAL NOTES LOGIC
+
 const showNotesModal = ref(false);
 const selectedVisitor = ref(null);
 const notesText = ref('');
@@ -183,6 +208,7 @@ onMounted(() => {
 
 <template>
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
+        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
             
             <div class="flex items-start justify-between mb-6">
@@ -194,7 +220,7 @@ onMounted(() => {
               <button 
                 @click="handleReport"
                 class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] 
-                       text-[#38CA99] rounded-sm font-medium text-sm 
+                       text-[#38CA99] rounded-lg font-medium text-sm 
                        hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
               >
                 <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -219,7 +245,7 @@ onMounted(() => {
               <div class="relative shrink-0">
                 <select 
                   v-model="itemsPerPage" 
-                  class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
+                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
                 >
                   <option :value="5">5</option>
                   <option :value="10">10</option>
@@ -235,7 +261,7 @@ onMounted(() => {
               </div>
             </div>
             
-            <div class="flex-1 flex flex-col overflow-hidden">
+            <div class="flex-1 overflow-hidden">
               <DataTable 
                 :columns="tableColumns"               
                 :data="sortedData" 
@@ -294,50 +320,78 @@ onMounted(() => {
             
           </div>
           
-          <Pagination
-            v-model:current-page="currentPage"
-            :total-data="totalItems"
-            :per-page="itemsPerPage"
-          />
+          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B]">
+            <span>{{ t('visitorData.showing', { from: startIndex, to: endIndex, total: totalItems }) }}</span>
+            
+            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+              <button 
+                @click="goToPage(currentPage - 1)" 
+                :disabled="currentPage === 1"
+                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
+              </button>
+              
+              <button 
+                v-for="page in visiblePages" 
+                :key="page"
+                @click="goToPage(page)"
+                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
+                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
+              >
+                {{ page }}
+              </button>
 
+              <button 
+                @click="goToPage(currentPage + 1)" 
+                :disabled="currentPage === totalPages"
+                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+              >
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+              </button>
+            </div>
+          </div>
+
+        </div> 
       </main>
 
-    <div v-if="showNotesModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-[550px] p-6 mx-4 relative animate-fade-in-up">
-        
-        <button @click="closeNotesModal" class="absolute top-5 right-5 text-gray-800 hover:text-gray-500 transition-colors focus:outline-none">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <path d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
+  <Modal
+  :show="showNotesModal"
+  :title="`Notes, ${selectedVisitor?.nama ?? ''}`"
+  width="md"
+  @close="closeNotesModal"
+>
+  <textarea
+    v-model="notesText"
+    rows="6"
+    placeholder="Enter notes here..."
+    class="w-full border border-gray-300 rounded-sm p-3 text-gray-700 text-sm 
+           focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] resize-none"
+  ></textarea>
 
-        <h2 class="text-xl font-bold text-gray-900 mb-6">Notes, {{ selectedVisitor?.nama }}</h2>
-
-        <textarea
-          v-model="notesText"
-          rows="6"
-          placeholder="Enter Address Here..."
-          class="w-full border border-gray-300 rounded-sm p-3 text-gray-700 text-sm focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] resize-none"
-        ></textarea>
-
-        <div class="flex justify-end gap-3 mt-6">
-          <button
-            @click="closeNotesModal"
-            class="px-6 py-2 border border-gray-300 rounded-sm text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors focus:outline-none"
-          >
-            Cancel
-          </button>
-          <button
-            @click="saveNotes"
-            :disabled="isSavingNotes"
-            class="px-6 py-2 bg-[#F7941D] text-white rounded-sm font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ isSavingNotes ? 'Loading...' : 'Submit' }}
-          </button>
-        </div>
-        
-      </div>
+  <template #footer>
+    <div class="flex items-center justify-end gap-3">
+      <button
+        @click="closeNotesModal"
+        class="px-5 py-2.5 text-sm font-medium text-gray-600 
+               border border-gray-300 rounded-sm
+               hover:bg-gray-50 transition-colors focus:outline-none"
+      >
+        Cancel
+      </button>
+      <button
+        @click="saveNotes"
+        :disabled="isSavingNotes"
+        class="px-5 py-2.5 text-sm font-medium text-white 
+               bg-[#F7941D] rounded-sm
+               hover:bg-[#E8850E] transition-colors focus:outline-none
+               disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ isSavingNotes ? 'Loading...' : 'Submit' }}
+      </button>
     </div>
+  </template>
+</Modal>
 
 </template>
 
@@ -347,18 +401,4 @@ button:focus {
   box-shadow: none !important;
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.2s ease-out forwards;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
 </style>

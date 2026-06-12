@@ -96,6 +96,18 @@ const routes = [
     component: () => import('../views/EventSetting.vue'),
     meta: { middleware: [auth] },
   },
+  {
+    path: '/event/visitor/:id',
+    name: 'EventVisitorDetail',
+    component: () => import('../views/EventVisitorDetail.vue'),
+    meta: { middleware: [auth] },
+  },
+  {
+    path: '/event/feedback/:id',
+    name: 'EventFeedbackDetail',
+    component: () => import('../views/EventFeedbackDetail.vue'),
+    meta: { middleware: [auth] },
+  },
 
   // Signage - Create (multi-step)
   {
