@@ -15,7 +15,7 @@ import keyline from '@/assets/icons/key-line.svg';
 import editIcon from '@/assets/icons/edit-box-line.svg';
 import { ref, onMounted, computed, watch } from 'vue';
 import { getAllUsers, createUser, updateUser, deleteUser } from '@/services/userService';
-import { getAllBranches } from '@/services/branchService';
+import { getAllBranches } from '@/services/cabangService';
 import { useConfirmDelete } from '@/composables/useConfirmDelete';
 import { useToastNotification } from '@/composables/useToastNotification';
 
@@ -45,8 +45,8 @@ watch(searchQuery, (nilaiBaru) => {
 const tableColumns = computed(() => [
   { key: 'name', label: t('userManagement.table.name'), sortable: true },
   { key: 'email', label: t('userManagement.table.email'), sortable: true },
+  { key: 'phone', label: t('userManagement.table.phone'), sortable: true },
   { key: 'branch_name', label: t('userManagement.table.branch'), sortable: true },
-  { key: 'role', label: t('userManagement.table.role'), sortable: true },
   { key: 'aksi', label: t('userManagement.table.action'), sortable: false },
 ]);
 
