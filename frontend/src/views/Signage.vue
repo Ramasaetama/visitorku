@@ -1,13 +1,15 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Toast from '@/components/common/Toast.vue';
-import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
+import Pagination from '@/components/common/Pagination.vue'; 
+import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
+import notfound from '@/assets/notfound.svg'; 
 import {
   getAllSignages,
   deleteSignage,
@@ -24,15 +26,28 @@ const perPage        = ref(10);
 const currentPage    = ref(1);
 const totalRecords   = ref(0);
 
-// ─── Dropdown State ──────────────────────────────────────────────────────────
+// ─── Dropdown State dengan Posisi Dinamis (Mekar ke Kanan) ───────────────────
 const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
 
-const toggleDropdown = (id) => {
+const toggleDropdown = async (id, event) => {
   if (activeDropdown.value === id) {
     activeDropdown.value = null;
   } else {
     activeDropdown.value = id;
+    
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX}px` 
+    };
   }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
 };
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
@@ -56,8 +71,6 @@ const handleSort = (key) => {
 };
 
 // ─── Filtered & Sorted Data ──────────────────────────────────────────────────
-// Catatan: Signage API sepertinya mengembalikan semua data tanpa backend pagination, 
-// jadi filter dan sort dilakukan di Frontend.
 const filteredData = computed(() => {
   if (!appliedSearch.value) return signageData.value;
   const keyword = appliedSearch.value.toLowerCase();
@@ -83,10 +96,8 @@ const paginatedData = computed(() => {
   return sortedData.value.slice(start, start + perPage.value);
 });
 
-// Update total record setiap kali filter berubah
 watch(filteredData, (newVal) => {
   totalRecords.value = newVal.length;
-  // Jika page saat ini melebih batas page setelah filter, kembalikan ke page 1
   const maxPage = Math.max(1, Math.ceil(newVal.length / perPage.value));
   if (currentPage.value > maxPage) {
     currentPage.value = 1;
@@ -98,7 +109,7 @@ watch(filteredData, (newVal) => {
 const fetchSignages = async () => {
   isLoading.value = true;
   try {
-    const response = await getAllSignages({ page: 1, size: 1000 }); // Ambil semua
+    const response = await getAllSignages({ page: 1, size: 1000 }); 
     const res   = response.data || response;
     const items = Array.isArray(res) ? res : (res.data || res.items || []);
     
@@ -139,12 +150,13 @@ const handleCreateNew = () => {
 };
 
 const handleEdit = (row) => {
+  closeDropdown();
   router.push(`/layar-informasi/create?edit=${row.id}`);
-  activeDropdown.value = null;
 };
 
 // ─── Delete ───────────────────────────────────────────────────────────────────
 const handleDelete = async (row) => {
+  closeDropdown();
   const confirmed = await confirmDelete('Signage');
   if (!confirmed) return;
   try {
@@ -161,10 +173,18 @@ const showToast    = ref(false);
 const toastMessage = ref('');
 const handleCloseToast = () => { showToast.value = false; };
 
-onMounted(fetchSignages);
+onMounted(() => {
+  fetchSignages();
+  window.addEventListener('scroll', closeDropdown, true);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', closeDropdown, true);
+});
 </script>
 
 <template>
+  <div class="flex-1 w-full h-full flex flex-col">
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col">
 
@@ -237,28 +257,33 @@ onMounted(fetchSignages);
             <div class="flex items-center gap-2 relative">
               
               <button 
-                @click.stop="toggleDropdown(row.id)"
+                @click.stop="toggleDropdown(row.id, $event)"
                 class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
+                title="Opsi"
               >
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                 </svg>
               </button>
 
-              <div v-if="activeDropdown === row.id" @click="activeDropdown = null" class="fixed inset-0 z-40"></div>
-              
-              <div 
-                v-if="activeDropdown === row.id" 
-                class="absolute top-[110%] left-0 w-36 bg-white rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-gray-100 py-1.5 z-50"
-              >
-                <button @click="handleEdit(row)" class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none">
-                  Edit Data
-                </button>
-              </div>
+              <Teleport to="body">
+                <div v-if="activeDropdown === row.id" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
+                
+                <div 
+                  v-if="activeDropdown === row.id" 
+                  class="fixed w-36 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                  :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                >
+                  <button @click="handleEdit(row)" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors">
+                    Edit Data
+                  </button>
+                </div>
+              </Teleport>
 
               <button 
                 @click="handleDelete(row)"
                 class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none relative z-10"
+                title="Hapus"
               >
                 <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                   <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
@@ -269,13 +294,20 @@ onMounted(fetchSignages);
           </template>
 
           <template #empty>
-            <div class="flex flex-col items-center justify-center py-16 text-gray-400">
-              <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-              </svg>
-              <p class="text-sm font-medium text-gray-500">No Records to display</p>
-            </div>
+            <EmptyState 
+              v-if="signageData.length === 0"
+              :icon="notfound"
+              title="Signage Belum Tersedia"
+              description="Tambahkan signage terlebih dahulu agar dapat ditampilkan di layar."
+              buttonText="Tambah Signage"
+              @action="handleCreateNew"
+            />
+            <EmptyState 
+              v-else
+              :icon="notfound"
+              title="No Records to display"
+              :description="`Tidak ada signage yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+            />
           </template>
         </DataTable>
       </div>
@@ -295,4 +327,12 @@ onMounted(fetchSignages);
     :message="toastMessage"
     @close="handleCloseToast"
   />
+  </div>
 </template>
+
+<style scoped>
+button:focus, select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>

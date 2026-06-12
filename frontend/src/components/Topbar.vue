@@ -7,7 +7,6 @@ import { getProfile } from '@/services/companyProfileService';
 import { confirmAction } from '@/utils/alertHelper';
 import { themeState } from '@/utils/ThemeState';
 import visitorkulogo from '@/assets/visitorku.png';
-import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
 
 

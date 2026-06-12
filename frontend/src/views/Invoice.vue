@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
@@ -20,6 +20,32 @@ const router        = useRouter();
 const isReceiptModalOpen = ref(false);
 const selectedReceiptUrl = ref('');
 
+// ─── Dropdown State dengan Posisi Dinamis ────────────────────────────────────
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    
+    // Tunggu DOM update, lalu hitung posisi tombol yang diklik
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    // 144px adalah lebar dropdown (w-36)
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX }px` 
+    };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
+
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = [
   { key: 'evidence_url',  label: 'RECEIPT',     sortable: false },
@@ -32,6 +58,7 @@ const tableColumns = [
 ];
 
 const goToDetail = (row) => {
+  closeDropdown();
   router.push(`/master/invoice/detail/${row.id}`);
 };
 
@@ -99,6 +126,7 @@ const formatCurrency = (val) => {
 
 // ─── Confirm Invoice ──────────────────────────────────────────────────────────
 const handleConfirm = async (row) => {
+  closeDropdown();
   try {
     await confirmInvoice({ id: row.id });
     await fetchInvoices();
@@ -135,11 +163,19 @@ watch(currentPage, () => {
 });
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-onMounted(fetchInvoices);
+onMounted(() => {
+  fetchInvoices();
+  window.addEventListener('scroll', closeDropdown, true);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', closeDropdown, true);
+});
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col relative w-full">
+  <div class="flex-1 w-full h-full flex flex-col">
+  <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col">
 
       <div class="flex items-start justify-between mb-6">
@@ -241,20 +277,36 @@ onMounted(fetchInvoices);
                 </div>
               </td>
               <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
-                <button
-                  @click="goToDetail(row)"
-                  title="Lihat Detail Invoice"
-                  class="w-8 h-8 flex items-center justify-center rounded-full
-                         bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
-                             -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                  </svg>
-                </button>
+                
+                <div class="flex items-center gap-2 relative">
+                  <button 
+                    @click.stop="toggleDropdown(row.id, $event)"
+                    class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none"
+                    title="Opsi"
+                  >
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                    </svg>
+                  </button>
+
+                  <Teleport to="body">
+                    <div v-if="activeDropdown === row.id" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
+                    
+                    <div 
+                      v-if="activeDropdown === row.id" 
+                      class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                      :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                    >
+                      <button 
+                        @click="goToDetail(row)" 
+                        class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#D9E2FF] hover:text-[#4075FF] focus:outline-none transition-colors"
+                      >
+                        Lihat Detail
+                      </button>
+                    </div>
+                  </Teleport>
+                </div>
+
               </td>
             </tr>
           </template>
@@ -315,5 +367,6 @@ onMounted(fetchInvoices);
       </Transition>
     </Teleport>
 
+  </div>
   </div>
 </template>

@@ -1,5 +1,4 @@
 <script setup>
-import Sidebar from '@/components/Sidebar.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
@@ -8,9 +7,8 @@ import Toast from '@/components/common/Toast.vue';
 import FormTambahTujuan from '@/components/cabang/FormTambahTujuan.vue';
 import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
 import notfound from '@/assets/notfound.svg';
-import Topbar from '@/components/Topbar.vue';
 
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch, nextTick } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
 import { getCategories, getBranches, createCategory, updateCategory, deleteCategory } from '@/services/tujuanService';
 
@@ -54,6 +52,27 @@ const isLoading = ref(false);
 const showModal = ref(false);
 const showToast = ref(false);
 const toastMessage = ref(''); 
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX }px`     };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
 const fetchDataTujuan = async () => {
   isLoading.value = true;
@@ -156,6 +175,7 @@ const handleTambahTujuan = () => {
 };
 
 const handleEditTujuan = (row) => {
+  closeDropdown();
   const rawData = rawDataTujuan.value.find(item => item.id === row.id);
   
   if (rawData) {
@@ -230,8 +250,9 @@ const handleSubmitTujuan = async (formData) => {
 };
 </script>
 
-<template>      
-  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
+<template>   
+  <div class="flex-1 w-full h-full flex flex-col"> 
+    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
       <div class="p-6 flex-1 flex flex-col">
         
         <div class="flex items-start justify-between mb-6">
@@ -303,7 +324,7 @@ const handleSubmitTujuan = async (formData) => {
               <div class="flex items-center gap-2 relative">
                 
                 <button 
-                  @click="handleEditTujuan(row)"
+                  @click="toggleDropdown(row.id, $event)"
                   class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
                   title="Edit Data"
                 >
@@ -311,6 +332,23 @@ const handleSubmitTujuan = async (formData) => {
                     <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                   </svg>
                 </button>
+
+                <Teleport to="body">
+                <div v-if="activeDropdown === row.id" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
+                
+                <div 
+                  v-if="activeDropdown === row.id" 
+                  class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                  :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                >
+                  <button 
+                    @click="handleEditTujuan(row)" 
+                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                  >
+                    Edit Data
+                  </button>
+                </div>
+              </Teleport>
 
                 <button 
                   @click="handleDeleteTujuan(row)"
@@ -352,8 +390,8 @@ const handleSubmitTujuan = async (formData) => {
         :per-page="itemsPerPage"
       />
       
-  </main>
-    
+    </main>
+  </div>  
   <Modal 
     :show="showModal"
     :title="isEditMode ? 'Edit Tujuan Kunjungan' : 'Tambah Tujuan Kunjungan'"

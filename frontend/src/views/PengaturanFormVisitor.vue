@@ -1,28 +1,44 @@
 <script setup>
-import { ref, computed } from 'vue'
-import Sidebar from '@/components/Sidebar.vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import Modal from '@/components/common/Modal.vue'
 import Input from '@/components/common/Input.vue'
 import Toggle from '@/components/common/Toggle.vue'
 import Toast from '@/components/common/Toast.vue'
-import Topbar from '@/components/Topbar.vue';
-import visitorkulogo from '@/assets/visitorku.png'
-import patternBg from '@/assets/Frame 7.svg'
-import globeIcon from '@/assets/proicons_globe.svg'
-import adminprofile from '@/assets/adminprofile.png'
-import deleteIcon from '@/assets/delete.svg'
+import defaultFieldIcon from '@/assets/icons/defaultField.svg';
+import customFieldIcon from '@/assets/icons/customField.svg';
 
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import { getAdditionalData, updateAdditionalData } 
   from '@/services/pengaturanFormService'
-
-import { onMounted } from 'vue'
 
 // ── State ──
 const showModal = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const activeKebab = ref(null)
+
+// ── Dropdown State dengan Posisi Dinamis ──
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (index, event) => {
+  if (activeDropdown.value === index) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = index;
+    
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX }px`     };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
 // ── Default Fields (non-deletable) ──
 const defaultFields = ref([
@@ -83,16 +99,13 @@ const fetchAdditionalData = async () => {
 }
 
 onMounted(() => {
-  fetchAdditionalData()
+  fetchAdditionalData();
+  window.addEventListener('scroll', closeDropdown, true);
 })
 
-const toggleKebab = (fieldId) => {
-  activeKebab.value = activeKebab.value === fieldId ? null : fieldId
-}
-
-const closeKebab = () => {
-  activeKebab.value = null
-}
+onUnmounted(() => {
+  window.removeEventListener('scroll', closeDropdown, true);
+})
 
 const handleCloseToast = () => {
   showToast.value = false
@@ -108,6 +121,7 @@ const generateFieldSlug = (text) => {
 
 // 3. Perbarui fungsi Buka Modal Tambah
 const openModal = () => {
+  closeDropdown();
   formData.value = { fieldName: '', fieldType: 'Text', placeholder: '', required: false };
   editingFieldIndex.value = null; // Pastikan mode Tambah
   showModal.value = true;
@@ -115,6 +129,7 @@ const openModal = () => {
 
 // 4. Tambahkan fungsi Buka Modal Edit
 const handleEditForm = (index) => {
+  closeDropdown();
   const fieldToEdit = customFields.value[index];
   
   formData.value = {
@@ -138,7 +153,8 @@ const saveField = async () => {
     field: generateFieldSlug(formData.value.fieldName), 
     name: formData.value.fieldName,
     type: formData.value.fieldType.toLowerCase(), // Backend minta huruf kecil (text, number, dll)
-    required: formData.value.required
+    required: formData.value.required,
+    placeholder: formData.value.placeholder // Tambahkan placeholder ke payload jika diperlukan
   };
 
   try {
@@ -170,6 +186,7 @@ const saveField = async () => {
 
 // 6. Perbarui Fungsi Hapus (Delete) dengan SweetAlert
 const deleteField = async (index) => {
+  closeDropdown();
   // Panggil pop-up konfirmasi khas aplikasi Anda
   const isConfirmed = await confirmDelete('Custom Field');
   
@@ -203,9 +220,9 @@ const deleteField = async (index) => {
 </script>
 
 <template>
-  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
+  <div class="flex-1 w-full h-full flex flex-col">
+    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-6 flex-1 flex flex-col">
-            <!-- Page Header -->
             <div class="flex items-start justify-between mb-6">
               <div>
                 <h1 class="text-2xl font-semibold text-gray-800 mb-1">Custom Field</h1>
@@ -215,30 +232,26 @@ const deleteField = async (index) => {
               </div>
               <button
                 @click.stop="openModal"
-                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all"
+                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none"
               >
                 <span class="text-lg leading-none">+</span> Create new field
               </button>
             </div>
 
-            <!-- Field Table -->
             <div class="flex-1 overflow-hidden">
               <table class="w-full">
                 <thead>
                   <tr class="border-b-2 border-gray-200">
                     <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4 w-1/2">Field Name</th>
                     <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4">Type</th>
-                    <th class="py-3 px-4 w-16"></th>
+                    <th class="py-3 px-4 w-28 text-center text-sm font-semibold text-gray-700">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <!-- Default Fields Section -->
                   <tr>
                     <td colspan="3" class="pt-4 pb-2 px-4">
                       <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
+                        <img :src="defaultFieldIcon" alt="Default Field" class="w-3.5 h-3.5 brightness-0 invert" />
                         Field default
                       </span>
                     </td>
@@ -249,28 +262,17 @@ const deleteField = async (index) => {
                     <td class="py-3.5 px-4 text-sm text-gray-500">{{ field.type }}</td>
                     
                     <td class="py-3.5 px-4">
-                      <div class="flex justify-center w-[72px]">
-                        <button
-                          class="flex items-center justify-center w-8 h-8 rounded border border-[#F7941D] text-[#F7941D] hover:bg-orange-50 transition-colors"
-                        >
-                          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                            <circle cx="12" cy="5" r="1.5" />
-                            <circle cx="12" cy="12" r="1.5" />
-                            <circle cx="12" cy="19" r="1.5" />
-                          </svg>
-                        </button>
+                      <div class="flex justify-center w-full">
+                        <span class="text-gray-300">-</span>
                       </div>
                     </td>
                   </tr>
 
-                  <!-- Custom Fields Section -->
                   <template v-if="customFields.length > 0">
                     <tr>
                       <td colspan="3" class="pt-6 pb-2 px-4">
                         <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
-                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                          </svg>
+                          <img :src="customFieldIcon" alt="Custom Field" class="w-3.5 h-3.5 brightness-0 invert" />
                           Custom Field
                         </span>
                       </td>
@@ -281,20 +283,39 @@ const deleteField = async (index) => {
                       <td class="py-3.5 px-4 text-sm text-gray-500">{{ field.type }}</td>
                       
                       <td class="py-3.5 px-4">
-                        <div class="flex items-center gap-2 w-18 relative">
+                        <div class="flex justify-center items-center gap-2 relative">
                           
                           <button
-                            @click.stop="handleEditForm(index)"
+                            @click.stop="toggleDropdown(index, $event)"
                             class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
+                            title="Opsi"
                           >
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                             </svg>
                           </button>
 
+                          <Teleport to="body">
+                            <div v-if="activeDropdown === index" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
+                            
+                            <div 
+                              v-if="activeDropdown === index" 
+                              class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                              :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                            >
+                              <button 
+                                @click="handleEditForm(index)" 
+                                class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                              >
+                                Edit Field
+                              </button>
+                            </div>
+                          </Teleport>
+
                           <button
                             @click.stop="deleteField(index)"
                             class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none relative z-10"
+                            title="Hapus Field"
                           >
                             <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                               <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
@@ -306,7 +327,6 @@ const deleteField = async (index) => {
                     </tr>
                   </template>
 
-                  <!-- Create field link -->
                   <tr>
                     <td colspan="3" class="pt-4 px-4">
                       <button
@@ -323,13 +343,11 @@ const deleteField = async (index) => {
           </div>
       </main>
 
-    <!-- CREATE FIELD MODAL -->
     <Modal
       :show="showModal"
       :title="editingFieldIndex !== null ? 'Edit Field' : 'Create Field'"  width="half"
       @close="closeModal"
     >
-      <!-- General Section -->
       <div class="mb-8">
         <h3 class="text-base font-semibold text-gray-900 mb-4">General</h3>
         <Input
@@ -340,14 +358,12 @@ const deleteField = async (index) => {
         />
       </div>
 
-      <!-- Field Type Section -->
       <div class="mb-8">
         <h3 class="text-base font-semibold text-gray-900 mb-4">Field Type</h3>
 
-        <!-- Field Type Dropdown -->
         <div class="mb-4">
           <label class="text-body-4 font-semibold font-poppins text-gray-900 mb-1 block">
-            Field Name<span class="text-red-500">*</span>
+            Tipe Data<span class="text-red-500">*</span>
           </label>
           <div class="relative">
             <select
@@ -366,16 +382,14 @@ const deleteField = async (index) => {
           </div>
         </div>
 
-        <!-- Placeholder Text -->
         <Input
           v-model="formData.placeholder"
           label="Placeholder Text"
-          placeholder="Contoh: Masukkan nama lengkap"
+          placeholder="Contoh: Masukkan data..."
           required
         />
       </div>
 
-      <!-- Settings Section -->
       <div>
         <h3 class="text-base font-semibold text-gray-900 mb-4">Settings</h3>
         <div class="flex items-start gap-3">
@@ -387,13 +401,12 @@ const deleteField = async (index) => {
         </div>
       </div>
 
-      <!-- Footer -->
       <template #footer>
         <div class="flex items-center justify-end gap-3">
           <button
             type="button"
             @click="closeModal"
-            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm  hover:bg-gray-50 transition-colors"
+            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm  hover:bg-gray-50 transition-colors focus:outline-none"
           >
             Cancel
           </button>
@@ -403,7 +416,7 @@ const deleteField = async (index) => {
             @click="saveField" 
             :disabled="!isFormValid"
             :class="[
-              'px-5 py-2.5 text-sm font-medium rounded-sm transition-colors',
+              'px-5 py-2.5 text-sm font-medium rounded-sm transition-colors focus:outline-none',
               isFormValid
                 ? 'text-white bg-[#F7941D] hover:bg-[#E8850E]'
                 : 'text-white bg-gray-300 cursor-not-allowed'
@@ -415,6 +428,13 @@ const deleteField = async (index) => {
       </template>
     </Modal>
 
-    <!-- Toast Notification -->
     <Toast :show="showToast" :message="toastMessage" @close="handleCloseToast" />
+  </div>
 </template>
+
+<style scoped>
+button:focus, select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>

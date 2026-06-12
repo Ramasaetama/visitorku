@@ -278,6 +278,7 @@ const goBack = () => {
 </script>
 
 <template>
+  <div class="flex-1 w-full h-full flex flex-col">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
@@ -540,4 +541,5 @@ const goBack = () => {
         </div>
       </div>
     </div>  
+  </div>
 </template>

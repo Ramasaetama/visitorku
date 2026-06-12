@@ -42,9 +42,10 @@ const goBack = () => {
 </script>
 
 <template>
+  <div class="flex-1 w-full h-full flex flex-col">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col p-6">
           
-          <div class="flex items-center justify-between mb-6 border-b pb-4">
+          <div class="flex items-center justify-between mb-6 border-b pb-4 border-gray-200">
             <div class="flex items-center gap-4">
               <button @click="goBack" class="w-8 h-8 flex items-center justify-center bg-[#FEF4E3] text-[#F7941D] rounded-sm hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
@@ -92,5 +93,6 @@ const goBack = () => {
             </div>
           </div>
 
+        </div>
         </div>
 </template>

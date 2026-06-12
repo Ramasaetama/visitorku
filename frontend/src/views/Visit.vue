@@ -130,6 +130,7 @@ onMounted(fetchVisits);
 </script>
 
 <template>
+  <div class="flex-1 w-full h-full flex flex-col">
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col">
 
@@ -308,6 +309,7 @@ onMounted(fetchVisits);
     />
 
   </main>
+  </div>
 </template>
 
 <style scoped>
