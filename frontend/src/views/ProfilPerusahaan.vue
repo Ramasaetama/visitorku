@@ -210,7 +210,6 @@
 
         <div>
           <h3 class="text-base font-semibold text-gray-900 mb-1">API Scopes</h3>
-          <p class="text-xs text-gray-500 mb-4">Lorem Ipsum is simply dummy text</p>
 
           <div class="space-y-2">
             <div v-for="(scope, index) in availableScopes" :key="scope.id" class="border-b border-gray-100 pb-4 last:border-0">

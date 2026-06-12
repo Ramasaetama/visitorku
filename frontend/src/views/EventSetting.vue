@@ -4,6 +4,8 @@ import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
+import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
+import notfound from '@/assets/notfound.svg'; // 🌟 FIX: Import Icon
 import { showSuccess, showError, confirmDelete } from '@/utils/alertHelper';
 import { getEventById } from '@/services/eventService';
 import api from '@/services/api';
@@ -193,10 +195,9 @@ onMounted(async () => {
 
 <template>
   <div class="flex-1 w-full h-full flex flex-col">
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-6 flex-1 flex flex-col">
 
-            <!-- Header -->
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center gap-3">
                 <button
@@ -227,7 +228,6 @@ onMounted(async () => {
               </nav>
             </div>
 
-            <!-- Tabs -->
             <div class="flex gap-0 mb-6 border-b border-gray-200">
               <button
                 @click="activeTab = 'register'"
@@ -249,33 +249,27 @@ onMounted(async () => {
               </button>
             </div>
 
-            <!-- Loading State -->
             <div v-if="isLoading" class="flex items-center justify-center py-20">
               <div class="w-8 h-8 border-2 border-[#F7941D] border-t-transparent rounded-full animate-spin"></div>
             </div>
 
-            <!-- Field List -->
             <div v-else class="flex-1 flex flex-col gap-3">
 
-              <!-- Empty hint -->
-              <div v-if="activeFields.length === 0" class="flex flex-col items-center justify-center py-12 text-gray-400">
-                <svg class="w-12 h-12 mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
-                </svg>
-                <p class="text-sm font-medium text-gray-400">{{ t('eventSetting.emptyHint') }}</p>
-              </div>
+              <EmptyState 
+                v-if="activeFields.length === 0"
+                :icon="notfound"
+                :title="t('eventSetting.emptyHint')"
+                description="Silakan tambahkan field baru menggunakan tombol di bawah."
+                :showButton="false"
+              />
 
-              <!-- Field Row -->
               <div
                 v-for="(field, index) in activeFields"
                 :key="activeTab + '-' + index"
                 class="border border-gray-200 rounded-sm overflow-hidden"
               >
-                <!-- Required Toggle Row -->
                 <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-100">
                   <div class="flex items-center gap-3">
-                    <!-- Toggle Switch -->
                     <button
                       type="button"
                       @click="field.required = !field.required"
@@ -290,7 +284,6 @@ onMounted(async () => {
                     <span class="text-sm font-medium text-gray-600">{{ t('eventSetting.required') }}</span>
                   </div>
 
-                  <!-- Delete Button -->
                   <button
                     @click="handleRemove(index)"
                     class="w-8 h-8 flex items-center justify-center rounded-lg text-red-400 hover:bg-red-50 hover:text-red-500 transition-colors focus:outline-none"
@@ -303,7 +296,6 @@ onMounted(async () => {
                   </button>
                 </div>
 
-                <!-- Field Name & Type Row -->
                 <div class="flex items-center gap-3 px-4 py-3 bg-white">
                   <input
                     v-model="field.name"
@@ -328,7 +320,6 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <!-- Bottom Actions -->
               <div class="sticky bottom-0 z-10 mt-auto bg-white flex items-center justify-between py-4 border-t border-gray-100">
     
                 <button

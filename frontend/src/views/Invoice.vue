@@ -1,15 +1,11 @@
 <script setup>
-<<<<<<< HEAD
 import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
-=======
-import { ref, computed, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
->>>>>>> 2ec822221a9bfc5e165492c5fbf2b3baea5660e5
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
 import { useRouter } from 'vue-router';
-import { getAllInvoices, confirmInvoice } from '@/services/invoiceService';
+import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
 
 const { t } = useI18n();
 
@@ -284,7 +280,6 @@ onUnmounted(() => {
                 </div>
               </td>
               <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
-<<<<<<< HEAD
                 
                 <div class="flex items-center gap-2 relative">
                   <button 
@@ -315,22 +310,6 @@ onUnmounted(() => {
                   </Teleport>
                 </div>
 
-=======
-                <button
-                  @click="goToDetail(row)"
-                  :title="t('invoice.detailTooltip')"
-                  class="w-8 h-8 flex items-center justify-center rounded-full
-                         bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7
-                             -1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                  </svg>
-                </button>
->>>>>>> 2ec822221a9bfc5e165492c5fbf2b3baea5660e5
               </td>
             </tr>
           </template>

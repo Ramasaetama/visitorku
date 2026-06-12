@@ -150,8 +150,8 @@ export default {
       timezoneLabel: 'Zona Waktu',
     },
     apiToken: {
-      heading: 'API Access Token',
-      generateBtn: 'Membuat Token API',
+      heading: 'Access Token API',
+      generateBtn: 'Buat Token API',
       emptyTitle: 'Membuat token untuk memberikan akses API',
       emptyDesc: 'Token digunakan sebagai akses API untuk kebutuhan integrasi sistem.',
       deleteToken: 'Hapus Token',
@@ -422,11 +422,12 @@ export default {
   visitorForm: {
     title: 'Custom Field',
     subtitle: 'Tambahkan field untuk mengumpulkan informasi visitor sesuai kebutuhan Anda.',
-    createBtn: '+ Buat Field Baru',
+    createBtn: 'Buat Field Baru',
     createLink: '+ Buat Field',
     table: {
       fieldName: 'Nama Field',
       type: 'Tipe',
+      action: 'Aksi',
     },
     badge: {
       default: 'Field default',

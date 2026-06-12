@@ -1,16 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
+import { useI18n } from 'vue-i18n';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
-
-import FeedbackIcon from '@/assets/icons/feedback-line.svg';
-import FolderChartIcon from '@/assets/icons/folder-chart-line.svg';
-import AddIcon from '@/assets/icons/add-line.svg';
 
 import {
   getEventById,
@@ -305,14 +300,14 @@ onMounted(async () => {
 
 <template>
   <div class="flex-1 w-full h-full flex flex-col">
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-6 flex-1 flex flex-col">
 
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-3">
                 <button
                   @click="router.push('/event')"
-                  class="w-8 h-8 rounded-lg bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
+                  class="w-8 h-8 rounded-sm bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -399,7 +394,7 @@ onMounted(async () => {
 
               <button
                 @click="showFinishModal = true"
-                class="flex items-center justify-center gap-2 px-5 py-2 bg-[#FFFFFF] border border-[#FF4C4C] text-[#FF4C4C] text-sm font-medium rounded-md hover:bg-[#FF4C4C] hover:text-white active:scale-95 transition-all focus:outline-none"
+                class="flex items-center justify-center gap-2 px-5 py-2 bg-[#FFFFFF] border border-[#FF4C4C] text-[#FF4C4C] text-sm font-medium rounded-sm hover:bg-[#FF4C4C] hover:text-white active:scale-95 transition-all focus:outline-none"
               >
                 {{ t('eventVisitor.finish') }}
               </button>
@@ -534,36 +529,12 @@ onMounted(async () => {
 
           </div>
 
-          <!-- Pagination -->
-          <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-[13px] text-[#64748B]">
-            <span>Showing {{ startIndex }} to {{ endIndex }} from {{ totalRecords }} records</span>
+          <Pagination
+            v-model:current-page="currentPage"
+            :total-data="totalRecords"
+            :per-page="perPage"
+          />
 
-            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-              <button
-                @click="goToPage(currentPage - 1)"
-                :disabled="currentPage === 1"
-                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
-              </button>
-              <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="goToPage(page)"
-                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
-                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage === totalPages"
-                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-              </button>
-            </div>
-          </div>
         </div>
 
     <div v-if="showModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">

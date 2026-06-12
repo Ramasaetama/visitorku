@@ -293,7 +293,7 @@ onMounted(() => {
                       >
                         <button 
                           @click="$router.push(`/visitor/${row.id}`); closeDropdown();" 
-                          class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#D9E2FF] hover:text-[#4075FF] focus:outline-none transition-colors"
+                          class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
                         >
                           Lihat Detail
                         </button>

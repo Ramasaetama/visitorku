@@ -332,7 +332,7 @@ onUnmounted(() => {
         <button
           @click="openAddModal"
           class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
-                 text-[#F7941D] text-sm font-medium rounded-lg
+                 text-[#F7941D] text-sm font-medium rounded-sm
                  hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
         >
           <span class="text-lg leading-none">+</span>
@@ -353,7 +353,7 @@ onUnmounted(() => {
         <div class="relative shrink-0">
           <select
             v-model="perPage"
-            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -392,7 +392,7 @@ onUnmounted(() => {
               >{{ row.location_url }}</a>
               <button
                 @click="copyUrl(row.location_url)"
-                class="shrink-0 w-[26px] h-[26px] rounded bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
+                class="shrink-0 w-[26px] h-[26px] bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-[#FEF4E3] hover:text-[#F7941D] transition-colors focus:outline-none"
                 title="Copy URL Lokasi"
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -468,12 +468,12 @@ onUnmounted(() => {
                 
                 <div 
                   v-if="activeDropdown === row.id" 
-                  class="fixed w-36 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                  class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
                   :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
                 >
                   <button 
                     @click="goToEventVisitor(row)" 
-                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#D9E2FF] hover:text-[#4075FF] focus:outline-none transition-colors"
+                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
                   >
                     Event Visitor
                   </button>
@@ -487,7 +487,7 @@ onUnmounted(() => {
 
                   <button 
                     @click="openEditModal(row)" 
-                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#E6F4FF] hover:text-[#008FFB] focus:outline-none transition-colors"
+                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
                   >
                     Edit Data
                   </button>
@@ -552,7 +552,7 @@ onUnmounted(() => {
           v-model="form.name"
           type="text"
           :placeholder="t('event.modal.eventNamePlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
         />
       </div>
 
@@ -563,7 +563,7 @@ onUnmounted(() => {
           v-model="form.description"
           rows="3"
           :placeholder="t('event.modal.descriptionPlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
@@ -574,7 +574,7 @@ onUnmounted(() => {
           v-model="form.location"
           rows="2"
           :placeholder="t('event.modal.locationPlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
@@ -585,7 +585,7 @@ onUnmounted(() => {
           v-model="form.location_url"
           type="text"
           :placeholder="t('event.modal.locationUrlPlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
         />
       </div>
 
@@ -657,7 +657,7 @@ onUnmounted(() => {
         <button
           type="button"
           @click="closeModal"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
         >
           {{ t('event.modal.cancel') }}
         </button>
@@ -666,7 +666,7 @@ onUnmounted(() => {
           @click="handleSubmit"
           :disabled="isSaving || hasDateErrors"
           :title="hasDateErrors ? t('event.modal.checkDates') : ''"
-          class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          class="px-5 py-2.5 text-sm font-medium text-white rounded-sm transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           :class="hasDateErrors ? 'bg-gray-400' : 'bg-[#F7941D] hover:bg-[#E8850E]'"
         >
           {{ isSaving ? t('event.modal.saving') : (isEdit ? t('event.modal.update') : t('event.modal.add')) }}

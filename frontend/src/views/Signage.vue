@@ -10,7 +10,6 @@ import notfound from '@/assets/notfound.svg';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
-import notfound from '@/assets/notfound.svg'; 
 import {
   getAllSignages,
   deleteSignage,
@@ -259,7 +258,7 @@ onUnmounted(() => {
               
               <button 
                 @click.stop="toggleDropdown(row.id, $event)"
-                class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
+                class="w-[30px] h-[30px] rounded-sm border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
                 title="Opsi"
               >
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -272,7 +271,7 @@ onUnmounted(() => {
                 
                 <div 
                   v-if="activeDropdown === row.id" 
-                  class="fixed w-36 bg-white rounded-lg shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                  class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
                   :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
                 >
                   <button @click="handleEdit(row)" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors">

@@ -246,30 +246,18 @@ const deleteField = async (index) => {
               <table class="w-full">
                 <thead>
                   <tr class="border-b-2 border-gray-200">
-<<<<<<< HEAD
-                    <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4 w-1/2">Field Name</th>
-                    <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4">Type</th>
-                    <th class="py-3 px-4 w-28 text-center text-sm font-semibold text-gray-700">Aksi</th>
-=======
                     <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4 w-1/2">{{ t('visitorForm.table.fieldName') }}</th>
                     <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4">{{ t('visitorForm.table.type') }}</th>
+                    <th class="text-left text-sm font-semibold text-gray-700 py-3 px-4 w-12">{{ t('visitorForm.table.action') }}</th>
                     <th class="py-3 px-4 w-16"></th>
->>>>>>> 2ec822221a9bfc5e165492c5fbf2b3baea5660e5
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td colspan="3" class="pt-4 pb-2 px-4">
                       <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
-<<<<<<< HEAD
                         <img :src="defaultFieldIcon" alt="Default Field" class="w-3.5 h-3.5 brightness-0 invert" />
-                        Field default
-=======
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                        </svg>
                         {{ t('visitorForm.badge.default') }}
->>>>>>> 2ec822221a9bfc5e165492c5fbf2b3baea5660e5
                       </span>
                     </td>
                   </tr>
@@ -289,15 +277,8 @@ const deleteField = async (index) => {
                     <tr>
                       <td colspan="3" class="pt-6 pb-2 px-4">
                         <span class="inline-flex items-center gap-1.5 bg-[#F7941D] text-white text-xs font-semibold px-3 py-1.5 rounded-sm">
-<<<<<<< HEAD
                           <img :src="customFieldIcon" alt="Custom Field" class="w-3.5 h-3.5 brightness-0 invert" />
-                          Custom Field
-=======
-                          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                          </svg>
                           {{ t('visitorForm.badge.custom') }}
->>>>>>> 2ec822221a9bfc5e165492c5fbf2b3baea5660e5
                         </span>
                       </td>
                     </tr>
@@ -373,8 +354,9 @@ const deleteField = async (index) => {
       @close="closeModal"
     >
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-gray-900 mb-4">{{ t('visitorForm.modal.sectionGeneral') }}</h3>
+        <h3 class="text-base font-medium text-gray-900 mb-4">{{ t('visitorForm.modal.sectionGeneral') }}</h3>
         <Input
+          class="custom-medium-label" 
           v-model="formData.fieldName"
           :label="t('visitorForm.modal.fieldNameLabel')"
           :placeholder="t('visitorForm.modal.fieldNamePlaceholder')"
@@ -383,15 +365,11 @@ const deleteField = async (index) => {
       </div>
 
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-gray-900 mb-4">{{ t('visitorForm.modal.sectionType') }}</h3>
+        <h3 class="text-base font-medium text-gray-900 mb-4">{{ t('visitorForm.modal.sectionType') }}</h3>
 
         <div class="mb-4">
-          <label class="text-body-4 font-semibold font-poppins text-gray-900 mb-1 block">
-<<<<<<< HEAD
-            Tipe Data<span class="text-red-500">*</span>
-=======
+          <label class="text-body font-weight: 400 font-poppins text-gray-900 mb-1 block">
             {{ t('visitorForm.modal.fieldTypeLabel') }}<span class="text-red-500">*</span>
->>>>>>> 2ec822221a9bfc5e165492c5fbf2b3baea5660e5
           </label>
           <div class="relative">
             <select
@@ -411,25 +389,21 @@ const deleteField = async (index) => {
         </div>
 
         <Input
+          class="custom-medium-label"
           v-model="formData.placeholder"
-<<<<<<< HEAD
-          label="Placeholder Text"
-          placeholder="Contoh: Masukkan data..."
-=======
           :label="t('visitorForm.modal.placeholderLabel')"
           :placeholder="t('visitorForm.modal.placeholderPlaceholder')"
->>>>>>> 2ec822221a9bfc5e165492c5fbf2b3baea5660e5
           required
         />
       </div>
 
       <div>
-        <h3 class="text-base font-semibold text-gray-900 mb-4">{{ t('visitorForm.modal.sectionSettings') }}</h3>
+        <h3 class="text-base font-medium text-gray-900 mb-4">{{ t('visitorForm.modal.sectionSettings') }}</h3>
         <div class="flex items-start gap-3">
           <Toggle v-model="formData.required" />
           <div>
-            <p class="text-sm font-semibold text-gray-900">{{ t('visitorForm.modal.requiredLabel') }}</p>
-            <p class="text-xs text-gray-500 mt-0.5">{{ t('visitorForm.modal.requiredDesc') }}</p>
+            <p class="text-body font-weight: 400 text-gray-900">{{ t('visitorForm.modal.requiredLabel') }}</p>
+            <p class="text-sm text-gray-500 mt-0.5">{{ t('visitorForm.modal.requiredDesc') }}</p>
           </div>
         </div>
       </div>
@@ -469,5 +443,10 @@ const deleteField = async (index) => {
 button:focus, select:focus {
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* Memaksa label di dalam Input menjadi font-normal (400) agar tidak terlihat semi-bold */
+.custom-medium-label :deep(label) {
+  font-weight: 400 !important;
 }
 </style>

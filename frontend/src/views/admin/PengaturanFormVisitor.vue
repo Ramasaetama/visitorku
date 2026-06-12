@@ -358,11 +358,11 @@ const deleteField = async (index) => {
 
       <!-- Field Type Section -->
       <div class="mb-8">
-        <h3 class="text-base font-semibold text-gray-900 mb-4">Field Type</h3>
+        <h3 class="text-base font-medium text-gray-900 mb-4">Field Type</h3>
 
         <!-- Field Type Dropdown -->
         <div class="mb-4">
-          <label class="text-body-4 font-semibold font-poppins text-gray-900 mb-1 block">
+          <label class="text-body-4 font-medium font-poppins text-gray-900 mb-1 block">
             Field Name<span class="text-red-500">*</span>
           </label>
           <div class="relative">

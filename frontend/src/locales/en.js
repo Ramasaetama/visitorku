@@ -415,11 +415,12 @@ export default {
   visitorForm: {
     title: 'Custom Field',
     subtitle: 'Add fields to collect visitor information as needed.',
-    createBtn: '+ Create New Field',
+    createBtn: 'Create New Field',
     createLink: '+ Create Field',
     table: {
       fieldName: 'Field Name',
       type: 'Type',
+      action: 'Action',
     },
     badge: {
       default: 'Default Field',
@@ -433,7 +434,7 @@ export default {
       sectionSettings: 'Settings',
       fieldNameLabel: 'Field Name',
       fieldNamePlaceholder: 'Example: Full Name',
-      fieldTypeLabel: 'Field Type',
+      fieldTypeLabel: 'Field Name',
       placeholderLabel: 'Placeholder Text',
       placeholderPlaceholder: 'Example: Enter your full name',
       requiredLabel: 'Required',
