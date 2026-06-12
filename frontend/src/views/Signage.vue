@@ -7,13 +7,10 @@ import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
 import Toast from '@/components/common/Toast.vue';
-<<<<<<< HEAD
-import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
-=======
+import Pagination from '@/components/common/Pagination.vue';
 import notfound from '@/assets/notfound.svg';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
->>>>>>> 15c0d84 (style: menyamakan icon empty state di halaman signage dan event)
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import {
   getAllSignages,
@@ -200,7 +197,6 @@ onMounted(fetchSignages);
           />
         </div>
 
-<<<<<<< HEAD
         <div class="relative shrink-0">
           <select 
             v-model="perPage" 
@@ -216,130 +212,6 @@ onMounted(fetchSignages);
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
             </svg>
-=======
-              <div class="relative shrink-0">
-                <select 
-                  v-model="perPage" 
-                  class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
-                >
-                  <option :value="5">5</option>
-                  <option :value="10">10</option>
-                  <option :value="25">25</option>
-                  <option :value="50">50</option>
-                  <option :value="100">100</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
-
-              <div class="flex-1" />
-            </div>
-
-            <div class="flex-1 overflow-hidden">
-              <DataTable 
-                :columns="tableColumns"               
-                :data="paginatedData" 
-                :loading="isLoading"
-                :sort-key="sortKey"
-                :sort-order="sortOrder"
-                @sort="handleSort"
-              >
-                <template #url="{ row }">
-                  <a 
-                    :href="row.url" 
-                    target="_blank" 
-                    class="text-black"
-                  >
-                    {{ row.url }}
-                  </a>
-                </template>
-
-                <template #aksi="{ row }">
-                  <div class="flex items-center gap-2 relative">
-                    
-                    <button 
-                      @click.stop="toggleDropdown(row.id)"
-                      class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
-                    >
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                      </svg>
-                    </button>
-
-                    <div v-if="activeDropdown === row.id" @click="activeDropdown = null" class="fixed inset-0 z-40"></div>
-                    
-                    <div 
-                      v-if="activeDropdown === row.id" 
-                      class="absolute top-[110%] left-0 w-36 bg-white rounded-lg shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-gray-100 py-1.5 z-50"
-                    >
-                      <button @click="handleEdit(row)" class="w-full text-left px-4 py-2 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none">
-                        Edit Data
-                      </button>
-                    </div>
-
-                    <button 
-                      @click="handleDelete(row)"
-                      class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none relative z-10"
-                    >
-                      <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
-                      </svg>
-                    </button>
-
-                  </div>
-                </template>
-
-                <template #empty>
-                  <EmptyState
-                    v-if="signageData.length === 0"
-                    :icon="notfound"
-                    :title="t('signage.noRecords')"
-                  />
-                  <EmptyState
-                    v-else
-                    :icon="notfound"
-                    :title="t('signage.noRecords')"
-                    :description="`Tidak ada signage yang cocok dengan '${appliedSearch}'`"
-                  />
-                </template>
-              </DataTable>
-            </div>
-
-          </div>
-
-          <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-            <span>
-              Showing {{ showingFrom }} to {{ showingTo }} from {{ filteredData.length }} records
-            </span>
-
-            <div class="flex items-center gap-1">
-              <button
-                @click="goToPage(currentPage - 1)"
-                :disabled="currentPage === 1"
-                class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                       text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
-                       transition-colors"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                </svg>
-              </button>
-              <button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage >= totalPages"
-                class="w-8 h-8 flex items-center justify-center border border-gray-200 rounded-lg
-                       text-gray-500 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed
-                       transition-colors"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-              </button>
-            </div>
->>>>>>> 15c0d84 (style: menyamakan icon empty state di halaman signage dan event)
           </div>
         </div>
 

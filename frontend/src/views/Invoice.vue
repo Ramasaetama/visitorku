@@ -1,10 +1,13 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
 import { useRouter } from 'vue-router';
 import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
+
+const { t } = useI18n();
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const invoiceData   = ref([]);
@@ -21,15 +24,15 @@ const isReceiptModalOpen = ref(false);
 const selectedReceiptUrl = ref('');
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
-const tableColumns = [
-  { key: 'evidence_url',  label: 'RECEIPT',     sortable: false },
-  { key: 'number',   label: 'NUMBER',      sortable: false },
-  { key: 'price',  label: 'PACKAGE',     sortable: false },
-  { key: 'payment_total',   label: 'AMOUNT (RP)', sortable: false },
-  { key: 'due_date', label: 'DUE DATE',    sortable: false },
-  { key: 'status',   label: 'STATUS',      sortable: false },
-  { key: 'action',   label: 'ACTION',      sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'evidence_url', label: t('invoice.table.receipt'),  sortable: false },
+  { key: 'number',       label: t('invoice.table.number'),   sortable: false },
+  { key: 'price',        label: t('invoice.table.package'),  sortable: false },
+  { key: 'payment_total',label: t('invoice.table.amount'),   sortable: false },
+  { key: 'due_date',     label: t('invoice.table.dueDate'),  sortable: false },
+  { key: 'status',       label: t('invoice.table.status'),   sortable: false },
+  { key: 'action',       label: t('invoice.table.action'),   sortable: false },
+]);
 
 const goToDetail = (row) => {
   router.push(`/master/invoice/detail/${row.id}`);
@@ -144,8 +147,8 @@ onMounted(fetchInvoices);
 
       <div class="flex items-start justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-800 mb-1">Invoice</h1>
-          <p class="text-sm text-gray-500">Kelola dan pantau seluruh data invoice yang ada.</p>
+          <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('invoice.title') }}</h1>
+          <p class="text-sm text-gray-500">{{ t('invoice.subtitle') }}</p>
         </div>                
       </div>
 
@@ -153,7 +156,7 @@ onMounted(fetchInvoices);
         <div class="w-full sm:max-w-md">
           <SearchInput 
             v-model="searchQuery" 
-            placeholder="Cari Invoice" 
+            :placeholder="t('invoice.searchPlaceholder')" 
             @keyup.enter="executeSearch"  
           />
         </div>
@@ -193,7 +196,7 @@ onMounted(fetchInvoices);
                 <template v-if="row.evidence_url && row.evidence_url !== '-'">
                   <button 
                     @click="openReceiptModal(row.evidence_url)"
-                    title="Klik untuk melihat receipt"
+                    :title="t('invoice.receiptModal.viewTooltip')"
                     class="inline-block hover:opacity-80 transition-opacity focus:outline-none"
                   >
                     <img 
@@ -243,7 +246,7 @@ onMounted(fetchInvoices);
               <td class="px-4 py-3 text-sm border-b border-[#EDEDED]">
                 <button
                   @click="goToDetail(row)"
-                  title="Lihat Detail Invoice"
+                  :title="t('invoice.detailTooltip')"
                   class="w-8 h-8 flex items-center justify-center rounded-full
                          bg-blue-50 text-blue-500 hover:bg-blue-100 transition-colors"
                 >
@@ -265,7 +268,7 @@ onMounted(fetchInvoices);
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
               </svg>
-              <p class="text-sm font-medium text-gray-500">No Records to display</p>
+              <p class="text-sm font-medium text-gray-500">{{ t('invoice.noRecords') }}</p>
             </div>
           </template>
         </DataTable>
@@ -294,7 +297,7 @@ onMounted(fetchInvoices);
           <div class="relative bg-white rounded-sm shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden z-10 hover:shadow-lg transition-shadow duration-300">
             
             <div class="flex items-center justify-between px-6 pt-6 pb-2">
-              <h3 class="text-lg font-bold text-gray-800">Receipt</h3>
+              <h3 class="text-lg font-bold text-gray-800">{{ t('invoice.receiptModal.title') }}</h3>
               <button @click="closeReceiptModal" class="text-gray-400 hover:text-gray-800 transition-colors focus:outline-none p-1 rounded-full hover:bg-gray-100">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>

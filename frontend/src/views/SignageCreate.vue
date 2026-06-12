@@ -554,4 +554,5 @@ const goBack = () => {
         </div>
       </div>
     </div>  
+  </div><!-- /bg-white root wrapper -->
 </template>

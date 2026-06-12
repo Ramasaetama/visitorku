@@ -116,7 +116,7 @@ const handleLogout = async () => {
 </script>
 
 <template>
-  <div class="sticky top-0 z-50 flex flex-col">
+  <div class="relative z-50 flex flex-col shrink-0">
     
     <header 
       class="relative h-19 flex items-center justify-between px-9 shadow-sm transition-colors duration-300"

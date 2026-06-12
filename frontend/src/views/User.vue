@@ -7,26 +7,21 @@ import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import FormTambahPengguna from '@/components/pengguna/FormTambahPengguna.vue';
 import FormPermissionPengguna from '@/components/pengguna/FormPermissionPengguna.vue'; 
-import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
+import Pagination from '@/components/common/Pagination.vue';
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
-
-<<<<<<< HEAD
-=======
 import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
-
-
->>>>>>> acd69a9 (feat(i18n): menerapkan switch language di seluruh halaman)
 import keyline from '@/assets/icons/key-line.svg';
 import editIcon from '@/assets/icons/edit-box-line.svg';
-
 import { ref, onMounted, computed, watch } from 'vue';
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
+import { getAllUsers, createUser, updateUser, deleteUser } from '@/services/userService';
+import { getAllBranches } from '@/services/branchService';
+import { useConfirmDelete } from '@/composables/useConfirmDelete';
+import { useToastNotification } from '@/composables/useToastNotification';
 
-import { getAllBranches } from '@/services/cabangService';
-import { getAllUsers, createUser, updateUser, deleteUser, updateUserPermission } from '@/services/userService';
+const { t } = useI18n();
+const { confirmDelete } = useConfirmDelete();
+const { showSuccess, showError } = useToastNotification();
 
 const searchQuery = ref('');
 const appliedSearchQuery = ref('');
@@ -40,35 +35,29 @@ const itemsPerPage = ref(10);
 
 const executeSearch = () => {
   appliedSearchQuery.value = searchQuery.value;
-  currentPage.value = 1; 
+  currentPage.value = 1;
 };
 
 watch(searchQuery, (nilaiBaru) => {
   if (nilaiBaru === '') executeSearch(); 
 });
-watch(itemsPerPage, () => {
-  currentPage.value = 1;
-});
 
 const tableColumns = computed(() => [
   { key: 'name', label: t('userManagement.table.name'), sortable: true },
   { key: 'email', label: t('userManagement.table.email'), sortable: true },
-  { key: 'phone_number', label: t('userManagement.table.phone'), sortable: false },
   { key: 'branch_name', label: t('userManagement.table.branch'), sortable: true },
+  { key: 'role', label: t('userManagement.table.role'), sortable: true },
   { key: 'aksi', label: t('userManagement.table.action'), sortable: false },
 ]);
 
 const filteredData = computed(() => {
   if (!appliedSearchQuery.value) return penggunaData.value;
   const keyword = appliedSearchQuery.value.toLowerCase();
-  return penggunaData.value.filter(user => {
-    return (
-      (user.name && user.name.toLowerCase().includes(keyword)) ||
-      (user.email && user.email.toLowerCase().includes(keyword)) ||
-      (user.phone_number && user.phone_number.toLowerCase().includes(keyword)) ||
-      (user.branch_name && user.branch_name.toLowerCase().includes(keyword))
-    );
-  });
+  return penggunaData.value.filter(item =>
+    Object.values(item).some(val =>
+      String(val).toLowerCase().includes(keyword)
+    )
+  );
 });
 
 const sortKey = ref('');
@@ -84,8 +73,8 @@ const handleSort = (columnKey) => {
 };
 
 const sortedData = computed(() => {
-  if (!sortKey.value) return filteredData.value; 
-  return [...filteredData.value].sort((a, b) => { 
+  if (!sortKey.value) return filteredData.value;
+  return [...filteredData.value].sort((a, b) => {
     const valA = a[sortKey.value] ?? '';
     const valB = b[sortKey.value] ?? '';
     const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
@@ -93,7 +82,6 @@ const sortedData = computed(() => {
   });
 });
 
-// LOGIKA PAGINATION FRONTEND SLICE
 const totalItems = computed(() => filteredData.value.length);
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
@@ -104,31 +92,17 @@ const paginatedData = computed(() => {
 const fetchAllData = async () => {
   isLoading.value = true;
   try {
-    try {
-      const branchRes = await getAllBranches({ page: 1, size: 100 });
-      branchesData.value = branchRes?.data?.data || branchRes?.data || [];
-    } catch (err) {
-      console.warn("Gagal memuat data cabang untuk mapping:", err);
-    }
+    const branchRes = await getAllBranches({ page: 1, size: 100 });
+    branchesData.value = branchRes?.data?.data || branchRes?.data || [];
+
     const userRes = await getAllUsers({ page: 1, size: 100 });
     const items = userRes?.data?.data || userRes?.data || [];
-    
-    penggunaData.value = (Array.isArray(items) ? items : []).map(user => {
-      let namaCabang = '-';
-      if (user.branch_id) {
-        const matchedBranch = branchesData.value.find(b => b.id === user.branch_id);
-        if (matchedBranch && matchedBranch.name) namaCabang = matchedBranch.name;
-      }
+
+    penggunaData.value = items.map(user => {
+      const matchedBranch = branchesData.value.find(b => b.id === user.branch_id);
       return {
-        id: user.id || '-',
-        name: user.name || '-',
-        email: user.email || '-',
-        phone_number: user.phone_number || '-',
-        address: user.address || '', 
-        branch_id: user.branch_id || '', 
-        branch_name: namaCabang,
-        permissions: user.permissions || [],
-        is_owner: user.is_owner || false
+        ...user,
+        branch_name: matchedBranch?.name || '-',
       };
     });
   } catch (error) {
@@ -138,9 +112,9 @@ const fetchAllData = async () => {
   }
 };
 
-onMounted(() => {
-  fetchAllData();
-});
+onMounted(fetchAllData);
+
+const activeDropdown = ref(null);
 
 const showModal = ref(false);
 const editingUser = ref(null); 
@@ -155,55 +129,39 @@ const handleTambahPengguna = () => {
 };
 
 const handleCloseModal = () => {
-  editingUser.value = null;
   showModal.value = false;
+  editingUser.value = null;
 };
 
 const handleSubmitPengguna = async (formData) => {
   try {
     if (editingUser.value) {
       await updateUser(editingUser.value.id, formData);
-      toastMessage.value = t('userManagement.success.updated');
     } else {
       await createUser(formData);
-      toastMessage.value = t('userManagement.success.added');
     }
-    showModal.value = false;
-    editingUser.value = null;
-    showToast.value = true;
+    showSuccess(t('userManagement.success.saved'));
+    handleCloseModal();
     await fetchAllData();
   } catch (error) {
-    toastMessage.value = error.response?.data?.message || t('userManagement.error.generic');
-    showToast.value = true;
+    showError(error.response?.data?.message || t('userManagement.error.generic'));
   }
 };
 
 const handleEditPengguna = (row) => {
-  editingUser.value = {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    phone_number: row.phone_number,
-    address: row.address,
-    branch_id: row.branch_id, 
-  };
+  editingUser.value = { ...row };
   showModal.value = true;
 };
 
 const handlePermission = (row) => {
-  editingPermissionUser.value = {
-    id: row.id,
-    name: row.name,
-    permissions: row.permissions || []
-  };
+  editingPermissionUser.value = { ...row };
   showPermissionModal.value = true;
 };
 
 const handleSubmitPermission = async (data) => {
   try {
-    await updateUserPermission(editingPermissionUser.value.id, { permissions: data.permissions });
-    toastMessage.value = t('userManagement.success.permissionUpdated');
-    showToast.value = true;
+    await updateUser(editingPermissionUser.value.id, { permissions: data });
+    showSuccess(t('userManagement.success.permissionSaved'));
     showPermissionModal.value = false;
     await fetchAllData();
   } catch (error) {
@@ -212,12 +170,8 @@ const handleSubmitPermission = async (data) => {
 };
 
 const handleDeletePengguna = async (row) => {
-<<<<<<< HEAD
-  const isConfirmed = await confirmDelete('Pengguna');
-=======
   activeDropdown.value = null; 
   const isConfirmed = await confirmDelete(t('userManagement.confirm.deleteLabel'));
->>>>>>> acd69a9 (feat(i18n): menerapkan switch language di seluruh halaman)
   if (isConfirmed) {
     try {
       await deleteUser(row.id); 
@@ -236,26 +190,25 @@ const handleCloseToast = () => {
 
 <template>
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-<<<<<<< HEAD
     <div class="bg-white rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden relative">
       <div class="p-6 flex-1 flex flex-col min-h-0">
         
         <div class="flex items-start justify-between mb-6 shrink-0">
           <div>
-            <h1 class="text-2xl font-semibold text-gray-800 mb-1">Manajemen Pengguna</h1>
-            <p class="text-sm text-gray-500">Kelola Informasi Pengguna.</p>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('userManagement.title') }}</h1>
+            <p class="text-sm text-gray-500">{{ t('userManagement.subtitle') }}</p>
           </div>
-          <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
-            <span class="text-lg leading-none">+</span> Tambah Pengguna
+          <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
+            <span class="text-lg leading-none">+</span> {{ t('userManagement.addBtn') }}
           </button>
         </div>
         
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4 shrink-0">
           <div class="w-full sm:max-w-md flex-1">
-            <SearchInput v-model="searchQuery" placeholder="Cari Pengguna" @keyup.enter="executeSearch" />
+            <SearchInput v-model="searchQuery" :placeholder="t('userManagement.searchPlaceholder')" @keyup.enter="executeSearch" />
           </div>
           <div class="relative shrink-0">
-            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
+            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
               <option :value="5">5</option>
               <option :value="10">10</option>
               <option :value="25">25</option>
@@ -305,56 +258,25 @@ const handleCloseToast = () => {
                 >
                   <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
-=======
-        <div class="bg-white rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden relative">
-          <div class="p-6 flex-1 flex flex-col min-h-0">
-            
-            <div class="flex items-start justify-between mb-6 shrink-0">
-              <div>
-                <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('userManagement.title') }}</h1>
-                <p class="text-sm text-gray-500">{{ t('userManagement.subtitle') }}</p>
-              </div>
-              <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
-                <span class="text-lg leading-none">+</span> {{ t('userManagement.addBtn') }}
-              </button>
-            </div>
-            
-            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4 shrink-0">
-              <div class="w-full sm:max-w-md flex-1">
-                <SearchInput v-model="searchQuery" :placeholder="t('userManagement.searchPlaceholder')" @keyup.enter="executeSearch" />
-              </div>
-              <div class="relative shrink-0">
-                <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
-                  <option :value="5">5</option>
-                  <option :value="10">10</option>
-                  <option :value="25">25</option>
-                  <option :value="50">50</option>
-                  <option :value="100">100</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
->>>>>>> acd69a9 (feat(i18n): menerapkan switch language di seluruh halaman)
                   </svg>
                 </button>
               </div>
             </template>
 
-<<<<<<< HEAD
             <template #empty>
               <EmptyState 
                 v-if="penggunaData.length === 0"
                 :icon="notfound"
-                title="Data Pengguna Belum Tersedia"
-                description="Tambahkan minimal satu pengguna agar sistem dapat digunakan."
-                buttonText="Tambah Pengguna"
+                :title="t('userManagement.empty.noData')"
+                :description="t('userManagement.empty.noDataDesc')"
+                :buttonText="t('userManagement.empty.noDataBtn')"
                 @action="handleTambahPengguna"
               />
               <EmptyState 
                 v-else
                 :icon="notfound"
-                title="No Records to display"
-                :description="`Tidak ada pengguna yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                :title="t('userManagement.empty.notFound')"
+                :description="`${t('userManagement.empty.notFoundDesc')} '${appliedSearchQuery}'`"
               />
             </template>
           </DataTable>
@@ -372,163 +294,11 @@ const handleCloseToast = () => {
 
     </div> 
   </main>
-=======
-   <!-- Tombol Permission - icon putih di atas orange -->
-<button
-  v-if="!row.is_owner"
-  @click="handlePermission(row)"
-  class="w-[30px] h-[30px] rounded bg-[#F7941D] flex items-center justify-center hover:bg-[#E8850E] transition-colors focus:outline-none"
->
-  <img :src="keyline" class="w-[15px] h-[15px] brightness-0 invert" alt="permission" />
-</button>
 
-<!-- Tombol Edit - icon putih di atas biru -->
-<button
-  @click="handleEditPengguna(row)"
-  class="w-[30px] h-[30px] rounded bg-[#3B82F6] flex items-center justify-center hover:bg-[#2563EB] transition-colors focus:outline-none"
->
-  <img :src="editIcon" class="w-[15px] h-[15px] brightness-0 invert" alt="edit" />
-</button>
-
-                    <button 
-                      @click="handleDeletePengguna(row)"
-                      class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none"
-                    >
-                      <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
-                      </svg>
-                    </button>
-
-                  </div>
-                </template>
-
-                <template #empty>
-                  <EmptyState 
-                    v-if="penggunaData.length === 0"
-                    :icon="notfound"
-                    :title="t('userManagement.empty.noData')"
-                    :description="t('userManagement.empty.noDataDesc')"
-                    :buttonText="t('userManagement.empty.noDataBtn')"
-                    @action="handleTambahPengguna"
-                  />
-                  <EmptyState 
-                    v-else
-                    :icon="notfound"
-                    :title="t('userManagement.empty.notFound')"
-                    :description="`${t('userManagement.empty.notFoundDesc')} '${appliedSearchQuery}'`"
-                  />
-                </template>
-              </DataTable>
-            </div>
-            
-          </div>
-          
-          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B] shrink-0 bg-white rounded-b-2xl">
-           <span>{{ t('userManagement.showing', { from: startIndex, to: endIndex, total: totalItems }) }}</span>
-
-            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-              <button 
-                @click="goToPage(currentPage - 1)" 
-                :disabled="currentPage === 1"
-                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
-              </button>
-              
-              <button 
-                v-for="page in visiblePages" 
-                :key="page"
-                @click="goToPage(page)"
-                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
-                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
-              >
-                {{ page }}
-              </button>
-
-              <button 
-                @click="goToPage(currentPage + 1)" 
-                :disabled="currentPage === totalPages"
-                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-              </button>
-            </div>
-          </div>
-
-        </div> 
-      </main>
-    
-    <Modal 
-      :show="showModal"
-      :title="editingUser ? t('userManagement.modal.editTitle') : t('userManagement.modal.addTitle')"
-      :description="editingUser ? t('userManagement.modal.editDesc') : t('userManagement.modal.addDesc')"
-      width="half"
-      @close="handleCloseModal"
-    >
-      <FormTambahPengguna 
-        :initialData="editingUser"
-        :branches="branchesData" @submit="handleSubmitPengguna"
-        @cancel="handleCloseModal"
-      />
-      
-      <template #footer>
-        <div class="flex items-center justify-end gap-3">
-          <button 
-            type="button"
-            @click="handleCloseModal"
-            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
-          >
-            {{ t('userManagement.modal.cancel') }}
-          </button>
-          <button 
-            type="submit"
-            form="formTambahPengguna"
-            class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
-          >
-            {{ editingUser ? t('userManagement.modal.update') : t('userManagement.modal.save') }}
-          </button>
-        </div>
-      </template>
-    </Modal>
-
-    <Modal 
-      :show="showPermissionModal"
-      :title="`${t('userManagement.permission.title')}: ${editingPermissionUser?.name || ''}`"
-      :description="t('userManagement.permission.desc')"
-      width="half"
-      @close="showPermissionModal = false"
-    >
-      <FormPermissionPengguna 
-        v-if="showPermissionModal"
-        :initialPermissions="editingPermissionUser?.permissions"
-        @submit="handleSubmitPermission"
-      />
-      
-      <template #footer>
-        <div class="flex items-center justify-end gap-3">
-          <button 
-            type="button"
-            @click="showPermissionModal = false"
-            class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
-          >
-            {{ t('userManagement.permission.cancel') }}
-          </button>
-          <button 
-            type="submit"
-            form="formPermissionPengguna"
-            class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
-          >
-            {{ t('userManagement.permission.save') }}
-          </button>
-        </div>
-      </template>
-    </Modal>
->>>>>>> acd69a9 (feat(i18n): menerapkan switch language di seluruh halaman)
-    
   <Modal 
     :show="showModal"
-    :title="editingUser ? 'Edit Pengguna' : 'Tambah Pengguna'"
-    :description="editingUser ? 'Ubah informasi pengguna.' : 'Masukan informasi pengguna baru ke dalam sistem.'"
+    :title="editingUser ? t('userManagement.modal.editTitle') : t('userManagement.modal.addTitle')"
+    :description="editingUser ? t('userManagement.modal.editDesc') : t('userManagement.modal.addDesc')"
     width="half"
     @close="handleCloseModal"
   >
@@ -543,16 +313,16 @@ const handleCloseToast = () => {
         <button 
           type="button"
           @click="handleCloseModal"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
         >
-          Batal
+          {{ t('userManagement.modal.cancel') }}
         </button>
         <button 
           type="submit"
           form="formTambahPengguna"
-          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-sm hover:bg-[#E8850E] transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
-          {{ editingUser ? 'Perbarui Pengguna' : 'Tambah Pengguna' }}
+          {{ editingUser ? t('userManagement.modal.update') : t('userManagement.modal.save') }}
         </button>
       </div>
     </template>
@@ -560,8 +330,8 @@ const handleCloseToast = () => {
 
   <Modal 
     :show="showPermissionModal"
-    :title="'Hak Akses: ' + (editingPermissionUser?.name || 'Pengguna')"
-    description="Atur dan kelola level akses menu pengguna di dalam sistem."
+    :title="`${t('userManagement.permission.title')}: ${editingPermissionUser?.name || ''}`"
+    :description="t('userManagement.permission.desc')"
     width="half"
     @close="showPermissionModal = false"
   >
@@ -576,16 +346,16 @@ const handleCloseToast = () => {
         <button 
           type="button"
           @click="showPermissionModal = false"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
         >
-          Batal
+          {{ t('userManagement.permission.cancel') }}
         </button>
         <button 
           type="submit"
           form="formPermissionPengguna"
-          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-sm hover:bg-[#E8850E] transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
-          Simpan Hak Akses
+          {{ t('userManagement.permission.save') }}
         </button>
       </div>
     </template>
