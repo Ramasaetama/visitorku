@@ -1,9 +1,11 @@
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import { getSignageBySlug, getSignageById } from '@/services/signageService';
 
 const route = useRoute();
+const { t } = useI18n();
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const signage = ref(null);
@@ -76,7 +78,7 @@ const fetchSignage = async () => {
     signage.value = data;
   } catch (err) {
     console.error('Gagal memuat signage:', err);
-    error.value = 'Signage tidak ditemukan.';
+    error.value = t('signage.display.notFound');
   } finally {
     isLoading.value = false;
   }
@@ -106,7 +108,7 @@ onUnmounted(() => {
     <!-- Loading -->
     <div v-if="isLoading" class="loading-container">
       <div class="loader"></div>
-      <p>Memuat signage...</p>
+      <p>{{ t('signage.display.loading') }}</p>
     </div>
 
     <!-- Error -->
@@ -160,7 +162,7 @@ onUnmounted(() => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
               </svg>
-              <span class="text-white/60 text-sm">No Image</span>
+              <span class="text-white/60 text-sm">{{ t('signage.display.noImage') }}</span>
             </div>
           </template>
         </div>

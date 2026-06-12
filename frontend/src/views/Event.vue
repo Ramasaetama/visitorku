@@ -1,16 +1,16 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DateTimePicker from '@/components/common/DateTimePicker.vue';
 import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import Pagination from '@/components/common/Pagination.vue';
-import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
-import notfound from '@/assets/notfound.svg'; // 🌟 FIX: Import notfound icon
+import EmptyState from '@/components/common/EmptyState.vue';
+import notfound from '@/assets/notfound.svg';
+
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import {
   getAllEvents,
@@ -19,6 +19,7 @@ import {
   deleteEvent,
 } from '@/services/eventService';
 
+const { t } = useI18n();
 const router = useRouter();
 
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -53,14 +54,14 @@ const closeDropdown = () => {
 };
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
-const tableColumns = [
-  { key: 'name',             label: 'Name',             sortable: true,  width: 'w-[20%]' },
-  { key: 'start_at',         label: 'Event Start',      sortable: true,  width: 'w-[16%]' },
-  { key: 'finish_at',        label: 'Event Finish',     sortable: true,  width: 'w-[16%]' },
-  { key: 'url_registration', label: 'URL Registration', sortable: false, width: 'w-[16%]' },
-  { key: 'location_url',     label: 'URL Location',     sortable: false, width: 'w-[16%]' },
-  { key: 'aksi',             label: 'Action',           sortable: false, width: 'w-[16%]' },
-];
+const tableColumns = computed(() => [
+  { key: 'name',             label: t('event.table.name'),            sortable: true,  width: 'w-[20%]' },
+  { key: 'start_at',         label: t('event.table.eventStart'),      sortable: true,  width: 'w-[16%]' },
+  { key: 'finish_at',        label: t('event.table.eventFinish'),     sortable: true,  width: 'w-[16%]' },
+  { key: 'url_registration', label: t('event.table.urlRegistration'), sortable: false, width: 'w-[16%]' },
+  { key: 'location_url',     label: t('event.table.urlLocation'),     sortable: false, width: 'w-[16%]' },
+  { key: 'aksi',             label: t('event.table.action'),          sortable: false, width: 'w-[16%]' },
+]);
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('name');
@@ -186,13 +187,13 @@ const validateDates = () => {
   const regFinish   = form.value.registration_finish_at ? new Date(form.value.registration_finish_at) : null;
 
   if (eventStart && eventFinish && eventFinish <= eventStart) {
-    dateErrors.value.event_finish_at = 'Waktu selesai event harus setelah waktu mulai event.';
+    dateErrors.value.event_finish_at = t('event.validation.finishAfterStart');
   }
   if (regStart && regFinish && regFinish <= regStart) {
-    dateErrors.value.registration_finish_at = 'Waktu selesai registrasi harus setelah waktu mulai registrasi.';
+    dateErrors.value.registration_finish_at = t('event.validation.regFinishAfterStart');
   }
   if (regStart && eventStart && regStart >= eventStart) {
-    dateErrors.value.registration_start_at = 'Waktu mulai registrasi harus sebelum waktu mulai event.';
+    dateErrors.value.registration_start_at = t('event.validation.regStartBeforeEvent');
   }
 };
 
@@ -248,13 +249,13 @@ const closeModal = () => {
 
 const handleSubmit = async () => {
   if (!form.value.name || !form.value.description || !form.value.start_at || !form.value.finish_at || !form.value.registration_start_at || !form.value.registration_finish_at) {
-    showError('Harap lengkapi semua field yang wajib diisi.');
+    showError(t('event.validation.requiredFields'));
     return;
   }
 
   validateDates();
   if (hasDateErrors.value) {
-    showError('urutan tanggal yang dimasukkan salah.');
+    showError(t('event.validation.invalidDates'));
     return;
   }
 
@@ -263,15 +264,15 @@ const handleSubmit = async () => {
     const payload = { ...form.value };
     if (isEdit.value) {
       await updateEvent(editingId.value, payload);
-      showSuccess('Event berhasil diperbarui.');
+      showSuccess(t('event.success.updated'));
     } else {
       await createEvent(payload);
-      showSuccess('Event berhasil ditambahkan.');
+      showSuccess(t('event.success.added'));
     }
     closeModal();
     await fetchEvents();
   } catch (err) {
-    showError(err.response?.data?.message || 'Terjadi kesalahan.');
+    showError(err.response?.data?.message || t('event.error.generic'));
   } finally {
     isSaving.value = false;
   }
@@ -284,10 +285,10 @@ const handleDelete = async (row) => {
   if (!confirmed) return;
   try {
     await deleteEvent(row.id);
-    showSuccess('Event berhasil dihapus.');
+    showSuccess(t('event.success.deleted'));
     await fetchEvents();
   } catch (err) {
-    showError(err.response?.data?.message || 'Gagal menghapus event.');
+    showError(err.response?.data?.message || t('event.error.deleteFailed'));
   }
 };
 
@@ -303,7 +304,7 @@ const goToEventSetting  = (row) => {
 
 const copyUrl = (url) => {
   if (url && url !== '-') {
-    navigator.clipboard.writeText(url).then(() => showSuccess('URL berhasil disalin!'));
+    navigator.clipboard.writeText(url).then(() => showSuccess(t('event.success.urlCopied')));
   }
 };
 
@@ -322,27 +323,29 @@ onUnmounted(() => {
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col">
 
+      <!-- Header -->
       <div class="flex items-start justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-800 mb-1">Event</h1>
-          <p class="text-sm text-gray-500">Kelola dan pantau seluruh data event yang ada.</p>
+          <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('event.title') }}</h1>
+          <p class="text-sm text-gray-500">{{ t('event.subtitle') }}</p>
         </div>  
         <button
           @click="openAddModal"
           class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
-                 text-[#F7941D] text-sm font-medium rounded-sm
+                 text-[#F7941D] text-sm font-medium rounded-lg
                  hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
         >
           <span class="text-lg leading-none">+</span>
-          Create New Event
+          {{ t('event.createButton') }}
         </button>              
       </div>
 
+      <!-- Toolbar -->
       <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
         <div class="w-full sm:max-w-md">
           <SearchInput
             v-model="searchQuery"
-            placeholder="Search Event"
+            :placeholder="t('event.searchPlaceholder')"
             @keyup.enter="executeSearch"
           />
         </div>
@@ -350,7 +353,7 @@ onUnmounted(() => {
         <div class="relative shrink-0">
           <select
             v-model="perPage"
-            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -364,8 +367,11 @@ onUnmounted(() => {
             </svg>
           </div>
         </div>
+
+        <div class="flex-1" />
       </div>
 
+      <!-- Table -->
       <div class="flex-1 overflow-hidden">
         <DataTable
           :columns="tableColumns"
@@ -532,64 +538,71 @@ onUnmounted(() => {
 
   <Modal
     :show="showModal"
-    :title="isEdit ? 'Edit Event' : 'Tambah Event'"
-    :description="isEdit ? 'Ubah informasi event yang sudah ada.' : 'Masukan informasi event baru ke dalam sistem.'"
+    :title="isEdit ? t('event.modal.editTitle') : t('event.modal.addTitle')"
+    :description="isEdit ? t('event.modal.editDesc') : t('event.modal.addDesc')"
     width="half"
     @close="closeModal"
   >
+    <!-- Body Form -->
     <div class="space-y-5">
+      <!-- Name -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Event <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.eventName') }} <span class="text-red-500">*</span></label>
         <input
           v-model="form.name"
           type="text"
-          placeholder="Masukkan nama event..."
-          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          :placeholder="t('event.modal.eventNamePlaceholder')"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
         />
       </div>
 
+      <!-- Description -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi <span class="text-red-500">*</span></label>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.description') }} <span class="text-red-500">*</span></label>
         <textarea
           v-model="form.description"
           rows="3"
-          placeholder="Masukkan deskripsi event..."
-          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          :placeholder="t('event.modal.descriptionPlaceholder')"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
+      <!-- Location -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">Lokasi</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.location') }}</label>
         <textarea
           v-model="form.location"
           rows="2"
-          placeholder="Masukkan lokasi event..."
-          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          :placeholder="t('event.modal.locationPlaceholder')"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
+      <!-- Location URL -->
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1.5">URL Lokasi</label>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.locationUrl') }}</label>
         <input
           v-model="form.location_url"
           type="text"
-          placeholder="Masukkan URL lokasi..."
-          class="w-full bg-[#FFFFFF] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          :placeholder="t('event.modal.locationUrlPlaceholder')"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
         />
       </div>
 
+      <!-- Event Start At -->
       <DateTimePicker
         v-model="form.start_at"
-        label="Waktu Mulai Event"
+        :label="t('event.modal.startAt')"
         :required="true"
       />
 
+      <!-- Event Finish At -->
       <div>
         <DateTimePicker
           v-model="form.finish_at"
-          label="Waktu Selesai Event"
+          :label="t('event.modal.finishAt')"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.event_finish_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.event_finish_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.event_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -601,12 +614,13 @@ onUnmounted(() => {
         </Transition>
       </div>
 
+      <!-- Registration Start At -->
       <div>
         <DateTimePicker
           v-model="form.registration_start_at"
-          label="Waktu Mulai Registrasi"
+          :label="t('event.modal.regStartAt')"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_start_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_start_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.registration_start_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -618,12 +632,13 @@ onUnmounted(() => {
         </Transition>
       </div>
 
+      <!-- Registration Finish At -->
       <div>
         <DateTimePicker
           v-model="form.registration_finish_at"
-          label="Waktu Selesai Registrasi"
+          :label="t('event.modal.regFinishAt')"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_finish_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_finish_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.registration_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -636,24 +651,25 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <!-- Footer Slot -->
     <template #footer>
       <div class="flex items-center justify-end gap-3">
         <button
           type="button"
           @click="closeModal"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
         >
-          Batal
+          {{ t('event.modal.cancel') }}
         </button>
         <button
           type="button"
           @click="handleSubmit"
           :disabled="isSaving || hasDateErrors"
-          :title="hasDateErrors ? 'Periksa kembali urutan tanggal' : ''"
-          class="px-5 py-2.5 text-sm font-medium text-white rounded-sm transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          :title="hasDateErrors ? t('event.modal.checkDates') : ''"
+          class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           :class="hasDateErrors ? 'bg-gray-400' : 'bg-[#F7941D] hover:bg-[#E8850E]'"
         >
-          {{ isSaving ? 'Menyimpan...' : (isEdit ? 'Perbarui Event' : 'Tambah Event') }}
+          {{ isSaving ? t('event.modal.saving') : (isEdit ? t('event.modal.update') : t('event.modal.add')) }}
         </button>
       </div>
     </template>

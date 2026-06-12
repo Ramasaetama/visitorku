@@ -1,13 +1,14 @@
 <script setup>
 import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
+import EmptyState from '@/components/common/EmptyState.vue';
 import Toast from '@/components/common/Toast.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
-import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
+import notfound from '@/assets/notfound.svg';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import notfound from '@/assets/notfound.svg'; 
 import {

@@ -225,7 +225,10 @@ onMounted(() => {
 
       <div class="bg-white rounded-md border border-gray-100 p-6">
         <h1 class="text-2xl font-semibold text-gray-800 mb-6">{{ t('dashboard.title') }}</h1>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-3 gap-6 overflow-visible min-h-[80px]"
+          style="transform: translateZ(0); will-change: transform;"
+        >
           <div class="bg-white rounded-sm p-5 flex items-center gap-4 border border-gray-200 shadow-xs">
             <div class="w-12 h-12 rounded-full bg-[#FEF4E3] flex items-center justify-center shrink-0">
               <svg class="w-6 h-6 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,9 +237,9 @@ onMounted(() => {
                 <path d="M8 17a4 4 0 0 1 8 0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
               </svg>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-xl font-bold text-gray-900 leading-none">{{ counters.visitor_total }}</span>
-              <span class="text-[14px] text-gray-600 font-medium">{{ t('dashboard.totalVisitor') }}</span>
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-xl font-bold text-gray-900 leading-none shrink-0">{{ counters.visitor_total }}</span>
+              <span class="text-[14px] text-gray-600 font-medium whitespace-nowrap">{{ t('dashboard.totalVisitor') }}</span>
             </div>
           </div>
 
@@ -248,9 +251,9 @@ onMounted(() => {
                 <path d="M3 12h12" />
               </svg>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-xl font-bold text-gray-900 leading-none">{{ counters.visit_total }}</span>
-              <span class="text-[14px] text-gray-600 font-medium">{{ t('dashboard.totalVisit') }}</span>
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-xl font-bold text-gray-900 leading-none shrink-0">{{ counters.visit_total }}</span>
+              <span class="text-[14px] text-gray-600 font-medium whitespace-nowrap">{{ t('dashboard.totalVisit') }}</span>
             </div>
           </div>
 
@@ -260,9 +263,9 @@ onMounted(() => {
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
               </svg>
             </div>
-            <div class="flex items-baseline gap-2">
-              <span class="text-xl font-bold text-gray-900 leading-none">{{ counters.user_total }}</span>
-              <span class="text-[14px] text-gray-600 font-medium">{{ t('dashboard.totalUser') }}</span>
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="text-xl font-bold text-gray-900 leading-none shrink-0">{{ counters.user_total }}</span>
+              <span class="text-[14px] text-gray-600 font-medium whitespace-nowrap">{{ t('dashboard.totalUser') }}</span>
             </div>
           </div>
         </div>

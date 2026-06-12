@@ -1,18 +1,17 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
-
-const { t } = useI18n();
+import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
-import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
+import Pagination from '@/components/common/Pagination.vue';
 import notfound from '@/assets/notfound.svg';
-import { getAllVisits, exportVisitReport } from '@/services/visitService';
+import { getAllVisits } from '@/services/visitService';
 
+const { t } = useI18n();
 const router = useRouter();
 
 // ─── State ───────────────────────────────────────────────────────────────────
@@ -25,13 +24,13 @@ const currentPage   = ref(1);
 const totalRecords  = ref(0);
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
-const tableColumns = [
-  { key: 'name',      label: 'Name',      sortable: true  },
-  { key: 'purpose',   label: 'Purpose',   sortable: true  },
-  { key: 'check_in',  label: 'Check In',  sortable: true  },
-  { key: 'check_out', label: 'Check Out', sortable: false },
-  { key: 'face',      label: 'Face',      sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'name',      label: t('visitData.table.name'),      sortable: true  },
+  { key: 'purpose',   label: t('visitData.table.purpose'),   sortable: true  },
+  { key: 'check_in',  label: t('visitData.table.checkIn'),   sortable: true  },
+  { key: 'check_out', label: t('visitData.table.checkOut'),  sortable: false },
+  { key: 'face',      label: t('visitData.table.face'),      sortable: false },
+]);
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('check_in');
@@ -78,7 +77,7 @@ const fetchVisits = async () => {
     }));
   } catch (err) {
     console.error('Gagal memuat data visit:', err);
-    visitData.value  = [];
+    visitData.value    = [];
     totalRecords.value = 0;
   } finally {
     isLoading.value = false;
@@ -121,7 +120,7 @@ watch(currentPage, () => {
   fetchVisits();
 });
 
-// ─── Report Export ────────────────────────────────────────────────────────────
+// ─── Report ───────────────────────────────────────────────────────────────────
 const handleReport = () => {
   router.push('/report');
 };
@@ -136,14 +135,14 @@ onMounted(fetchVisits);
 
       <div class="flex items-start justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-800 mb-1">Daftar Kunjungan</h1>
-          <p class="text-sm text-gray-500">Pantau seluruh data kunjungan yang terdaftar.</p>
+          <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('visitData.title') }}</h1>
+          <p class="text-sm text-gray-500">{{ t('visitData.subtitle') }}</p>
         </div> 
 
         <button 
           @click="handleReport"
           class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] 
-                 text-[#38CA99] rounded-sm font-medium text-sm 
+                 text-[#38CA99] rounded-lg font-medium text-sm 
                  hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
         >
           <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -152,15 +151,15 @@ onMounted(fetchVisits);
             <line x1="12" y1="15" x2="12" y2="9" />
             <line x1="16" y1="15" x2="16" y2="13" />
           </svg>
-          Report
+          {{ t('visitData.reportButton') }}
         </button>
       </div>
 
       <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
-        <div class="w-full sm:max-w-md">
+        <div class="w-full sm:max-w-md flex-1">
           <SearchInput 
             v-model="searchQuery" 
-            placeholder="Cari Kunjungan" 
+            :placeholder="t('visitData.searchPlaceholder')" 
             @keyup.enter="executeSearch"  
           />
         </div>
@@ -168,7 +167,7 @@ onMounted(fetchVisits);
         <div class="relative shrink-0">
           <select 
             v-model="perPage" 
-            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -251,7 +250,7 @@ onMounted(fetchVisits);
               <td class="px-5 py-4 text-[13px] border-b border-[#EDEDED] text-center">
                 <div class="flex justify-center">
                   <template v-if="row.satisfaction === 3">
-                    <svg class="w-6.5 h-6.5 text-[#10B981]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" stroke-width="2"/>
                       <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                       <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
@@ -259,7 +258,7 @@ onMounted(fetchVisits);
                     </svg>
                   </template>
                   <template v-else-if="row.satisfaction === 2">
-                    <svg class="w-6.5 h-6.5 text-[#F59E0B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-[#F59E0B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" stroke-width="2"/>
                       <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                       <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
@@ -267,7 +266,7 @@ onMounted(fetchVisits);
                     </svg>
                   </template>
                   <template v-else-if="row.satisfaction === 1">
-                    <svg class="w-6.5 h-6.5 text-[#EF4444]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <svg class="w-6 h-6 text-[#EF4444]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                       <circle cx="12" cy="12" r="10" stroke-width="2"/>
                       <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                       <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
@@ -284,30 +283,28 @@ onMounted(fetchVisits);
             <EmptyState 
               v-if="visitData.length === 0"
               :icon="notfound"
-              title="Data Kunjungan Belum Tersedia"
-              description="Belum ada data kunjungan yang terekam di sistem."
+              :title="t('visitData.emptyTitle')"
+              :description="t('visitData.emptyDescription')"
               :showButton="false"
             />
-
             <EmptyState 
               v-else
               :icon="notfound"
-              title="Pencarian Tidak Ditemukan"
-              :description="`Tidak ada kunjungan yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+              :title="t('visitData.notFoundTitle')"
+              :description="t('visitData.notFoundDescription')"
               :showButton="false"
             />
           </template>
         </DataTable>
       </div>
 
+      <Pagination
+        v-model:current-page="currentPage"
+        :total-data="totalRecords"
+        :per-page="perPage"
+      />
+
     </div>
-
-    <Pagination
-      v-model:current-page="currentPage"
-      :total-data="totalRecords"
-      :per-page="perPage"
-    />
-
   </main>
   </div>
 </template>

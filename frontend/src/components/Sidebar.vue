@@ -65,7 +65,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
 </script>
 
 <template>
-  <aside class="hidden md:flex w-65 bg-[#F4F6F8] flex-col mr-4 mb-4 ml-4 gap-4 font-['Poppins'] h-[calc(100%-1rem)] overflow-y-auto hide-scrollbar shrink-0 overscroll-contain">
+  <aside class="hidden md:flex w-65 bg-[#F4F6F8] flex-col mr-4 mb-4 ml-4 gap-4 font-['Poppins'] overflow-y-auto hide-scrollbar shrink-0 overscroll-contain">
       <div class="bg-white rounded-2xl shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <div class="mb-6">
         <h3 class="text-[16px] font-semibold text-[#1E293B] mb-5 tracking-wide">{{ t('sidebar.mainMenu') }}</h3>
@@ -108,7 +108,8 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
       </div>
     </div>
 
-    <div v-if="shouldShowQuickGuide" class="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
+    <!-- Quick Guide: hanya tampil di layar besar (≥1024px) -->
+    <div v-if="shouldShowQuickGuide" class="hidden lg:block bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4">
       <div class="flex items-center justify-between mb-2">
         <span class="text-[#F7941D] text-[12px] font-semibold">{{ t('sidebar.quickGuide') }}</span>
         <button @click="showQuickGuide = false" class="text-gray-400 hover:text-gray-600 p-1">
@@ -162,6 +163,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
       </button>
     </div>
   </aside>
+
 
   <aside class="flex md:hidden w-14 bg-[#F4F6F8] flex-col items-center py-3 gap-1 font-['Poppins'] h-full overflow-y-auto hide-scrollbar shrink-0 overscroll-contain">
         <div class="bg-white rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-2 w-full flex flex-col items-center gap-1">
