@@ -209,29 +209,11 @@ onUnmounted(() => {
           <div class="w-full sm:max-w-md">
             <SearchInput
               v-model="searchQuery"
+              v-model:perPage="perPage"
               :placeholder="t('eventFeedback.searchPlaceholder')"
               @keyup.enter="executeSearch"
             />
           </div>
-
-          <div class="relative shrink-0">
-            <select
-              v-model="perPage"
-              class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
-            >
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="25">25</option>
-              <option :value="50">50</option>
-              <option :value="100">100</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
-
           <div class="flex-1" />
 
           <button
@@ -266,7 +248,6 @@ onUnmounted(() => {
                     <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                     <path d="M8 14.5c1.5 2 4.5 2 6 0" stroke-linecap="round"/>
                   </svg>
-                  <span class="text-[13px] text-[#10B981] font-medium">Happy</span>
                 </template>
                 <template v-else-if="row.satisfaction === 2">
                   <svg class="w-6 h-6 text-[#F59E0B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -275,7 +256,6 @@ onUnmounted(() => {
                     <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                     <line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round"/>
                   </svg>
-                  <span class="text-[13px] text-[#F59E0B] font-medium">Neutral</span>
                 </template>
                 <template v-else-if="row.satisfaction === 1">
                   <svg class="w-6 h-6 text-[#EF4444]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">

@@ -1,13 +1,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { useRoute, useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
-import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
-import notfound from '@/assets/notfound.svg'; // 🌟 FIX: Import Icon
+import { useRoute, useRouter } from 'vue-router'; 
 import { showSuccess, showError, confirmDelete } from '@/utils/alertHelper';
 import { getEventById } from '@/services/eventService';
+
+import EmptyState from '@/components/common/EmptyState.vue'; 
+import notfound from '@/assets/notfound.svg';
 import api from '@/services/api';
 
 const { t } = useI18n();
@@ -211,21 +210,7 @@ onMounted(async () => {
                 </button>
                 <h1 class="text-xl font-semibold text-gray-800">{{ t('eventSetting.title') }}</h1>
               </div>
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>{{ t('eventSetting.breadcrumb.dashboard') }}</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <button @click="router.push('/event')" class="hover:text-[#F7941D] transition-colors">{{ t('eventSetting.breadcrumb.event') }}</button>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">{{ t('eventSetting.breadcrumb.setting') }}</span>
-              </nav>
+              
             </div>
 
             <div class="flex gap-0 mb-6 border-b border-gray-200">
@@ -324,7 +309,7 @@ onMounted(async () => {
     
                 <button
                   @click="handleAddField"
-                  class="flex items-center gap-2 px-4 py-2 bg-[#4075FF] text-white text-sm font-medium hover:bg-[#3060EE] active:scale-95 transition-all focus:outline-none"
+                  class="flex items-center gap-2 px-4 py-2 border-2 border-[#F7941D] text-[#F7941D] text-sm font-medium hover:bg-[#FFF9F0] active:scale-95 transition-all focus:outline-none"
                   style="border-radius: 8px;"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">

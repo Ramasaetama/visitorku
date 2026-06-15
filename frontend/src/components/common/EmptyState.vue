@@ -54,7 +54,7 @@ defineEmits(['action']);
     </div>
     
     <!-- Title -->
-    <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">
+    <h3 class="text-lg font-medium text-gray-800 mb-2 text-center">
       {{ title }}
     </h3>
     

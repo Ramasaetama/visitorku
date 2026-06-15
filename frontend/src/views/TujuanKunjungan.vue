@@ -276,34 +276,14 @@ const handleSubmitTujuan = async (formData) => {
           <div class="w-full sm:max-w-md flex-1">
             <SearchInput 
               v-model="searchQuery" 
+              v-model:perPage="itemsPerPage"
               placeholder="Cari berdasarkan nama PIC/Divisi" 
               @keyup.enter="executeSearch" />
-          </div>
-
-          <div class="relative shrink-0">
-            <select 
-              v-model="itemsPerPage" 
-              class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
-            >
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="25">25</option>
-              <option :value="50">50</option>
-              <option :value="100">100</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
-          
+          </div>          
           <button 
-            class="flex items-center gap-2 px-4 py-2.5 border-2 border-gray-300 
-                   text-gray-400 rounded-sm font-medium text-[13px] 
-                   hover:bg-gray-50 transition-all focus:outline-none"
+            class="group flex items-center justify-center gap-2 h-9 px-4 bg-white border border-gray-200 rounded-sm text-sm text-gray-700 font-medium focus:outline-none focus:border-[#F7941D] focus:text-[#F7941D] focus:ring-[30px] focus:ring-[#F7941D] transition-all duration-200"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 text-gray-400 group-focus:text-[#F7941D] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
             </svg>

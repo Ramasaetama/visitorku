@@ -11,14 +11,27 @@
       <span v-if="!previewUrl" class="text-[#F7941D] font-medium text-sm">Upload image here</span>
     </div>
 
-    <button @click="save" :disabled="!selectedFile || isSaving" class="px-6 py-2.5 bg-[#F7941D] hover:bg-[#E8850E] text-white font-medium rounded-sm text-sm transition disabled:opacity-70 disabled:cursor-not-allowed">
+    <button 
+      @click="save" 
+      :disabled="isSaving || !hasChanges" 
+      :class="[
+        'px-6 py-2.5 font-medium rounded-sm text-sm transition-all duration-200 flex items-center justify-center gap-2 w-fit',
+        (!hasChanges || isSaving) 
+          ? 'bg-[#ACACAC] text-white cursor-not-allowed' 
+          : 'bg-[#F7941D] hover:bg-[#E8850E] text-white cursor-pointer shadow-sm hover:shadow'
+      ]"
+    >
+      <svg v-if="isSaving" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
       {{ isSaving ? 'Uploading...' : 'Save Changes' }}
     </button>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { uploadAdminProfilePicture } from '@/services/adminProfileService';
 import { showToast, showError } from '@/utils/alertHelper';
 
@@ -31,6 +44,11 @@ const fileInput = ref(null);
 const selectedFile = ref(null);
 const previewUrl = ref(props.profileData?.picture_url || props.profileData?.avatar || null);
 const isSaving = ref(false);
+
+// 🌟 FIX: Detektor perubahan, tombol baru nyala kalau ada file yang dipick
+const hasChanges = computed(() => {
+  return selectedFile.value !== null;
+});
 
 const handleFileChange = (e) => {
   const file = e.target.files[0];
@@ -46,7 +64,10 @@ const save = async () => {
   try {
     await uploadAdminProfilePicture(selectedFile.value);
     showToast('Foto profil berhasil diperbarui!', 'success');
-    selectedFile.value = null; // Reset setelah sukses
+    
+    // Reset file setelah sukses agar tombol mati/abu-abu lagi
+    selectedFile.value = null; 
+    
     emit('refresh');
   } catch (error) {
     showError('Gagal mengunggah foto profil.');

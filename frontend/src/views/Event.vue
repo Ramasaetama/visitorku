@@ -74,9 +74,19 @@ const handleSort = (key) => {
     sortKey.value   = key;
     sortOrder.value = 'asc';
   }
-  currentPage.value = 1;
-  fetchEvents();
 };
+
+// 🌟 FIX: Membuat fungsi sortedData aktif agar perubahan handleSort langsung ngefek di tabel
+const sortedData = computed(() => {
+  if (!sortKey.value) return eventData.value; 
+
+  return [...eventData.value].sort((a, b) => { 
+    const valA = a[sortKey.value] ?? '';
+    const valB = b[sortKey.value] ?? '';
+    const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
+    return sortOrder.value === 'asc' ? cmp : -cmp;
+  });
+});
 
 // ─── Fetch Data ───────────────────────────────────────────────────────────────
 const fetchEvents = async () => {
@@ -323,7 +333,6 @@ onUnmounted(() => {
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col">
 
-      <!-- Header -->
       <div class="flex items-start justify-between mb-6">
         <div>
           <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('event.title') }}</h1>
@@ -340,42 +349,21 @@ onUnmounted(() => {
         </button>              
       </div>
 
-      <!-- Toolbar -->
-      <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+      <div class="mb-6">
         <div class="w-full sm:max-w-md">
-          <SearchInput
-            v-model="searchQuery"
-            :placeholder="t('event.searchPlaceholder')"
-            @keyup.enter="executeSearch"
+          <SearchInput 
+            v-model="searchQuery" 
+            v-model:perPage="perPage"
+            :placeholder="t('branch.searchPlaceholder')" 
+            @search="executeSearch"  
           />
         </div>
-
-        <div class="relative shrink-0">
-          <select
-            v-model="perPage"
-            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
-          >
-            <option :value="5">5</option>
-            <option :value="10">10</option>
-            <option :value="25">25</option>
-            <option :value="50">50</option>
-            <option :value="100">100</option>
-          </select>
-          <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-            </svg>
-          </div>
-        </div>
-
-        <div class="flex-1" />
       </div>
 
-      <!-- Table -->
       <div class="flex-1 overflow-hidden">
         <DataTable
           :columns="tableColumns"
-          :data="eventData"
+          :data="sortedData"          
           :loading="isLoading"
           :sort-key="sortKey"
           :sort-order="sortOrder"
@@ -543,9 +531,7 @@ onUnmounted(() => {
     width="half"
     @close="closeModal"
   >
-    <!-- Body Form -->
     <div class="space-y-5">
-      <!-- Name -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.eventName') }} <span class="text-red-500">*</span></label>
         <input
@@ -556,7 +542,6 @@ onUnmounted(() => {
         />
       </div>
 
-      <!-- Description -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.description') }} <span class="text-red-500">*</span></label>
         <textarea
@@ -567,7 +552,6 @@ onUnmounted(() => {
         ></textarea>
       </div>
 
-      <!-- Location -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.location') }}</label>
         <textarea
@@ -578,7 +562,6 @@ onUnmounted(() => {
         ></textarea>
       </div>
 
-      <!-- Location URL -->
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-1.5">{{ t('event.modal.locationUrl') }}</label>
         <input
@@ -589,20 +572,18 @@ onUnmounted(() => {
         />
       </div>
 
-      <!-- Event Start At -->
       <DateTimePicker
         v-model="form.start_at"
         :label="t('event.modal.startAt')"
         :required="true"
       />
 
-      <!-- Event Finish At -->
       <div>
         <DateTimePicker
           v-model="form.finish_at"
           :label="t('event.modal.finishAt')"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.event_finish_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.event_finish_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.event_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -614,13 +595,12 @@ onUnmounted(() => {
         </Transition>
       </div>
 
-      <!-- Registration Start At -->
       <div>
         <DateTimePicker
           v-model="form.registration_start_at"
           :label="t('event.modal.regStartAt')"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_start_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_start_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.registration_start_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -632,13 +612,12 @@ onUnmounted(() => {
         </Transition>
       </div>
 
-      <!-- Registration Finish At -->
       <div>
         <DateTimePicker
           v-model="form.registration_finish_at"
           :label="t('event.modal.regFinishAt')"
           :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-xl': dateErrors.registration_finish_at }"
+          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_finish_at }"
         />
         <Transition name="err-fade">
           <p v-if="dateErrors.registration_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
@@ -651,7 +630,6 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Footer Slot -->
     <template #footer>
       <div class="flex items-center justify-end gap-3">
         <button

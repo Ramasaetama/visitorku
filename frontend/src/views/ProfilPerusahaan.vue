@@ -161,11 +161,17 @@
                        {{ t('companyProfile.apiToken.createdBy') }} <span class="font-bold text-gray-800">Admin</span> {{ t('companyProfile.apiToken.createdOn') }} {{ token.createdAt }}
                      </div>
                   </div>
-                </div> <div class="flex justify-end pt-8 pb-4 border-t border-gray-100 mt-10">
+                </div> 
+                <div class="flex justify-end pt-8 pb-4 border-t border-gray-100 mt-10">
                   <button 
                     @click="saveProfile" 
-                    :disabled="isSaving"
-                    class="px-8 py-3.5 bg-[#EE9D0F] hover:bg-[#d6850d] text-white rounded-sm text-[14px] font-semibold transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-70 disabled:cursor-not-allowed flex items-center gap-2"
+                    :disabled="isSaving || !hasChanges"
+                    :class="[
+                      'px-8 py-3.5 text-white rounded-sm text-[14px] font-semibold transition-all duration-200 shadow-sm flex items-center gap-2',
+                      (!hasChanges || isSaving) 
+                        ? 'bg-[#ACACAC] cursor-not-allowed' 
+                        : 'bg-[#EE9D0F] hover:bg-[#d6850d] hover:shadow-md cursor-pointer'
+                    ]"
                   >
                     <svg v-if="isSaving" class="animate-spin w-4 h-4 text-white" fill="none" viewBox="0 0 24 24">
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -254,7 +260,7 @@
 
       <template #footer>
         <div class="flex items-center justify-end gap-3 w-full pt-4">
-          <button @click="showFormModal = false" class="px-8 py-3 text-sm font-semibold text-[#F7941D] bg-white border-2 border-[#F7941D] hover:bg-[#FFF9F0] rounded-sm transition-colors">
+          <button @click="showFormModal = false" class="px-8 py-3 text-sm font-medium text-[#F7941D] bg-white border-2 border-[#F7941D] hover:bg-[#FFF9F0] rounded-sm transition-colors">
             {{ t('companyProfile.apiToken.scopeModal.cancel') }}
           </button>
           <button @click="processGenerate" class="px-8 py-3 text-sm font-semibold text-white bg-[#F7941D] hover:bg-[#E8850E] rounded-sm transition-colors shadow-md">
@@ -463,6 +469,14 @@ const fetchProfileData = async () => {
     themeState.primaryColor = originalTheme.value.primaryColor;
     themeState.headerBg = originalTheme.value.headerBg;
 
+    originalProfile.value = {
+      name: companyProfile.value.name,
+      address: companyProfile.value.address,
+      primaryColor: companyProfile.value.primaryColor,
+      language: companyProfile.value.language,
+      timezone: companyProfile.value.timezone
+    };
+
   } catch (error) {
     console.error('Gagal memuat profil perusahaan:', error);
   } finally {
@@ -510,6 +524,24 @@ onMounted(() => {
   fetchApiKeyData();
 });
 
+// Data foto copy dari server
+const originalProfile = ref({
+  name: '',
+  address: '',
+  primaryColor: '',
+  language: '',
+  timezone: ''
+});
+
+// Mengecek apakah ada perbedaan antara form dan data aslinya
+const hasChanges = computed(() => {
+  return companyProfile.value.name !== originalProfile.value.name ||
+         companyProfile.value.address !== originalProfile.value.address ||
+         companyProfile.value.primaryColor !== originalProfile.value.primaryColor ||
+         companyProfile.value.language !== originalProfile.value.language ||
+         companyProfile.value.timezone !== originalProfile.value.timezone;
+});
+
 const saveProfile = async () => {
   isSaving.value = true;
   try {
@@ -540,6 +572,14 @@ const saveProfile = async () => {
     originalTheme.value = {
       primaryColor: companyProfile.value.primaryColor,
       headerBg: companyProfile.value.headerBg
+    };
+
+    originalProfile.value = {
+      name: companyProfile.value.name,
+      address: companyProfile.value.address,
+      primaryColor: companyProfile.value.primaryColor,
+      language: companyProfile.value.language,
+      timezone: companyProfile.value.timezone
     };
 
   } catch (error) {
@@ -651,6 +691,10 @@ const autoSaveLangTz = async () => {
     }
 
     await updateLanguageTimezone(companyProfile.value.id, payloadLangTz);
+
+    originalProfile.value.language = companyProfile.value.language;
+    originalProfile.value.timezone = companyProfile.value.timezone;
+    
   } catch (error) {}
 };
 

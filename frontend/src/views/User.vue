@@ -245,21 +245,7 @@ const handleCloseToast = () => {
         
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4 shrink-0">
           <div class="w-full sm:max-w-md flex-1">
-            <SearchInput v-model="searchQuery" :placeholder="t('userManagement.searchPlaceholder')" @keyup.enter="executeSearch" />
-          </div>
-          <div class="relative shrink-0">
-            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
-              <option :value="5">5</option>
-              <option :value="10">10</option>
-              <option :value="25">25</option>
-              <option :value="50">50</option>
-              <option :value="100">100</option>
-            </select>
-            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
+            <SearchInput v-model="searchQuery" v-model:perPage="itemsPerPage" :placeholder="t('userManagement.searchPlaceholder')" @keyup.enter="executeSearch" />
           </div>
         </div>
         

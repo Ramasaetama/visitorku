@@ -46,6 +46,7 @@ const tableColumns = computed(() => [
 // PAGINATION
 const currentPage = ref(1);
 const itemsPerPage = ref(10); 
+const perPage= ref(10);
 const totalItems = ref(0); 
 
 watch(itemsPerPage, () => {
@@ -237,30 +238,12 @@ onMounted(() => {
               <div class="w-full sm:max-w-md">
                 <SearchInput 
                   v-model="searchQuery" 
+                  v-model:perPage="itemsPerPage"
                   placeholder="Search" 
                   @keyup.enter="executeSearch"  
                 />
-              </div>
-
-              <div class="relative shrink-0">
-                <select 
-                  v-model="itemsPerPage" 
-                  class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
-                >
-                  <option :value="5">5</option>
-                  <option :value="10">10</option>
-                  <option :value="25">25</option>
-                  <option :value="50">50</option>
-                  <option :value="100">100</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-            
+              </div>   
+            </div>         
             <div class="flex-1 flex flex-col overflow-hidden">
               <DataTable 
                 :columns="tableColumns"               

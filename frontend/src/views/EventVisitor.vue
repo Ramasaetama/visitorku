@@ -367,27 +367,14 @@ onMounted(async () => {
               <div class="w-full sm:max-w-md">
                 <SearchInput
                   v-model="searchQuery"
+                  v-model:perPage="perPage"
                   :placeholder="t('eventVisitor.searchPlaceholder')"
                   @keyup.enter="executeSearch"
                 />
               </div>
 
               <div class="relative shrink-0">
-                <select
-                  v-model="perPage"
-                  class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
-                >
-                  <option :value="5">5</option>
-                  <option :value="10">10</option>
-                  <option :value="25">25</option>
-                  <option :value="50">50</option>
-                  <option :value="100">100</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
+               
               </div>
 
               <div class="flex-1" />
@@ -401,8 +388,8 @@ onMounted(async () => {
 
               <button
                 @click="goToFeedback"
-                class="w-[38px] h-[38px] border border-[#4075FF] flex items-center justify-center text-[#4075FF] hover:bg-[#4075FF] transition-colors focus:outline-none"
-                style="border-radius: 10px; background: transparent;"
+                class="w-[38px] h-[38px] border border-[#4075FF] flex items-center justify-center text-[#4075FF] hover:bg-[#4075FF] hover:text-white transition-colors focus:outline-none"
+                style="border-radius: 10px;"
                 title="View Feedback"
               >
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -412,8 +399,8 @@ onMounted(async () => {
 
               <button
                 @click="handleDownloadExcel"
-                class="w-[38px] h-[38px] border border-[#10B981] flex items-center justify-center text-[#10B981] hover:bg-[#ECFDF5] transition-colors focus:outline-none"
-                style="border-radius: 10px; background: transparent;"
+                class="w-[38px] h-[38px] border border-[#10B981] flex items-center justify-center text-[#10B981] hover:bg-[#10B981] hover:text-white transition-colors focus:outline-none"
+                style="border-radius: 10px;"
                 title="Download Excel"
               >
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -423,8 +410,8 @@ onMounted(async () => {
 
               <button
                 @click="openAddModal"
-                class="w-[38px] h-[38px] border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none"
-                style="border-radius: 10px; background: transparent;"
+                class="w-[38px] h-[38px] border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
+                style="border-radius: 10px;"
                 title="Add Visitor"
               >
                 <svg class="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
