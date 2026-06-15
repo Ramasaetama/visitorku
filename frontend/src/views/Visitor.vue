@@ -397,7 +397,6 @@ onMounted(() => {
             </div>
           </div>
 
-        </div> 
     </main>
 
   <Modal
