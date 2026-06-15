@@ -7,7 +7,6 @@ import { getProfile } from '@/services/companyProfileService';
 import { confirmAction } from '@/utils/alertHelper';
 import { themeState } from '@/utils/ThemeState';
 import visitorkulogo from '@/assets/visitorku.png';
-import patternBg from '@/assets/Frame 7.svg';
 import globeIcon from '@/assets/proicons_globe.svg';
 
 
@@ -230,7 +229,7 @@ const handleLogout = async () => {
           >
             <div 
               v-if="isDropdownOpen"
-              class="absolute right-0 top-11.25 w-72 bg-white rounded-lg shadow-lg border border-gray-100 p-5 z-500 cursor-default"
+              class="absolute right-0 top-11.25 w-72 bg-white rounded-sm shadow-lg border border-gray-100 p-5 z-500 cursor-default"
               @click.stop
             >
               <div class="flex flex-col items-center text-center">

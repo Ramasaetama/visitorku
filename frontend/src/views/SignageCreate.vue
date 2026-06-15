@@ -278,6 +278,7 @@ const goBack = () => {
 </script>
 
 <template>
+  <div class="flex-1 w-full h-full flex flex-col">
         <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
           <div class="p-6 flex-1 flex flex-col">
 
@@ -297,22 +298,7 @@ const goBack = () => {
                 </h1>
               </div>
 
-              <!-- Breadcrumb -->
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <router-link to="/layar-informasi" class="hover:text-[#F7941D] transition-colors">{{ t('signage.title') }}</router-link>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">{{ t('signage.create.breadcrumbCreate') }}</span>
-              </nav>
+              
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -361,7 +347,7 @@ const goBack = () => {
                   v-model="formName"
                   type="text"
                   :placeholder="t('signage.create.fieldNamePlaceholder')"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-sm text-sm
                          focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
                          transition-colors"
                 />
@@ -374,7 +360,7 @@ const goBack = () => {
                   v-model="formRunningText"
                   rows="3"
                   :placeholder="t('signage.create.fieldRunningTextPlaceholder')"
-                  class="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm resize-y
+                  class="w-full px-4 py-2.5 border border-gray-300 rounded-sm text-sm resize-y
                          focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30 focus:border-[#F7941D]
                          transition-colors"
                 ></textarea>
@@ -554,5 +540,6 @@ const goBack = () => {
         </div>
       </div>
     </div>  
-  </div><!-- /bg-white root wrapper -->
+  </div>
+  </div>
 </template>

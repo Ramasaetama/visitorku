@@ -432,6 +432,11 @@ onMounted(() => {
   box-shadow: none !important;
 }
 
+button:focus, select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .hide-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;

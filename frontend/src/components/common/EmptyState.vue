@@ -68,7 +68,7 @@ defineEmits(['action']);
       v-if="showButton"
       @click="$emit('action')"
       class="flex items-center gap-2 px-6 py-2.5 border-2 border-[#F7941D] text-[#F7941D] 
-             rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white 
+             rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white 
              transition-all duration-200"
     >
       <span class="text-lg leading-none">+</span>

@@ -1,15 +1,13 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DateTimePicker from '@/components/common/DateTimePicker.vue';
 import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
-import Pagination from '@/components/common/Pagination.vue'; 
+import Pagination from '@/components/common/Pagination.vue';
 import SettingIcon from '@/assets/settings-3-line.svg';
 import DeleteIcon from '@/assets/delete.svg';
 import EditIcon from '@/assets/edit-box-line.svg';
@@ -35,6 +33,28 @@ const appliedSearch = ref('');
 const perPage      = ref(10);
 const currentPage  = ref(1);
 const totalRecords = ref(0);
+
+// ─── Dropdown State dengan Posisi Dinamis ────────────────────────────────────
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX}px` // 🌟 FIX: Mekar kanan
+    };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = computed(() => [
@@ -132,7 +152,6 @@ watch(perPage, () => {
 watch(currentPage, () => {
   fetchEvents();
 });
-
 
 // ─── Modal Add/Edit ───────────────────────────────────────────────────────────
 const showModal    = ref(false);
@@ -240,6 +259,7 @@ const openAddModal = () => {
 };
 
 const openEditModal = (row) => {
+  closeDropdown();
   isEdit.value    = true;
   editingId.value = row.id;
   const r = row.raw;
@@ -316,6 +336,7 @@ const handleSubmit = async () => {
 
 // ─── Delete ───────────────────────────────────────────────────────────────────
 const handleDelete = async (row) => {
+  closeDropdown();
   const confirmed = await confirmDelete(row.name);
   if (!confirmed) return;
   try {
@@ -328,8 +349,14 @@ const handleDelete = async (row) => {
 };
 
 // ─── Navigation & Copy ─────────────────────────────────────────────────────────
-const goToEventVisitor  = (row) => router.push(`/event/${row.id}/visitor`);
-const goToEventSetting  = (row) => router.push(`/event/${row.id}/setting`);
+const goToEventVisitor  = (row) => {
+  closeDropdown();
+  router.push(`/event/${row.id}/visitor`);
+};
+const goToEventSetting  = (row) => {
+  closeDropdown();
+  router.push(`/event/${row.id}/setting`);
+};
 
 const copyUrl = (url) => {
   if (url && url !== '-') {
@@ -337,10 +364,18 @@ const copyUrl = (url) => {
   }
 };
 
-onMounted(fetchEvents);
+onMounted(() => {
+  fetchEvents();
+  window.addEventListener('scroll', closeDropdown, true);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', closeDropdown, true);
+});
 </script>
 
 <template>
+  <div class="flex-1 w-full h-full flex flex-col">
   <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col">
 
@@ -353,7 +388,7 @@ onMounted(fetchEvents);
         <button
           @click="openAddModal"
           class="flex items-center gap-2 px-5 py-2 bg-white border-2 border-[#F7941D]
-                 text-[#F7941D] text-sm font-medium rounded-lg
+                 text-[#F7941D] text-sm font-medium rounded-sm
                  hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
         >
           <span class="text-lg leading-none">+</span>
@@ -374,7 +409,7 @@ onMounted(fetchEvents);
         <div class="relative shrink-0">
           <select
             v-model="perPage"
-            class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
+            class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-17.5"
           >
             <option :value="5">5</option>
             <option :value="10">10</option>
@@ -459,55 +494,76 @@ onMounted(fetchEvents);
           </template>
 
           <template #aksi="{ row }">
-            <div class="flex items-center gap-2">
-              <button
-                @click="goToEventVisitor(row)"
-                class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
-                style="background: #EEF2FF;"
-                title="Event Visitor"
+            <div class="flex items-center gap-2 relative">
+              
+              <button 
+                @click.stop="toggleDropdown(row.id, $event)"
+                class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative"
+                title="Opsi"
               >
-                <svg class="w-4.5 h-4.5 text-[#4075FF]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                  <circle cx="12" cy="12" r="3"/>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                 </svg>
               </button>
 
-              <button
-                @click="goToEventSetting(row)"
-                class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
-                style="background: #FFF7E6;"
-                title="Event Setting"
-              >
-                <svg class="w-4.5 h-4.5 text-[#F7941D]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="3"/>
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                </svg>
-              </button>
+              <Teleport to="body">
+                <div v-if="activeDropdown === row.id" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
+                
+                <div 
+                  v-if="activeDropdown === row.id" 
+                  class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                  :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                >
+                  <button 
+                    @click="goToEventVisitor(row)" 
+                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                  >
+                    Event Visitor
+                  </button>
+                  
+                  <button 
+                    @click="goToEventSetting(row)" 
+                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                  >
+                    Event Setting
+                  </button>
 
-              <button
-                @click="openEditModal(row)"
-                class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
-                style="background: #E6F4FF;"
-                title="Edit Event"
-              >
-                <img :src="EditIcon" alt="Edit" class="w-4.5 h-4.5" />
-              </button>
+                  <button 
+                    @click="openEditModal(row)" 
+                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                  >
+                    Edit Data
+                  </button>
+                </div>
+              </Teleport>
 
-              <button
+              <button 
                 @click="handleDelete(row)"
-                class="w-9.5 h-9.5 flex items-center justify-center rounded-lg hover:opacity-80 transition-all focus:outline-none"
-                style="background: #FFEEEE;"
-                title="Delete Event"
+                class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none relative z-10"
+                title="Hapus"
               >
-                <img :src="DeleteIcon" alt="Delete" class="w-4.5 h-4.5" />
+                <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
+                </svg>
               </button>
+
             </div>
           </template>
 
           <template #empty>
-            <EmptyState
+            <EmptyState 
+              v-if="eventData.length === 0"
               :icon="notfound"
-              :title="t('event.noRecords')"
+              title="Event Belum Tersedia"
+              description="Tambahkan event terlebih dahulu agar dapat dikelola dan dipantau."
+              buttonText="Tambah Event"
+              @action="openAddModal"
+            />
+            <EmptyState 
+              v-else
+              :icon="notfound"
+              title="No Records to display"
+              :description="`Tidak ada event yang cocok dengan kata kunci '${appliedSearchQuery}'`"
             />
           </template>
         </DataTable>
@@ -539,7 +595,7 @@ onMounted(fetchEvents);
           v-model="form.name"
           type="text"
           :placeholder="t('event.modal.eventNamePlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
         />
       </div>
 
@@ -550,7 +606,7 @@ onMounted(fetchEvents);
           v-model="form.description"
           rows="3"
           :placeholder="t('event.modal.descriptionPlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
@@ -561,7 +617,7 @@ onMounted(fetchEvents);
           v-model="form.location"
           rows="2"
           :placeholder="t('event.modal.locationPlaceholder')"
-          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors resize-none"
         ></textarea>
       </div>
 
@@ -657,7 +713,7 @@ onMounted(fetchEvents);
         <button
           type="button"
           @click="closeModal"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
         >
           {{ t('event.modal.cancel') }}
         </button>
@@ -665,8 +721,8 @@ onMounted(fetchEvents);
           type="button"
           @click="handleSubmit"
           :disabled="isSaving || hasDateErrors"
-          :title="hasDateErrors ? 'Mohon periksa kembali input tanggal Anda' : ''"
-          class="px-5 py-2.5 text-sm font-medium text-white rounded-lg transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+          :title="hasDateErrors ? t('event.modal.checkDates') : ''"
+          class="px-5 py-2.5 text-sm font-medium text-white rounded-sm transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
           :class="hasDateErrors ? 'bg-gray-400' : 'bg-[#F7941D] hover:bg-[#E8850E]'"
         >
           {{ isSaving ? t('event.modal.saving') : (isEdit ? t('event.modal.update') : t('event.modal.add')) }}
@@ -680,6 +736,7 @@ onMounted(fetchEvents);
     :message="toastMessage"
     @close="showToast = false"
   />
+  </div>
 </template>
 
 <style scoped>

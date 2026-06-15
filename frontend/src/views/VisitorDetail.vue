@@ -57,7 +57,8 @@ onMounted(() => {
 </script>
 
 <template>
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
+  <div class="flex-1 w-full h-full flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-8 flex-1 flex flex-col overflow-y-auto">
             
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-gray-100">
@@ -70,7 +71,7 @@ onMounted(() => {
             </div>
 
             <div v-if="!isLoading" class="flex flex-col md:flex-row gap-6 mb-10">
-              <div class="w-37.5 h-45 shrink-0 rounded-2xl overflow-hidden bg-[#F4F6F8] border border-gray-100">
+              <div class="w-37.5 h-45 shrink-0 rounded-sm overflow-hidden bg-[#F4F6F8] border border-gray-100">
                 <img v-if="visitorInfo.photo_profile" :src="visitorInfo.photo_profile" class="w-full h-full object-cover" alt="Profile" />
                 <div v-else class="w-full h-full flex items-center justify-center text-sm font-medium text-gray-500">
                   Profile
@@ -157,4 +158,5 @@ onMounted(() => {
 
           </div>
         </div>
+      </div>
 </template>

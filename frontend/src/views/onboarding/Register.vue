@@ -25,7 +25,7 @@
 
         <button
           @click="goToDashboard"
-          class="px-8 py-3 text-body-3 rounded-4xl font-poppins font-semibold bg-[#EE9D0F] text-white hover:bg-[#d68d0e] transition-colors duration-200 w-full"
+          class="px-8 py-3 text-body-3 rounded-sm font-poppins font-semibold bg-[#EE9D0F] text-white hover:bg-[#d68d0e] transition-colors duration-200 w-full"
         >
           Masuk ke Dashboard
         </button>
@@ -34,15 +34,15 @@
   </div>
 
   <OnboardingLayout v-else :current-step="currentStep" :total-steps="2">
-    <div v-if="currentStep === 1">
-      <h2 class="text-h2 font-bold text-gray-900 mb-2 font-poppins">
+    <div v-if="currentStep === 1" class="mt-39">
+      <h2 class="text-2xl lg:text-xl font-medium text-gray-900 mb-0 font-poppins">
         Beritahu Kami Tentang Perusahaan Anda
       </h2>
       <p class="text-body-2 text-gray-600 mb-8 font-poppins">
         Mulai dengan mengisi data perusahaan untuk membuat akun VisitorKu.
       </p>
 
-      <form @submit.prevent="nextStep" class="space-y-6" @focusin="isFormFocused = true" @focusout="isFormFocused = false">
+      <form @submit.prevent="nextStep" class="space-y-6 form-custom-label" @focusin="isFormFocused = true" @focusout="isFormFocused = false">
         <Input
           v-model="form.companyName"
           label="Nama Perusahaan"
@@ -62,19 +62,16 @@
           <button
             v-if="isFormFocused"
             type="button"
-            class="flex items-center gap-2 text-primary-500 font-semibold font-poppins hover:underline"
+            class="flex items-center gap-2 text-primary-500 font-semibold font-poppins text-[#EE9D0F] hover:underline"
           >
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Kembali
+            
           </button>
           <div v-else></div>
           <button
             type="submit"
             :disabled="!step1IsValid"
             :class="[
-              'px-6 py-3 text-body-3 rounded-4xl font-poppins font-semibold transition-colors duration-200',
+              'px-6 py-3 text-body-3 rounded-sm font-poppins font-semibold transition-colors duration-200',
               step1IsValid ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
             ]"
           >
@@ -85,21 +82,21 @@
 
       <p class="text-center text-body-3 text-gray-600 mt-8 font-poppins">
         Sudah punya akun? 
-        <router-link to="/login" class="text-primary-500 font-semibold hover:underline">
+        <router-link to="/login" class="text-[#EE9D0F] font-semibold hover:underline">
           Masuk Dashboard
         </router-link>
       </p>
     </div>
 
-    <div v-if="currentStep === 2">
-      <h2 class="text-h2 font-bold text-gray-900 mb-2 font-poppins">
+    <div v-if="currentStep === 2" class="">
+      <h2 class="text-2xl lg:text-xl font-medium text-gray-900 mt-5mb-0 font-poppins">
         Informasi Penanggung Jawab
       </h2>
       <p class="text-body-2 text-gray-600 mb-8 font-poppins">
         Data ini akan digunakan sebagai akun utama (admin) untuk mengelola VisitorKu.
       </p>
 
-      <form @submit.prevent="submitRegister" class="space-y-5">
+      <form @submit.prevent="submitRegister" class="space-y-5 form-custom-label">
         <Input
           v-model="form.adminName"
           label="Nama Lengkap"
@@ -131,10 +128,12 @@
           required
         />
 
-        <Toggle
-          v-model="form.sameAddress"
-          label="Alamat domisili sama dengan alamat perusahaan"
-        />
+        <div class="toggle-wrapper text-stone-950">
+          <Toggle
+            v-model="form.sameAddress"
+            label="Alamat domisili sama dengan alamat perusahaan"
+          />
+        </div>
 
         <PasswordInput
           v-model="form.password"
@@ -159,12 +158,10 @@
           </span>
         </div>
 
-
-
         <div class="flex items-center justify-between pt-2">
           <button
             type="button"
-            class="flex items-center gap-2 text-primary-500 font-semibold font-poppins hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex text-[#EE9D0F] items-center gap-2 text-primary-500 font-semibold font-poppins hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
             @click="prevStep"
             :disabled="isLoading"
           >
@@ -178,7 +175,7 @@
             type="submit"
             :disabled="!form.agreeTerms || isLoading || !!passwordError"
             :class="[
-              'px-6 py-3 text-body-3 rounded-4xl font-poppins font-semibold transition-colors duration-200 flex items-center gap-2',
+              'px-6 py-3 text-body-3 rounded-sm font-poppins font-semibold transition-colors duration-200 flex items-center gap-2',
               (form.agreeTerms && !isLoading && !passwordError) ? 'bg-[#EE9D0F] text-white hover:bg-[#d68d0e] cursor-pointer' : 'bg-[#ACACAC] text-white cursor-not-allowed'
             ]"
           >
@@ -193,7 +190,7 @@
 
       <p class="text-center text-body-3 text-gray-600 mt-8 font-poppins">
         Sudah punya akun? 
-        <router-link to="/login" class="text-primary-500 font-semibold hover:underline">
+        <router-link to="/login" class="text-[#EE9D0F] font-semibold hover:underline">
           Masuk Dashboard
         </router-link>
       </p>
@@ -326,3 +323,39 @@ const submitRegister = async () => {
   }
 }
 </script>
+
+<style scoped>
+/* Animasi banner error */
+.error-banner-enter-active {
+  transition: all 0.3s ease-out;
+}
+.error-banner-leave-active {
+  transition: all 0.2s ease-in;
+}
+.error-banner-enter-from {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+.error-banner-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* CSS Khusus untuk memanipulasi label di dalam form agar TIDAK BOLD */
+.form-custom-label :deep(label) {
+  font-weight: 400 !important; /* Hilangkan bold */
+  color: #374151; /* Warna abu-abu gelap */
+}
+
+/* Mengubah warna bintang (*) jadi merah */
+/* Hanya memunculkan bintang merah di elemen yang kita suruh */
+.required-asterisk :deep(label::after) {
+  content: " *";
+  color: #ef4444 !important; /* Warna merah */
+}
+
+.toggle-wrapper :deep(label),
+.toggle-wrapper :deep(span) {
+  color: #374151 !important; 
+}
+</style>

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
@@ -52,9 +52,42 @@ const itemsPerPage = ref(10);
 const totalItems = ref(0); 
 
 watch(itemsPerPage, () => {
-  currentPage.value = 1;
+  if (currentPage.value !== 1) {
+    currentPage.value = 1; 
+  } else {
+    fetchVisitors();
+  }
+});
+
+watch(currentPage, () => {
   fetchVisitors();
 });
+
+// ─── State Dropdown Opsi dengan Posisi Dinamis ───
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    
+    // Tunggu DOM update, lalu hitung posisi tombol
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    // 144px adalah lebar dropdown (w-36)
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX}px` 
+    };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
 // FETCHING DATA API
 const fetchVisitors = async () => {
@@ -159,6 +192,7 @@ const notesText = ref('');
 const isSavingNotes = ref(false);
 
 const openNotesModal = (row) => {
+  closeDropdown();
   selectedVisitor.value = row;
   notesText.value = row.notes || ''; 
   showNotesModal.value = true;
@@ -177,8 +211,6 @@ const saveNotes = async () => {
   
   isSavingNotes.value = true;
   try {
-    console.log("Mengirim ke ID:", selectedVisitor.value.id);
-    console.log("Isi payload:", { notes: notesText.value });
     await updateVisitorNotes(selectedVisitor.value.id, { notes: notesText.value });
     
     const index = visitorData.value.findIndex(v => v.id === selectedVisitor.value.id);
@@ -202,13 +234,14 @@ const handleReport = () => {
 
 onMounted(() => {
   fetchVisitors();
+  window.addEventListener('scroll', closeDropdown, true);
 });
 
 </script>
 
 <template>
-  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
+  <div class="flex-1 w-full h-full flex flex-col">
+    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-6 flex-1 flex flex-col">
             
             <div class="flex items-start justify-between mb-6">
@@ -271,30 +304,42 @@ onMounted(() => {
                 @sort="handleSort"
               >
                 <template #aksi="{ row }">
-                  <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-2 relative">
+                    
                     <button 
-                      @click="$router.push(`/visitor/${row.id}`)"
-                      class="w-[34px] h-[34px] rounded-[10px] bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors"
-                      style="outline: none !important; box-shadow: none !important; -webkit-tap-highlight-color: transparent;"
-                      title="Lihat Detail"
+                      @click.stop="toggleDropdown(row.id, $event)"
+                      class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none"
+                      title="Opsi"
                     >
-                      <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M2 12c0 0 4-8 10-8s10 8 10 8-4 8-10 8-10-8-10-8z"></path>
-                        <circle cx="12" cy="12" r="3.5"></circle>
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                       </svg>
                     </button>
 
-                    <button 
-                      @click="openNotesModal(row)"
-                      class="w-[34px] h-[34px] rounded-[10px] bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors"
-                      style="outline: none !important; box-shadow: none !important; -webkit-tap-highlight-color: transparent;"
-                      title="Catatan"
-                    >
-                      <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M12 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-6"></path>
-                        <path d="M20 4L12 12"></path>
-                      </svg>
-                    </button>
+                    <Teleport to="body">
+                      <div v-if="activeDropdown === row.id" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
+                      
+                      <div 
+                        v-if="activeDropdown === row.id" 
+                        class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                        :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                      >
+                        <button 
+                          @click="$router.push(`/visitor/${row.id}`); closeDropdown();" 
+                          class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                        >
+                          Lihat Detail
+                        </button>
+                        
+                        <button 
+                          @click="openNotesModal(row)" 
+                          class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                        >
+                          Catatan
+                        </button>
+                      </div>
+                    </Teleport>
+
                   </div>
                 </template>
                 
@@ -310,7 +355,7 @@ onMounted(() => {
                   <EmptyState 
                     v-else
                     :icon="notfound"
-                    title="t('visitorData.empty.notFound')"
+                    :title="t('visitorData.empty.notFound')"
                     :description="`${t('visitorData.empty.notFoundDesc')} '${appliedSearchQuery}'`"
                     :showButton="false"
                   />
@@ -353,7 +398,7 @@ onMounted(() => {
           </div>
 
         </div> 
-      </main>
+    </main>
 
   <Modal
   :show="showNotesModal"
@@ -393,10 +438,11 @@ onMounted(() => {
   </template>
 </Modal>
 
+  </div>
 </template>
 
 <style scoped>
-button:focus {
+button:focus, select:focus {
   outline: none !important;
   box-shadow: none !important;
 }

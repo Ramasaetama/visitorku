@@ -7,21 +7,17 @@ import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import FormTambahPengguna from '@/components/pengguna/FormTambahPengguna.vue';
 import FormPermissionPengguna from '@/components/pengguna/FormPermissionPengguna.vue'; 
-import Pagination from '@/components/common/Pagination.vue';
+import Pagination from '@/components/common/Pagination.vue'; 
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
-import keyline from '@/assets/icons/key-line.svg';
-import editIcon from '@/assets/icons/edit-box-line.svg';
-import { ref, onMounted, computed, watch } from 'vue';
-import { getAllUsers, createUser, updateUser, deleteUser } from '@/services/userService';
+
+import { ref, onMounted, computed, watch, nextTick, onUnmounted } from 'vue';
+import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
+import { getAllUsers, createUser, updateUser, deleteUser, updateUserPermission } from '@/services/userService';
 import { getAllBranches } from '@/services/cabangService';
-import { useConfirmDelete } from '@/composables/useConfirmDelete';
-import { useToastNotification } from '@/composables/useToastNotification';
 
 const { t } = useI18n();
-const { confirmDelete } = useConfirmDelete();
-const { showSuccess, showError } = useToastNotification();
 
 const searchQuery = ref('');
 const appliedSearchQuery = ref('');
@@ -59,6 +55,31 @@ const filteredData = computed(() => {
     )
   );
 });
+
+// ─── State Dropdown Opsi dengan Posisi Dinamis ───
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    // Mekar ke kanan
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX}px` 
+    };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
 const sortKey = ref('');
 const sortOrder = ref('asc');
@@ -112,9 +133,14 @@ const fetchAllData = async () => {
   }
 };
 
-onMounted(fetchAllData);
+onMounted(() => {
+  fetchAllData();
+  window.addEventListener('scroll', closeDropdown, true);
+});
 
-const activeDropdown = ref(null);
+onUnmounted(() => {
+  window.removeEventListener('scroll', closeDropdown, true);
+});
 
 const showModal = ref(false);
 const editingUser = ref(null); 
@@ -124,6 +150,7 @@ const toastMessage = ref('');
 const showToast = ref(false);
 
 const handleTambahPengguna = () => {
+  closeDropdown();
   editingUser.value = null;
   showModal.value = true;
 };
@@ -149,18 +176,31 @@ const handleSubmitPengguna = async (formData) => {
 };
 
 const handleEditPengguna = (row) => {
-  editingUser.value = { ...row };
+  closeDropdown();
+  editingUser.value = {
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    phone_number: row.phone_number, // Atau phone, menyesuaikan API
+    address: row.address,
+    branch_id: row.branch_id, 
+  };
   showModal.value = true;
 };
 
 const handlePermission = (row) => {
-  editingPermissionUser.value = { ...row };
+  closeDropdown();
+  editingPermissionUser.value = {
+    id: row.id,
+    name: row.name,
+    permissions: row.permissions || []
+  };
   showPermissionModal.value = true;
 };
 
 const handleSubmitPermission = async (data) => {
   try {
-    await updateUser(editingPermissionUser.value.id, { permissions: data });
+    await updateUserPermission(editingPermissionUser.value.id, { permissions: data });
     showSuccess(t('userManagement.success.permissionSaved'));
     showPermissionModal.value = false;
     await fetchAllData();
@@ -170,8 +210,8 @@ const handleSubmitPermission = async (data) => {
 };
 
 const handleDeletePengguna = async (row) => {
-  activeDropdown.value = null; 
-  const isConfirmed = await confirmDelete(t('userManagement.confirm.deleteLabel'));
+  closeDropdown();
+  const isConfirmed = await confirmDelete('Pengguna');
   if (isConfirmed) {
     try {
       await deleteUser(row.id); 
@@ -189,8 +229,8 @@ const handleCloseToast = () => {
 </script>
 
 <template>
-  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-    <div class="bg-white rounded-2xl shadow-sm flex-1 flex flex-col overflow-hidden relative">
+  <div class="flex-1 w-full h-full flex flex-col">
+    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
       <div class="p-6 flex-1 flex flex-col min-h-0">
         
         <div class="flex items-start justify-between mb-6 shrink-0">
@@ -198,7 +238,7 @@ const handleCloseToast = () => {
             <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('userManagement.title') }}</h1>
             <p class="text-sm text-gray-500">{{ t('userManagement.subtitle') }}</p>
           </div>
-          <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-lg font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
+          <button @click="handleTambahPengguna" class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#F7941D] text-[#F7941D] rounded-sm font-medium text-sm hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none">
             <span class="text-lg leading-none">+</span> {{ t('userManagement.addBtn') }}
           </button>
         </div>
@@ -208,7 +248,7 @@ const handleCloseToast = () => {
             <SearchInput v-model="searchQuery" :placeholder="t('userManagement.searchPlaceholder')" @keyup.enter="executeSearch" />
           </div>
           <div class="relative shrink-0">
-            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-lg pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
+            <select v-model="itemsPerPage" class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]">
               <option :value="5">5</option>
               <option :value="10">10</option>
               <option :value="25">25</option>
@@ -223,7 +263,7 @@ const handleCloseToast = () => {
           </div>
         </div>
         
-        <div class="flex-1 overflow-auto">
+        <div class="flex-1 overflow-hidden">
           <DataTable 
             :columns="tableColumns"               
             :data="paginatedData" 
@@ -233,25 +273,49 @@ const handleCloseToast = () => {
             @sort="handleSort"
           >
             <template #aksi="{ row }">
-              <div class="flex items-center gap-2">
-                <button
-                  v-if="!row.is_owner"
-                  @click="handlePermission(row)"
-                  class="w-[30px] h-[30px] rounded bg-[#F7941D] flex items-center justify-center hover:bg-[#E8850E] transition-colors focus:outline-none"
-                  title="Hak Akses"
+              <div class="flex items-center gap-2 relative">
+                
+                <button 
+                  @click.stop="toggleDropdown(row.id, $event)"
+                  class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none"
+                  title="Opsi"
                 >
-                  <img :src="keyline" class="w-[15px] h-[15px] brightness-0 invert" alt="permission" />
+                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
+                  </svg>
                 </button>
 
-                <button
-                  @click="handleEditPengguna(row)"
-                  class="w-[30px] h-[30px] rounded bg-[#3B82F6] flex items-center justify-center hover:bg-[#2563EB] transition-colors focus:outline-none"
-                  title="Edit Data"
-                >
-                  <img :src="editIcon" class="w-[15px] h-[15px] brightness-0 invert" alt="edit" />
-                </button>
+                <Teleport to="body">
+                  <div 
+                    v-if="activeDropdown === row.id" 
+                    @click="closeDropdown" 
+                    class="fixed inset-0 z-[9998]"
+                  ></div>
+                  
+                  <div 
+                    v-if="activeDropdown === row.id" 
+                    class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                    :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                  >
+                    <button 
+                      v-if="!row.is_owner"
+                      @click="handlePermission(row)" 
+                      class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                    >
+                      Hak Akses
+                    </button>
+
+                    <button 
+                      @click="handleEditPengguna(row)" 
+                      class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#E6F4FF] hover:text-[#008FFB] focus:outline-none transition-colors"
+                    >
+                      Edit Data
+                    </button>
+                  </div>
+                </Teleport>
 
                 <button 
+                  v-if="!row.is_owner"
                   @click="handleDeletePengguna(row)"
                   class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none"
                   title="Hapus"
@@ -260,6 +324,7 @@ const handleCloseToast = () => {
                     <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
                   </svg>
                 </button>
+
               </div>
             </template>
 
@@ -267,16 +332,16 @@ const handleCloseToast = () => {
               <EmptyState 
                 v-if="penggunaData.length === 0"
                 :icon="notfound"
-                :title="t('userManagement.empty.noData')"
-                :description="t('userManagement.empty.noDataDesc')"
-                :buttonText="t('userManagement.empty.noDataBtn')"
+                title="Data Pengguna Belum Tersedia"
+                description="Tambahkan minimal satu pengguna agar sistem dapat digunakan."
+                buttonText="Tambah Pengguna"
                 @action="handleTambahPengguna"
               />
               <EmptyState 
                 v-else
                 :icon="notfound"
-                :title="t('userManagement.empty.notFound')"
-                :description="`${t('userManagement.empty.notFoundDesc')} '${appliedSearchQuery}'`"
+                title="No Records to display"
+                :description="`Tidak ada pengguna yang cocok dengan kata kunci '${appliedSearchQuery}'`"
               />
             </template>
           </DataTable>
@@ -284,7 +349,7 @@ const handleCloseToast = () => {
         
       </div>
       
-      <div class="bg-white rounded-b-2xl">
+      <div class="bg-white rounded-b-2xl border-t border-gray-100">
         <Pagination
           v-model:current-page="currentPage"
           :total-data="totalItems"
@@ -292,9 +357,9 @@ const handleCloseToast = () => {
         />
       </div>
 
-    </div> 
-  </main>
-
+    </main>
+  </div>
+    
   <Modal 
     :show="showModal"
     :title="editingUser ? t('userManagement.modal.editTitle') : t('userManagement.modal.addTitle')"
@@ -304,7 +369,8 @@ const handleCloseToast = () => {
   >
     <FormTambahPengguna 
       :initialData="editingUser"
-      :branches="branchesData" @submit="handleSubmitPengguna"
+      :branches="branchesData" 
+      @submit="handleSubmitPengguna"
       @cancel="handleCloseModal"
     />
     

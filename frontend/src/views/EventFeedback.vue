@@ -1,11 +1,12 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, computed, onMounted, watch, nextTick, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
+import { useI18n } from 'vue-i18n';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
+import Pagination from '@/components/common/Pagination.vue';
+import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
+import notfound from '@/assets/notfound.svg'; // 🌟 FIX: Import notfound icon
 import { showError } from '@/utils/alertHelper';
 import {
   getEventById,
@@ -22,6 +23,30 @@ const eventId = computed(() => route.params.id);
 // ─── Event Info ───────────────────────────────────────────────────────────────
 const eventInfo        = ref(null);
 const satisfactionData = ref(null);
+
+// ─── State Dropdown Opsi dengan Posisi Dinamis ────────────────────────────────
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX }px` // 🌟 FIX: Mekar Kanan
+    };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
 // ─── State ───────────────────────────────────────────────────────────────────
 const feedbackData  = ref([]);
@@ -43,6 +68,17 @@ const tableColumns = computed(() => [
 // ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('name');
 const sortOrder = ref('asc');
+
+const handleSort = (key) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value   = key;
+    sortOrder.value = 'asc';
+  }
+  currentPage.value = 1;
+  fetchFeedback();
+};
 
 // ─── Fetch Event Info ─────────────────────────────────────────────────────────
 const fetchEventInfo = async () => {
@@ -93,36 +129,25 @@ const fetchFeedback = async () => {
   }
 };
 
-// ─── Pagination ───────────────────────────────────────────────────────────────
-const totalPages = computed(() => Math.max(1, Math.ceil(totalRecords.value / perPage.value)));
-const startIndex = computed(() => totalRecords.value === 0 ? 0 : ((currentPage.value - 1) * perPage.value) + 1);
-const endIndex   = computed(() => Math.min(currentPage.value * perPage.value, totalRecords.value));
-
-const visiblePages = computed(() => {
-  const maxVisible = 5;
-  let start = Math.max(1, currentPage.value - 2);
-  let end   = start + maxVisible - 1;
-  if (end > totalPages.value) { end = totalPages.value; start = Math.max(1, end - maxVisible + 1); }
-  const pages = [];
-  for (let i = start; i <= end; i++) pages.push(i);
-  return pages;
-});
-
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
-    currentPage.value = page;
-    fetchFeedback();
-  }
-};
-
-// ─── Search ───────────────────────────────────────────────────────────────────
+// ─── Search & Pagination Watchers ──────────────────────────────────────────────
 const executeSearch = () => {
   appliedSearch.value = searchQuery.value;
   currentPage.value   = 1;
   fetchFeedback();
 };
 watch(searchQuery, (val) => { if (val === '') executeSearch(); });
-watch(perPage, () => { currentPage.value = 1; fetchFeedback(); });
+
+watch(perPage, () => {
+  if(currentPage.value !== 1) {
+    currentPage.value = 1;
+  } else {
+    fetchFeedback();
+  }
+});
+
+watch(currentPage, () => {
+  fetchFeedback();
+});
 
 // ─── Download Excel ───────────────────────────────────────────────────────────
 const handleDownloadExcel = async () => {
@@ -153,53 +178,54 @@ onMounted(async () => {
   await fetchEventInfo();
   await fetchSatisfaction();
   await fetchFeedback();
+  window.addEventListener('scroll', closeDropdown, true);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', closeDropdown, true);
 });
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#F4F6F8] flex flex-col font-['Poppins']">
+  <div class="flex-1 w-full h-full flex flex-col">
+    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
+      <div class="p-6 flex-1 flex flex-col">
 
-    <div class="flex flex-1 items-stretch">
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <button
+              @click="router.push(`/event/${eventId}/visitor`)"
+              class="w-8 h-8 rounded-lg bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <h1 class="text-xl font-semibold text-gray-800">Event Feedback</h1>
+          </div>
+          <nav class="flex items-center gap-1.5 text-sm text-gray-400">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            <span>Dashboard</span>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <button @click="router.push('/event')" class="hover:text-[#F7941D] transition-colors">Event</button>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <button @click="router.push(`/event/${eventId}/visitor`)" class="hover:text-[#F7941D] transition-colors">Event Visitor</button>
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <span class="text-[#F7941D] font-medium">Event Feedback</span>
+          </nav>
+        </div>
 
-      <main class="flex-1 bg-[#F4F6F8] p-4">
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
-          <div class="p-6 flex-1 flex flex-col">
 
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-6">
-              <div class="flex items-center gap-3">
-                <button
-                  @click="router.push(`/event/${eventId}/visitor`)"
-                  class="w-8 h-8 rounded-lg bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
-                >
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                    <path d="M19 12H5M12 19l-7-7 7-7"/>
-                  </svg>
-                </button>
-                <h1 class="text-xl font-semibold text-gray-800">Event Feedback</h1>
-              </div>
-              <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                </svg>
-                <span>Dashboard</span>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <button @click="router.push('/event')" class="hover:text-[#F7941D] transition-colors">Event</button>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <button @click="router.push(`/event/${eventId}/visitor`)" class="hover:text-[#F7941D] transition-colors">Event Visitor</button>
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                </svg>
-                <span class="text-[#F7941D] font-medium">Event Feedback</span>
-              </nav>
-            </div>
-
-            <!-- Toolbar -->
             <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
               <div class="w-full sm:max-w-md">
                 <SearchInput
@@ -341,16 +367,13 @@ onMounted(async () => {
               >
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
               </button>
-            </div>
-          </div>
-        </div>
       </main>
     </div>
   </div>
 </template>
 
 <style scoped>
-button:focus {
+button:focus, select:focus {
   outline: none !important;
   box-shadow: none !important;
 }

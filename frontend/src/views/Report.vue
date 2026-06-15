@@ -106,7 +106,7 @@ const handleDownloadVisit = async () => {
 </script>
 
 <template>
-
+  <div class="flex-1 w-full h-full flex flex-col">
         <!-- ── Page Header ──────────────────────────────────────────────── -->
         <div class="bg-white rounded-2xl shadow-sm px-6 py-4 flex items-center justify-between mb-5">
 
@@ -282,6 +282,7 @@ const handleDownloadVisit = async () => {
           </div>
 
         </div>
+      </div>
 </template>
 
 <style scoped>

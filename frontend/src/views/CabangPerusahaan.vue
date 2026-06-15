@@ -6,13 +6,14 @@ import DataTable from '@/components/common/DataTable.vue';
 import Modal from '@/components/common/Modal.vue';
 import Toast from '@/components/common/Toast.vue';
 import FormTambahCabang from '@/components/cabang/FormTambahCabang.vue';
-import Pagination from '@/components/common/Pagination.vue'; // 🌟 Import Pagination
+import Pagination from '@/components/common/Pagination.vue'; 
 import notfound from '@/assets/notfound.svg';
 import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
-import { ref, onMounted, computed, watch } from 'vue';
+// 🌟 FIX: Import nextTick ditambahkan di sini
+import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import { getAllBranches, createBranch, updateBranch, deleteBranch } from '@/services/cabangService';
 
@@ -38,6 +39,29 @@ watch(searchQuery, (nilaiBaru) => {
 watch(itemsPerPage, () => {
   currentPage.value = 1;
 });
+
+// ─── Dropdown State & Logic ───
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX }px`     };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
 
 const tableColumns = [
   { key: 'nama', label: t('branch.table.name'), sortable: true },
@@ -84,12 +108,18 @@ const fetchBranches = async () => {
 
 onMounted(() => {
   fetchBranches();
+  window.addEventListener('scroll', closeDropdown, true);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', closeDropdown, true);
 });
 
 const showModal = ref(false);
 const editingBranch = ref(null); 
 
 const handleTambahCabang = () => {
+  closeDropdown();
   editingBranch.value = null;
   showModal.value = true;
 };
@@ -166,6 +196,7 @@ const paginatedData = computed(() => {
 });
 
 const handleEditCabang = (row) => {
+  closeDropdown();
   editingBranch.value = {
     id: row.id,
     namaCabang: row.nama,
@@ -176,6 +207,7 @@ const handleEditCabang = (row) => {
 };
 
 const handleDeleteCabang = async (row) => {
+  closeDropdown();
   const isConfirmed = await confirmDelete('Cabang Perusahaan');
 
   if (isConfirmed) {
@@ -191,6 +223,7 @@ const handleDeleteCabang = async (row) => {
 </script>
 
 <template>
+  <div class="flex-1 w-full h-full flex flex-col">
   <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     
     <div class="p-6 flex-1 flex flex-col">
@@ -250,15 +283,33 @@ const handleDeleteCabang = async (row) => {
         >
           <template #aksi="{ row }">
             <div class="flex items-center gap-2 relative">
+              
               <button 
-                @click="handleEditCabang(row)"
-                class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
-                title="Edit Cabang"
+                @click.stop="toggleDropdown(row.id, $event)"
+                class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none"
+                title="Opsi"
               >
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
                 </svg>
               </button>
+
+              <Teleport to="body">
+                <div v-if="activeDropdown === row.id" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
+                
+                <div 
+                  v-if="activeDropdown === row.id" 
+                  class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
+                  :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
+                >
+                  <button 
+                    @click="handleEditCabang(row)" 
+                    class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
+                  >
+                    Edit Data
+                  </button>
+                </div>
+              </Teleport>
 
               <button 
                 @click="handleDeleteCabang(row)"
@@ -269,6 +320,7 @@ const handleDeleteCabang = async (row) => {
                   <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
                 </svg>
               </button>
+              
             </div>
           </template>
 
@@ -344,6 +396,7 @@ const handleDeleteCabang = async (row) => {
     :message="toastMessage"
     @close="handleCloseToast"
   />
+  </div>
 </template>
 
 <style scoped>

@@ -1,5 +1,6 @@
 <template>
-  <div class="bg-white rounded-2xl shadow-sm h-full min-h-full flex flex-col font-['Poppins'] w-full">
+  <div class="flex-1 w-full h-full flex flex-col">
+  <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
     <div class="p-6 flex-1 flex flex-col overflow-y-auto">
       
       <div class="mb-6">
@@ -40,6 +41,7 @@
       </div>
 
     </div>
+  </div>
   </div>
 </template>
 

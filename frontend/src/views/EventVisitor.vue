@@ -1,16 +1,11 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
+import { useI18n } from 'vue-i18n';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
+import Pagination from '@/components/common/Pagination.vue'; 
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
-
-import FeedbackIcon from '@/assets/icons/feedback-line.svg';
-import FolderChartIcon from '@/assets/icons/folder-chart-line.svg';
-import AddIcon from '@/assets/icons/add-line.svg';
 
 import {
   getEventById,
@@ -49,6 +44,29 @@ const satisfactionStats = computed(() => {
   };
 });
 
+// ─── State Dropdown Opsi dengan Posisi Dinamis ────────────────────────────────
+const activeDropdown = ref(null);
+const dropdownPosition = ref({ top: '0px', left: '0px' });
+
+const toggleDropdown = async (id, event) => {
+  if (activeDropdown.value === id) {
+    activeDropdown.value = null;
+  } else {
+    activeDropdown.value = id;
+    
+    await nextTick();
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    
+    dropdownPosition.value = {
+      top: `${buttonRect.bottom + window.scrollY + 5}px`,
+      left: `${buttonRect.left + window.scrollX }px`     };
+  }
+};
+
+const closeDropdown = () => {
+  activeDropdown.value = null;
+};
+
 // ─── State ───────────────────────────────────────────────────────────────────
 const visitorData   = ref([]);
 const isLoading     = ref(false);
@@ -57,6 +75,30 @@ const appliedSearch = ref('');
 const perPage       = ref(10);
 const currentPage   = ref(1);
 const totalRecords  = ref(0);
+
+// ─── Sorting ─────────────────────────────────────────────────────────────────
+const sortKey = ref('');
+const sortOrder = ref('asc');
+
+const handleSort = (columnKey) => {
+  if (sortKey.value === columnKey) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value = columnKey;
+    sortOrder.value = 'asc';
+  }
+};
+
+const sortedData = computed(() => {
+  if (!sortKey.value) return visitorData.value; 
+
+  return [...visitorData.value].sort((a, b) => { 
+    const valA = a[sortKey.value] ?? '';
+    const valB = b[sortKey.value] ?? '';
+    const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
+    return sortOrder.value === 'asc' ? cmp : -cmp;
+  });
+});
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = computed(() => [
@@ -133,36 +175,26 @@ const formatDateTime = (val) => {
   return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-// ─── Pagination ───────────────────────────────────────────────────────────────
-const totalPages  = computed(() => Math.max(1, Math.ceil(totalRecords.value / perPage.value)));
-const startIndex  = computed(() => totalRecords.value === 0 ? 0 : ((currentPage.value - 1) * perPage.value) + 1);
-const endIndex    = computed(() => Math.min(currentPage.value * perPage.value, totalRecords.value));
-
-const visiblePages = computed(() => {
-  const maxVisible = 5;
-  let start = Math.max(1, currentPage.value - 2);
-  let end   = start + maxVisible - 1;
-  if (end > totalPages.value) { end = totalPages.value; start = Math.max(1, end - maxVisible + 1); }
-  const pages = [];
-  for (let i = start; i <= end; i++) pages.push(i);
-  return pages;
-});
-
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
-    currentPage.value = page;
-    fetchVisitors();
-  }
-};
-
-// ─── Search ───────────────────────────────────────────────────────────────────
+// ─── Search & Pagination Watchers ──────────────────────────────────────────────
 const executeSearch = () => {
   appliedSearch.value = searchQuery.value;
   currentPage.value   = 1;
   fetchVisitors();
 };
 watch(searchQuery, (val) => { if (val === '') executeSearch(); });
-watch(perPage, () => { currentPage.value = 1; fetchVisitors(); });
+
+watch(perPage, () => {
+  if(currentPage.value !== 1) {
+    currentPage.value = 1;
+  } else {
+    fetchVisitors();
+  }
+});
+
+watch(currentPage, () => {
+  fetchVisitors();
+});
+
 
 // ─── Add / Edit Visitor Modal ─────────────────────────────────────────────────
 const showModal = ref(false);
@@ -180,6 +212,7 @@ const openAddModal = () => {
 };
 
 const openEditModal = (row) => {
+  closeDropdown();
   isEdit.value    = true;
   editingId.value = row.id;
   form.value = {
@@ -219,6 +252,7 @@ const handleSubmit = async () => {
 
 // ─── Delete ───────────────────────────────────────────────────────────────────
 const handleDelete = async (row) => {
+  closeDropdown();
   const confirmed = await confirmDelete(row.name);
   if (!confirmed) return;
   try {
@@ -274,19 +308,20 @@ onMounted(async () => {
   await fetchEventInfo();
   await fetchCheckInOutCount();
   await fetchVisitors();
+  window.addEventListener('scroll', closeDropdown, true);
 });
 </script>
 
 <template>
-        <div class="bg-white rounded-2xl shadow-sm h-full flex flex-col">
+  <div class="flex-1 w-full h-full flex flex-col">
+        <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-6 flex-1 flex flex-col">
 
-            <!-- Header -->
             <div class="flex items-center justify-between mb-4">
               <div class="flex items-center gap-3">
                 <button
                   @click="router.push('/event')"
-                  class="w-8 h-8 rounded-lg bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
+                  class="w-8 h-8 rounded-sm bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -296,7 +331,6 @@ onMounted(async () => {
               </div>
             </div>
 
-            <!-- Stats Cards -->
             <div class="grid grid-cols-3 gap-4 mb-6">
               <div class="bg-white border border-gray-100 rounded-md p-4 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-lg bg-[#FEF4E3] flex items-center justify-center shrink-0">
@@ -384,7 +418,6 @@ onMounted(async () => {
 </div>
  
 
-            <!-- Toolbar -->
             <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
               <div class="w-full sm:max-w-md">
                 <SearchInput
@@ -414,10 +447,9 @@ onMounted(async () => {
 
               <div class="flex-1" />
 
-              <!-- Finish Event Button -->
               <button
                 @click="showFinishModal = true"
-                class="flex items-center justify-center gap-2 px-5 py-2 bg-[#FFFFFF] border border-[#FF4C4C] text-[#FF4C4C] text-sm font-medium rounded-md hover:bg-[#FF4C4C] hover:text-white active:scale-95 transition-all focus:outline-none"
+                class="flex items-center justify-center gap-2 px-5 py-2 bg-[#FFFFFF] border border-[#FF4C4C] text-[#FF4C4C] text-sm font-medium rounded-sm hover:bg-[#FF4C4C] hover:text-white active:scale-95 transition-all focus:outline-none"
               >
                 {{ t('eventVisitor.finish') }}
               </button>
@@ -456,15 +488,14 @@ onMounted(async () => {
               </button>
             </div>
 
-            <!-- Table -->
             <div class="flex-1 overflow-hidden">
               <DataTable
                 :columns="tableColumns"
-                :data="visitorData"
+                :data="sortedData"
                 :loading="isLoading"
                 :sort-key="sortKey"
                 :sort-order="sortOrder"
-                @sort="(key) => { sortKey = key; fetchVisitors(); }"
+                @sort="handleSort"
               >
                 <template #satisfaction="{ row }">
                   <div class="flex justify-center">
@@ -514,18 +545,18 @@ onMounted(async () => {
                       class="w-[30px] h-[30px] rounded bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
                       title="Edit"
                     >
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
                       </svg>
                     </button>
                     <button
                       @click="handleDelete(row)"
                       class="w-[30px] h-[30px] rounded bg-[#E45454] flex items-center justify-center text-white hover:bg-[#D24A4A] transition-colors focus:outline-none"
-                      title="Delete"
+                      title="Hapus"
                     >
-                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"/>
+                      <svg class="w-[15px] h-[15px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2M10 11v6M14 11v6"></path>
                       </svg>
                     </button>
                   </div>
@@ -545,39 +576,14 @@ onMounted(async () => {
 
           </div>
 
-          <!-- Pagination -->
-          <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-[13px] text-[#64748B]">
-            <span>{{ t('eventVisitor.showing', { from: startIndex, to: endIndex, total: totalRecords }) }}</span>
+          <Pagination
+            v-model:current-page="currentPage"
+            :total-data="totalRecords"
+            :per-page="perPage"
+          />
 
-            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-              <button
-                @click="goToPage(currentPage - 1)"
-                :disabled="currentPage === 1"
-                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
-              </button>
-              <button
-                v-for="page in visiblePages"
-                :key="page"
-                @click="goToPage(page)"
-                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
-                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
-              >
-                {{ page }}
-              </button>
-              <button
-                @click="goToPage(currentPage + 1)"
-                :disabled="currentPage === totalPages"
-                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-              </button>
-            </div>
-          </div>
         </div>
 
-    <!-- ─── Add / Edit Visitor Modal ─── -->
     <div v-if="showModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div class="bg-white rounded-sm shadow-xl w-full max-w-md mx-4 relative animate-fade-in-up">
 
@@ -638,7 +644,6 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- ─── Finish Event Confirmation ─── -->
     <div v-if="showFinishModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-8 text-center animate-fade-in-up">
         <div class="w-16 h-16 rounded-full border-4 border-blue-300 flex items-center justify-center mx-auto mb-4">
@@ -668,6 +673,7 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <style scoped>
