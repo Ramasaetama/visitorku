@@ -69,7 +69,11 @@ export default {
       checkIn: 'CHECK IN',
       checkOut: 'CHECK OUT',
       face: 'FACE',
-    }
+    },
+    legend: {
+      visitor: 'Visitor',
+      visit: 'Visit',
+    },
   },
   visitorData: {
     title: 'Visitor List',
@@ -503,6 +507,130 @@ export default {
     confirm: {
       deleteLabel: 'User',
     },
+  },
+  editProfile: {
+    title: 'Company Profile',
+    loading: 'Loading data...',
+    tabs: {
+      account: 'Account',
+      picture: 'Profile Picture',
+      password: 'Password',
+    },
+  },
+  visitorDetail: {
+    title: 'Visitor Detail',
+    profile: 'Profile',
+    fields: {
+      fullName: 'Full Name',
+      email: 'Email',
+      phone: 'Phone Number',
+      notes: 'Notes',
+    },
+    history: {
+      title: 'Check-in History',
+      table: {
+        purpose: 'Purpose',
+        location: 'Location',
+        checkIn: 'Check In',
+        checkOut: 'Check Out',
+      },
+    },
+  },
+  visitorDetail: {
+    title: 'Detail Pengunjung',
+    profile: 'Profil',
+    fields: {
+      fullName: 'Nama Lengkap',
+      email: 'Email',
+      phone: 'No Telepon',
+      notes: 'Catatan',
+    },
+    history: {
+      title: 'Riwayat Check-in',
+      table: {
+        purpose: 'Tujuan',
+        location: 'Lokasi',
+        checkIn: 'Check In',
+        checkOut: 'Check Out',
+      },
+    },
+  },
+  signage: {
+    title: 'Signage',
+    subtitle: 'Manage and monitor all existing signage data.',
+    createBtn: 'Create New Signage',
+    searchPlaceholder: 'Search Signage',
+    showing: 'Showing {from} to {to} from {total} records',
+    noRecords: 'No Records to display',
+    editData: 'Edit Data',
+    table: {
+      name: 'Name',
+      url: 'URL',
+      action: 'Action',
+    },
+    empty: {
+      noData: 'No Signage Yet',
+      noDataDesc: 'Add a signage first so it can be displayed on screen.',
+      noDataBtn: 'Add Signage',
+      notFound: 'No Matching Data',
+      notFoundDesc: 'No signage matches the keyword',
+    },
+    success: {
+      deleted: 'Signage successfully deleted.',
+      created: 'Signage successfully created.',
+    },
+    error: {
+      deleteFailed: 'Failed to delete signage.',
+      createFailed: 'Failed to create signage.',
+      invalidFormat: 'Unsupported file format. Use jpg, png, jpeg, or mp4.',
+      nameRequired: 'Signage name is required.',
+    },
+    create: {
+      selectLayout: 'Select Layout',
+      createSignage: 'Create Signage',
+      breadcrumbCreate: 'Create',
+      fieldName: 'Name',
+      fieldNamePlaceholder: 'Enter name here...',
+      fieldRunningText: 'Running Text',
+      fieldRunningTextPlaceholder: 'Enter Running Text Here...',
+      layoutPanel: 'Layout {n}',
+      change: 'change',
+      uploadFile: 'Upload file',
+      uploadFileHint: 'File type: (jpg, png, jpeg, mp4)',
+      createBtn: 'Create',
+      creating: 'Creating...',
+      durationModal: {
+        title: 'Image Duration',
+        desc: 'Enter image duration',
+        ok: 'OK',
+        cancel: 'Cancel',
+      },
+    },
+    display: {
+      loading: 'Loading signage...',
+      notFound: 'Signage not found.',
+      noImage: 'No Image',
+    },
+  },
+  report: {
+    title: 'Visitor Report',
+    fromDate: 'From Date',
+    toDate: 'To Date',
+    download: 'Download',
+    downloading: 'Downloading...',
+    fileUrlNotFound: 'File URL not found.',
+    fillDateError: 'Please fill in From Date and To Date.',
+    visitorReport: {
+      title: 'Visitor Report',
+    },
+    visitReport: {
+      title: 'Visit Report',
+    },
+  },
+  pagination: {
+    showing: 'Showing {count} of {total} data',
+    first: 'First',
+    last: 'Last',
   },
   invoice: {
     title: 'Invoice',

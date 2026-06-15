@@ -1,5 +1,6 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router';
 import Topbar from '@/components/Topbar.vue';
 import Sidebar from '@/components/Sidebar.vue';
@@ -8,6 +9,7 @@ import { getVisitorDetail } from '@/services/visitorService';
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n();
 const visitorId = route.params.id; 
 
 // State Data
@@ -16,12 +18,12 @@ const histories = ref([]);
 const isLoading = ref(true);
 
 // Definisi Kolom untuk DataTable
-const historyColumns = [
-  { key: 'category', label: 'Tujuan', sortable: false },
-  { key: 'location', label: 'Lokasi', sortable: false },
-  { key: 'check_in', label: 'Check In', sortable: false },
-  { key: 'check_out', label: 'Check Out', sortable: false },
-];
+const historyColumns = computed(() => [
+  { key: 'category', label: t('visitorDetail.history.table.purpose'), sortable: false },
+  { key: 'location', label: t('visitorDetail.history.table.location'), sortable: false },
+  { key: 'check_in', label: t('visitorDetail.history.table.checkIn'), sortable: false },
+  { key: 'check_out', label: t('visitorDetail.history.table.checkOut'), sortable: false },
+]);
 
 const fetchDetail = async () => {
   try {
@@ -66,7 +68,7 @@ onMounted(() => {
                 <button @click="goBack" class="w-8 h-8 flex items-center justify-center bg-[#FEF4E3] text-[#F7941D] rounded-sm hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"></path></svg>
                 </button>
-                <h1 class="text-xl font-bold text-gray-900">Visitor Detail</h1>
+                <h1 class="text-xl font-bold text-gray-900">{{ t('visitorDetail.title') }}</h1>
               </div>
             </div>
 
@@ -74,7 +76,7 @@ onMounted(() => {
               <div class="w-37.5 h-45 shrink-0 rounded-sm overflow-hidden bg-[#F4F6F8] border border-gray-100">
                 <img v-if="visitorInfo.photo_profile" :src="visitorInfo.photo_profile" class="w-full h-full object-cover" alt="Profile" />
                 <div v-else class="w-full h-full flex items-center justify-center text-sm font-medium text-gray-500">
-                  Profile
+                  {{ t('visitorDetail.profile') }}
                 </div>
               </div>
 
@@ -82,21 +84,21 @@ onMounted(() => {
                 
                 <div class="flex flex-col gap-3">
                   <div>
-                    <p class="text-[13px] text-[#64748B] font-semibold">Nama Lengkap</p>
+                    <p class="text-[13px] text-[#64748B] font-semibold">{{ t('visitorDetail.fields.fullName') }}</p>
                     <p class="text-[14px] font-medium text-[#1E293B] mt-0.5">{{ visitorInfo.name || '-' }}</p>
                   </div>
                   <div>
-                    <p class="text-[13px] text-[#64748B] font-semibold">Email</p>
+                    <p class="text-[13px] text-[#64748B] font-semibold">{{ t('visitorDetail.fields.email') }}</p>
                     <p class="text-[14px] font-medium text-[#1E293B] mt-0.5">{{ visitorInfo.email || '-' }}</p>
                   </div>
                   <div>
-                    <p class="text-[13px] text-[#64748B] font-semibold">No Telepon</p>
+                    <p class="text-[13px] text-[#64748B] font-semibold">{{ t('visitorDetail.fields.phone') }}</p>
                     <p class="text-[14px] font-medium text-[#1E293B] mt-0.5">{{ visitorInfo.phone_number || '-' }}</p>
                   </div>
                 </div>
 
                 <div>
-                  <p class="text-[13px] text-[#64748B] font-semibold">Catatan</p>
+                  <p class="text-[13px] text-[#64748B] font-semibold">{{ t('visitorDetail.fields.notes') }}</p>
                   <p class="text-[14px] font-medium text-[#1E293B] mt-0.5 whitespace-pre-wrap">{{ visitorInfo.notes || '-' }}</p>
                 </div>
 
@@ -113,7 +115,7 @@ onMounted(() => {
 
             <div>
               <div class="flex items-center justify-between mb-4">
-                <h2 class="text-[17px] font-bold text-gray-900">Check-in History</h2>
+                <h2 class="text-[17px] font-bold text-gray-900">{{ t('visitorDetail.history.title') }}</h2>
                 
                 <button class="flex items-center gap-2 px-4 py-2 bg-white border border-[#38CA99] text-[#38CA99] rounded-sm font-medium text-sm hover:bg-[#38CA99] hover:text-white transition-colors focus:outline-none">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-3 3m0 0l-3-3m3 3V4"></path></svg>

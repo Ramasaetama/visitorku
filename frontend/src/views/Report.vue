@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18n } from 'vue-i18n';
 import ExcelIcon from '@/assets/icon/file-excel-line.svg';
 
 import {
@@ -8,6 +9,8 @@ import {
   downloadVisitExcel,
   parseBlobError,
 } from '@/services/ReportService';
+
+const { t } = useI18n();
 
 // ─── Error State ─────────────────────────────────────────────────────────────
 const visitorError = ref('');
@@ -33,7 +36,7 @@ const openFileUrl = (url) => {
 // ─── Download Visitor ─────────────────────────────────────────────────────────
 const handleDownloadVisitor = async () => {
   if (!visitorDateFrom.value || !visitorDateTo.value) {
-    visitorError.value = 'Harap isi From Date dan To Date.';
+    visitorError.value = t('report.fillDateError');
     return;
   }
   visitorError.value         = '';
@@ -47,7 +50,7 @@ const handleDownloadVisitor = async () => {
     if (fileUrl) {
       openFileUrl(fileUrl);
     } else {
-      visitorError.value = 'URL file tidak ditemukan.';
+      visitorError.value = t('report.fileUrlNotFound');
     }
   } catch (err) {
     const parsed = await parseBlobError(err);
@@ -70,7 +73,7 @@ const handleDownloadVisitor = async () => {
 // ─── Download Visit ───────────────────────────────────────────────────────────
 const handleDownloadVisit = async () => {
   if (!visitDateFrom.value || !visitDateTo.value) {
-    visitError.value = 'Harap isi From Date dan To Date.';
+    visitError.value = t('report.fillDateError');
     return;
   }
   visitError.value         = '';
@@ -84,7 +87,7 @@ const handleDownloadVisit = async () => {
     if (fileUrl) {
       openFileUrl(fileUrl);
     } else {
-      visitError.value = 'URL file tidak ditemukan.';
+      visitError.value = t('report.fileUrlNotFound');
     }
   } catch (err) {
     const parsed = await parseBlobError(err);
@@ -123,7 +126,7 @@ const handleDownloadVisit = async () => {
                 <path d="M15 19l-7-7 7-7"/>
               </svg>
             </button>
-            <h1 class="text-[17px] font-bold text-gray-800">Visitor Report</h1>
+            <h1 class="text-[17px] font-bold text-gray-800">{{ t('report.title') }}</h1>
           </div>
         </div>
 
@@ -135,7 +138,7 @@ const handleDownloadVisit = async () => {
 
             <!-- Card Header -->
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-              <h2 class="text-[15px] font-bold text-gray-800">Visitor Report</h2>
+              <h2 class="text-[15px] font-bold text-gray-800">{{ t('report.visitorReport.title') }}</h2>
               <div class="w-8 h-8 rounded-sm bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
                 <img :src="ExcelIcon" alt="Excel Icon" class="w-4 h-4" />
               </div>
@@ -147,7 +150,7 @@ const handleDownloadVisit = async () => {
               <!-- From Date -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                  From Date <span class="text-red-500">*</span>
+                  {{ t('report.fromDate') }} <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="visitorDateFrom"
@@ -161,7 +164,7 @@ const handleDownloadVisit = async () => {
               <!-- To Date -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                  To Date <span class="text-red-500">*</span>
+                  {{ t('report.toDate') }} <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="visitorDateTo"
@@ -186,7 +189,7 @@ const handleDownloadVisit = async () => {
                   <polyline points="7 10 12 15 17 10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                {{ isDownloadingVisitor ? 'Downloading...' : 'Download' }}
+                {{ isDownloadingVisitor ? t('report.downloading') : t('report.download') }}
               </button>
 
               <!-- Error Banner Visitor -->
@@ -211,7 +214,7 @@ const handleDownloadVisit = async () => {
 
             <!-- Card Header -->
             <div class="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-              <h2 class="text-[15px] font-bold text-gray-800">Visit Report</h2>
+              <h2 class="text-[15px] font-bold text-gray-800">{{ t('report.visitReport.title') }}</h2>
               <div class="w-8 h-8 rounded-sm bg-[#E4FAF3] flex items-center justify-center text-[#38CA99]">
                 <img :src="ExcelIcon" alt="Excel Icon" class="w-4 h-4" />
               </div>
@@ -223,7 +226,7 @@ const handleDownloadVisit = async () => {
               <!-- From Date -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                  From Date <span class="text-red-500">*</span>
+                  {{ t('report.fromDate') }} <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="visitDateFrom"
@@ -237,7 +240,7 @@ const handleDownloadVisit = async () => {
               <!-- To Date -->
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">
-                  To Date <span class="text-red-500">*</span>
+                  {{ t('report.toDate') }} <span class="text-red-500">*</span>
                 </label>
                 <input
                   v-model="visitDateTo"
@@ -262,7 +265,7 @@ const handleDownloadVisit = async () => {
                   <polyline points="7 10 12 15 17 10"/>
                   <line x1="12" y1="15" x2="12" y2="3"/>
                 </svg>
-                {{ isDownloadingVisit ? 'Downloading...' : 'Download' }}
+                {{ isDownloadingVisit ? t('report.downloading') : t('report.download') }}
               </button>
               <!-- Error Banner Visit -->
               <div

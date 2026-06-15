@@ -9,8 +9,11 @@ import Pagination from '@/components/common/Pagination.vue';
 import notfound from '@/assets/notfound.svg';
 
 import { ref, onMounted, computed, watch, nextTick } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
 import { getCategories, getBranches, createCategory, updateCategory, deleteCategory } from '@/services/tujuanService';
+
+const { t } = useI18n();
 
 const searchQuery = ref('');
 const tujuanData = ref([]);
@@ -40,13 +43,13 @@ watch(itemsPerPage, () => {
   currentPage.value = 1;
 });
 
-const tableColumns = [
-  { key: 'divisi', label: 'Nama Divisi / Ruangan', sortable: true },
-  { key: 'pic', label: 'Nama PIC', sortable: true },
-  { key: 'jabatan', label: 'Jabatan', sortable: true },
-  { key: 'cabang', label: 'Cabang', sortable: true },
-  { key: 'aksi', label: 'Aksi', sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'divisi', label: t('purpose.table.division'), sortable: true },
+  { key: 'pic', label: t('purpose.table.pic'), sortable: true },
+  { key: 'jabatan', label: t('purpose.table.position'), sortable: true },
+  { key: 'cabang', label: t('purpose.table.branch'), sortable: true },
+  { key: 'aksi', label: t('purpose.table.action'), sortable: false },
+]);
 
 const isLoading = ref(false);
 const showModal = ref(false);
@@ -196,17 +199,17 @@ const handleEditTujuan = (row) => {
 };
 
 const handleDeleteTujuan = async (row) => {
-  const isConfirmed = await confirmDelete(`Tujuan Kunjungan untuk PIC: ${row.pic}`);
+  const isConfirmed = await confirmDelete(`${t('purpose.confirm.deleteLabel')}: ${row.pic}`);
 
   if (isConfirmed) {
     try {
       isLoading.value = true;
       await deleteCategory(row.id);
-      showSuccess('Tujuan Kunjungan berhasil dihapus!');
+      showSuccess(t('purpose.success.deleted'));
       fetchDataTujuan();
     } catch (error) {
       console.error('Gagal menghapus data:', error);
-      showError(error.response?.data?.message || 'Terjadi kesalahan saat menghapus data.');
+      showError(error.response?.data?.message || t('purpose.error.deleteFailed'));
     } finally {
       isLoading.value = false;
     }
@@ -229,10 +232,10 @@ const handleSubmitTujuan = async (formData) => {
 
     if (isEditMode.value) {
       await updateCategory(editId.value, payloadCategory);
-      toastMessage.value = 'Tujuan Kunjungan berhasil diperbarui!';
+      toastMessage.value = t('purpose.success.updated');
     } else {
       await createCategory(payloadCategory);
-      toastMessage.value = 'Tujuan Kunjungan berhasil ditambahkan!';
+      toastMessage.value = t('purpose.success.added');
     }
 
     showModal.value = false;
@@ -257,8 +260,8 @@ const handleSubmitTujuan = async (formData) => {
         
         <div class="flex items-start justify-between mb-6">
           <div>
-            <h1 class="text-2xl font-semibold text-gray-800 mb-1">Tujuan Kunjungan</h1>
-            <p class="text-sm text-gray-500">Kelola daftar divisi dan penanggung jawab yang dapat dipilih oleh pengunjung.</p>
+            <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('purpose.title') }}</h1>
+            <p class="text-sm text-gray-500">{{ t('purpose.subtitle') }}</p>
           </div>
           
           <button 
@@ -268,7 +271,7 @@ const handleSubmitTujuan = async (formData) => {
                    hover:bg-[#F7941D] hover:text-white transition-all focus:outline-none"
           >
             <span class="text-lg leading-none">+</span>
-            Tambah Tujuan
+            {{ t('purpose.addBtn') }}
           </button>
         </div>
         
@@ -277,7 +280,7 @@ const handleSubmitTujuan = async (formData) => {
             <SearchInput 
               v-model="searchQuery" 
               v-model:perPage="itemsPerPage"
-              placeholder="Cari berdasarkan nama PIC/Divisi" 
+              :placeholder="t('purpose.searchPlaceholder')" 
               @keyup.enter="executeSearch" />
           </div>          
           <button 
@@ -287,7 +290,7 @@ const handleSubmitTujuan = async (formData) => {
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
                     d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/>
             </svg>
-            Filter lainnya
+            {{ t('purpose.filterBtn') }}
           </button>
         </div>
         
@@ -347,16 +350,16 @@ const handleSubmitTujuan = async (formData) => {
               <EmptyState 
                 v-if="tujuanData.length === 0"
                 :icon="notfound"
-                title="Tujuan Belum Tersedia"
-                description="Tambahkan tujuan terlebih dahulu untuk memulai tujuan kunjungan."
-                buttonText="Tambah Tujuan"
+                :title="t('purpose.empty.noData')"
+                :description="t('purpose.empty.description')"
+                :buttonText="t('purpose.empty.buttonText')"
                 @action="handleTambahTujuan"
               />
               <EmptyState 
                 v-else
                 :icon="notfound"
-                title="No Records to display"
-                :description="`Tidak ada tujuan kunjungan yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                :title="t('purpose.empty.notFound')"
+                :description="`${t('purpose.empty.notFoundDesc')} '${appliedSearchQuery}'`"
               />
             </template>
           </DataTable>
@@ -374,8 +377,8 @@ const handleSubmitTujuan = async (formData) => {
   </div>  
   <Modal 
     :show="showModal"
-    :title="isEditMode ? 'Edit Tujuan Kunjungan' : 'Tambah Tujuan Kunjungan'"
-    :description="isEditMode ? 'Ubah informasi divisi dan penanggung jawab.' : 'Masukan informasi divisi dan penanggung jawab yang dapat dipilih oleh pengunjung.'"
+    :title="isEditMode ? t('purpose.modal.editTitle') : t('purpose.modal.addTitle')"
+    :description="isEditMode ? t('purpose.modal.editDesc') : t('purpose.modal.addDesc')"
     width="half"
     @close="handleCloseModal"
   >
@@ -396,7 +399,7 @@ const handleSubmitTujuan = async (formData) => {
                  border border-gray-300 rounded-sm
                  hover:bg-gray-50 transition-colors focus:outline-none"
         >
-          Batal
+          {{ t('purpose.modal.cancel') }}
         </button>
         <button 
           type="submit"
@@ -406,7 +409,7 @@ const handleSubmitTujuan = async (formData) => {
                  hover:bg-[#E8850E] transition-colors focus:outline-none"
           :disabled="isLoading"
         >
-          {{ isLoading ? 'Menyimpan...' : 'Simpan Tujuan' }}
+          {{ isLoading ? t('purpose.modal.saving') : t('purpose.modal.save') }}
         </button>
       </div>
     </template>
