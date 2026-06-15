@@ -8,6 +8,7 @@ import Pagination from '@/components/common/Pagination.vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 
 import {
+  getEventSatisfaction,
   getEventById,
   getEventVisitors,
   addEventVisitor,
@@ -16,6 +17,7 @@ import {
   finishEvent,
   getEventCheckInOutCount,
   downloadEventExcel,
+  
 } from '@/services/eventService';
 
 const { t } = useI18n();
@@ -28,21 +30,7 @@ const eventInfo   = ref(null);
 const checkInCount  = ref(0);
 const checkOutCount = ref(0);
 const totalVisitor  = ref(0);
-const satisfactionStats = computed(() => {
-  const items = visitorData.value;
-  let bad = 0, neutral = 0, good = 0, total = 0;
-  items.forEach(v => {
-    if (v.satisfaction === 1) { bad++;     total++; }
-    if (v.satisfaction === 2) { neutral++; total++; }
-    if (v.satisfaction === 3) { good++;    total++; }
-  });
-  if (total === 0) return { bad: 0, neutral: 0, good: 0 };
-  return {
-    bad:     Math.round((bad     / total) * 100),
-    neutral: Math.round((neutral / total) * 100),
-    good:    Math.round((good    / total) * 100),
-  };
-});
+const satisfactionStats = ref({ bad: 0, neutral: 0, good: 0 });
 
 // ─── State Dropdown Opsi dengan Posisi Dinamis ────────────────────────────────
 const activeDropdown = ref(null);
@@ -79,6 +67,8 @@ const totalRecords  = ref(0);
 // ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey = ref('');
 const sortOrder = ref('asc');
+
+
 
 const handleSort = (columnKey) => {
   if (sortKey.value === columnKey) {
@@ -133,6 +123,31 @@ const fetchCheckInOutCount = async () => {
     console.error('Gagal memuat check-in/out count:', err);
   }
 };
+// ─── Fetch Satisfaction ───────────────────────────────────────────────────────
+const fetchSatisfaction = async () => {
+  try {
+    const res = await getEventSatisfaction(eventId.value);
+    const data = res.data?.data ?? res.data ?? res;
+
+    const total = data.total ?? 0;
+    if (total === 0) {
+      satisfactionStats.value = { bad: 0, neutral: 0, good: 0 };
+      return;
+    }
+
+    // title: [1, 2, 3] → index 0=bad, 1=neutral, 2=good
+    const counts = data.data ?? [0, 0, 0]; // [jumlah bad, jumlah neutral, jumlah good]
+
+    satisfactionStats.value = {
+      bad:     Math.round((counts[0] / total) * 100),
+      neutral: Math.round((counts[1] / total) * 100),
+      good:    Math.round((counts[2] / total) * 100),
+    };
+  } catch (err) {
+    console.error('Gagal memuat satisfaction:', err);
+  }
+};
+
 
 // ─── Fetch Visitors ───────────────────────────────────────────────────────────
 const fetchVisitors = async () => {
@@ -174,6 +189,7 @@ const formatDateTime = (val) => {
   const pad = (n) => String(n).padStart(2, '0');
   return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
+
 
 // ─── Search & Pagination Watchers ──────────────────────────────────────────────
 const executeSearch = () => {
@@ -304,10 +320,13 @@ const handleDownloadExcel = async () => {
 const goToFeedback = () => router.push(`/event/${eventId.value}/feedback`);
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
+
+
 onMounted(async () => {
-  await fetchEventInfo();
-  await fetchCheckInOutCount();
-  await fetchVisitors();
+  fetchEventInfo();
+  fetchCheckInOutCount();
+  fetchVisitors();
+  fetchSatisfaction(); 
   window.addEventListener('scroll', closeDropdown, true);
 });
 </script>
