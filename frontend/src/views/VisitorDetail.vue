@@ -58,7 +58,7 @@ onMounted(() => {
 
 <template>
   <div class="flex-1 w-full h-full flex flex-col">
-        <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
+    <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
           <div class="p-8 flex-1 flex flex-col overflow-y-auto">
             
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-4 border-b border-gray-100">

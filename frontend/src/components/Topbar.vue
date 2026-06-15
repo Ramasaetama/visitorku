@@ -143,10 +143,10 @@ const handleLogout = async () => {
       
       <div class="relative z-10 flex items-center gap-4">
 
-        <div class="lang-section relative">
+        <div class="lang-section relative border-none">
           <button
             @click="toggleLangDropdown"
-            class="p-1.5 rounded-full hover:bg-white/20 transition flex items-center gap-1.5"
+            class="p-1.5 rounded-sm transition flex items-center gap-1.5"
             :title="t('topbar.selectLanguage')"
           >
             <img :src="globeIcon" alt="Language" class="w-5 h-5" />
@@ -163,20 +163,20 @@ const handleLogout = async () => {
           >
             <div
               v-if="isLangDropdownOpen"
-              class="absolute right-0 top-10 w-44 bg-white rounded-sm border border-gray-100 overflow-hidden z-50"
+              class="absolute right-0 top-10 w-44 bg-white rounded-sm overflow-hidden border-none z-50"
               @click.stop
             >
-              <div class="px-3 py-2 bg-linear-to-r from-[#FFF8F0] to-[#FFEDD5] border-b border-[#FFE4C4]">
-                <p class="text-[10px] font-semibold text-[#F7941D] uppercase tracking-wider">{{ t('topbar.selectLanguage') }}</p>
+              <div class="px-3 py-2 bg-linear-to-r from-[#FFF8F0] to-[#FFEDD5]">
+                <p class="text-[13px] font-semibold text-[#F7941D] uppercase tracking-wider">{{ t('topbar.selectLanguage') }}</p>
               </div>
               <div class="py-1">
                 <button
                   v-for="lang in languages"
                   :key="lang.code"
                   @click="switchLanguage(lang)"
-                  class="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all hover:bg-[#FEF3E2]"
+                  class="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all border-none"
                   :class="locale === lang.code
-                    ? 'text-[#F7941D] font-semibold bg-[#FEF3E2]'
+                    ? 'text-[#F7941D] font-medium bg-[#FEF3E2]'
                     : 'text-gray-600 font-normal'"
                 >
                   <span class="text-base leading-none">{{ lang.flag }}</span>
@@ -286,3 +286,10 @@ const handleLogout = async () => {
     <div class="h-5 w-full bg-[#F4F6F8]"></div>
   </div>
 </template>
+
+<style scoped>
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>

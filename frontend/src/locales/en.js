@@ -232,6 +232,8 @@ export default {
       generic: 'An error occurred.',
       deleteFailed: 'Failed to delete event.',
     },
+    urlInvalidProtocol: 'URL must start with http:// or https://.',
+    urlInvalidFormat: 'URL must be in the format https://www.example.com'
   },
   eventVisitor: {
     title: 'Event Visitor',
@@ -290,10 +292,10 @@ export default {
     showing: 'Showing {from} to {to} from {total} records',
     noRecords: 'No Records to display',
     table: {
-      name: 'NAME',
-      notes: 'NOTES',
-      satisfaction: 'SATISFACTION',
-      action: 'ACTION',
+      name: 'Name',
+      notes: 'Notes',
+      satisfaction: 'Satisfaction',
+      action: 'Action',
     },
     error: {
       downloadFailed: 'Failed to download Excel file.',
@@ -509,13 +511,13 @@ export default {
     showing: 'Showing {from} to {to} from {total} records',
     noRecords: 'No Records to display',
     table: {
-      receipt: 'RECEIPT',
-      number: 'NUMBER',
-      package: 'PACKAGE',
-      amount: 'AMOUNT (RP)',
-      dueDate: 'DUE DATE',
-      status: 'STATUS',
-      action: 'ACTION',
+      receipt: 'Receipt',
+      number: 'Number',
+      package: 'Package',
+      amount: 'Amount (RP)',
+      dueDate: 'Due Date',
+      status: 'Status',
+      action: 'Action',
     },
     receiptModal: {
       title: 'Receipt',

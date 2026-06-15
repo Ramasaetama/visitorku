@@ -76,9 +76,18 @@ const handleSort = (key) => {
     sortKey.value   = key;
     sortOrder.value = 'asc';
   }
-  currentPage.value = 1;
-  fetchFeedback();
 };
+
+const sortedData = computed(() => {
+  if (!sortKey.value) return feedbackData.value; 
+
+  return [...feedbackData.value].sort((a, b) => { 
+    const valA = a[sortKey.value] ?? '';
+    const valB = b[sortKey.value] ?? '';
+    const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
+    return sortOrder.value === 'asc' ? cmp : -cmp;
+  });
+});
 
 // ─── Fetch Event Info ─────────────────────────────────────────────────────────
 const fetchEventInfo = async () => {
@@ -211,16 +220,17 @@ onUnmounted(() => {
               v-model="searchQuery"
               v-model:perPage="perPage"
               :placeholder="t('eventFeedback.searchPlaceholder')"
-              @keyup.enter="executeSearch"
+              @search="executeSearch"
             />
           </div>
+
           <div class="flex-1" />
 
           <button
             @click="handleDownloadExcel"
-            class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] text-[#38CA99] rounded-sm font-medium text-sm hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
+            class="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#10B981] text-[#10B981] rounded-sm font-medium text-sm hover:bg-[#10B981] hover:text-white focus:ring-1 focus:ring-[#10B981]/30 transition-all group focus:outline-none"
           >
-            <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-[#10B981] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
               <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
               <line x1="8" y1="15" x2="8" y2="12" />
               <line x1="12" y1="15" x2="12" y2="9" />
@@ -233,7 +243,7 @@ onUnmounted(() => {
         <div class="flex-1 overflow-hidden">
           <DataTable
             :columns="tableColumns"
-            :data="feedbackData"
+            :data="sortedData"
             :loading="isLoading"
             :sort-key="sortKey"
             :sort-order="sortOrder"
@@ -264,43 +274,22 @@ onUnmounted(() => {
                     <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                     <path d="M8 16c1.5-2 4.5-2 6 0" stroke-linecap="round"/>
                   </svg>
-                  <span class="text-[13px] text-[#EF4444] font-medium">Sad</span>
                 </template>
                 <span v-else class="text-gray-400 font-bold">-</span>
               </div>
             </template>
 
             <template #aksi="{ row }">
-              <div class="flex items-center gap-2 relative">
-                
-                <button 
-                  @click.stop="toggleDropdown(row.id, $event)"
-                  class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
-                  title="Opsi"
-                >
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z" />
-                  </svg>
-                </button>
-
-                <Teleport to="body">
-                  <div v-if="activeDropdown === row.id" @click="closeDropdown" class="fixed inset-0 z-[9998]"></div>
-                  
-                  <div 
-                    v-if="activeDropdown === row.id" 
-                    class="fixed w-36 bg-white rounded-sm shadow-[0_4px_20px_rgba(0,0,0,0.15)] border border-gray-100 py-1.5 z-[9999]"
-                    :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
-                  >
-                    <button 
-                      @click="router.push(`/event/feedback/${row.id}`); closeDropdown();" 
-                      class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
-                    >
-                      View Detail
-                    </button>
-                  </div>
-                </Teleport>
-
-              </div>
+              <button
+                @click="router.push({ path: `/event/feedback/${row.id}`, state: { feedbackRow: JSON.stringify(row.raw) } })"
+                class="w-[30px] h-[30px] rounded bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors focus:outline-none"
+                title="View Detail"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M2 12c0 0 4-8 10-8s10 8 10 8-4 8-10 8-10-8-10-8z"/>
+                  <circle cx="12" cy="12" r="3.5"/>
+                </svg>
+              </button>
             </template>
 
             <template #empty>
@@ -308,14 +297,14 @@ onUnmounted(() => {
                 v-if="feedbackData.length === 0"
                 :icon="notfound"
                 title="Feedback Belum Tersedia"
-                description="Belum ada feedback yang diberikan untuk event ini."
+                description="Belum ada pengunjung yang mengisi form feedback untuk event ini."
                 :showButton="false"
               />
               <EmptyState 
                 v-else
                 :icon="notfound"
-                title="No Records to display"
-                :description="`Tidak ada feedback yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+                title="Tidak Ditemukan"
+                :description="`Tidak ada feedback yang cocok dengan pencarian '${appliedSearch}'`"
                 :showButton="false"
               />
             </template>
