@@ -1,5 +1,8 @@
 <script setup>
 import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const props = defineProps({
   currentPage: {
@@ -63,10 +66,10 @@ const changePage = (page) => {
   <div class="flex flex-col md:flex-row items-center justify-between gap-4 p-5 md:p-6 border-t border-gray-100 font-['Poppins']">
     
     <div class="text-[13px] text-gray-500 font-medium text-center md:text-left">
-      Menampilkan {{ showingCount }} dari {{ totalData }} data
+      {{ t('pagination.showing', { count: showingCount, total: totalData }) }}
     </div>
 
-    <div v-if="totalPages > 1" class="flex flex-wrap items-center justify-center gap-1.5 md:gap-2">
+    <div class="flex flex-wrap items-center justify-center gap-1.5 md:gap-2">
       
       <button
         type="button"
@@ -74,7 +77,7 @@ const changePage = (page) => {
         :disabled="currentPage === 1"
         class="px-3.5 py-1.5 border border-[#F7941D] rounded-sm text-[13px] font-medium text-[#F7941D] bg-white hover:bg-[#FFF9F0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none"
       >
-        Pertama
+        {{ t('pagination.first') }}
       </button>
 
       <button
@@ -98,7 +101,7 @@ const changePage = (page) => {
         :disabled="currentPage === totalPages"
         class="px-3.5 py-1.5 border border-[#F7941D] rounded-sm text-[13px] font-medium text-[#F7941D] bg-white hover:bg-[#FFF9F0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors focus:outline-none"
       >
-        Terakhir
+        {{ t('pagination.last') }}
       </button>
 
     </div>

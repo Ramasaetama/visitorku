@@ -4,7 +4,7 @@
     <div class="p-6 flex-1 flex flex-col overflow-y-auto">
       
       <div class="mb-6">
-        <h1 class="text-2xl font-semibold text-gray-800 mb-1">Profil Perusahaan</h1>
+        <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('editProfile.title') }}</h1>
       </div>
 
       <div class="border-b border-gray-200 mb-8">
@@ -20,7 +20,7 @@
         </nav>
       </div>
 
-      <div v-if="isLoading" class="text-center py-10 text-gray-500">Loading data...</div>
+      <div v-if="isLoading" class="text-center py-10 text-gray-500">{{ t('editProfile.loading') }}</div>
       
       <div v-else class="flex-1">
         <AccountTab 
@@ -46,7 +46,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 
 import AccountTab from '@/components/adminProfile/AccountTab.vue';
 import ProfilePictureTab from '@/components/adminProfile/ProfilePictureTab.vue';
@@ -54,15 +55,17 @@ import PasswordTab from '@/components/adminProfile/PasswordTab.vue';
 import { getAdminProfile } from '@/services/adminProfileService';
 
 
+const { t } = useI18n();
+
 const activeTab = ref('account');
 const isLoading = ref(true);
 const profileData = ref({});
 
-const tabs = [
-  { id: 'account', label: 'Account', icon: 'svg' }, 
-  { id: 'picture', label: 'Profile picture', icon: 'svg' },
-  { id: 'password', label: 'Password', icon: 'svg' },
-];
+const tabs = computed(() => [
+  { id: 'account', label: t('editProfile.tabs.account'), icon: 'svg' }, 
+  { id: 'picture', label: t('editProfile.tabs.picture'), icon: 'svg' },
+  { id: 'password', label: t('editProfile.tabs.password'), icon: 'svg' },
+]);
 
 const fetchData = async () => {
   isLoading.value = true;

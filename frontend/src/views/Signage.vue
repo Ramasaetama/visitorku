@@ -51,11 +51,11 @@ const closeDropdown = () => {
 };
 
 // ─── Kolom Tabel ─────────────────────────────────────────────────────────────
-const tableColumns = [
-  { key: 'name',  label: 'Name',   sortable: true },
-  { key: 'url',   label: 'URL',    sortable: true },
-  { key: 'aksi',  label: 'Action', sortable: false },
-];
+const tableColumns = computed(() => [
+  { key: 'name',  label: t('signage.table.name'),   sortable: true },
+  { key: 'url',   label: t('signage.table.url'),    sortable: true },
+  { key: 'aksi',  label: t('signage.table.action'), sortable: false },
+]);
 
 // ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('name');
@@ -161,10 +161,10 @@ const handleDelete = async (row) => {
   if (!confirmed) return;
   try {
     await deleteSignage(row.id);
-    showSuccess('Signage berhasil dihapus.');
+    showSuccess(t('signage.success.deleted'));
     await fetchSignages();
   } catch (err) {
-    showError(err.response?.data?.message || 'Gagal menghapus signage.');
+    showError(err.response?.data?.message || t('signage.error.deleteFailed'));
   }
 };
 
@@ -190,8 +190,8 @@ onUnmounted(() => {
 
       <div class="flex items-start justify-between mb-6">
         <div>
-          <h1 class="text-2xl font-semibold text-gray-800 mb-1">Signage</h1>
-          <p class="text-sm text-gray-500">Kelola dan pantau seluruh data signage yang ada.</p>
+          <h1 class="text-2xl font-semibold text-gray-800 mb-1">{{ t('signage.title') }}</h1>
+          <p class="text-sm text-gray-500">{{ t('signage.subtitle') }}</p>
         </div>  
         <button
           @click="handleCreateNew"
@@ -200,7 +200,7 @@ onUnmounted(() => {
                  hover:bg-[#F7941D] hover:text-white active:scale-95 transition-all"
         >
           <span class="text-lg leading-none">+</span>
-          Create New Signage
+          {{ t('signage.createBtn') }}
         </button>              
       </div>
 
@@ -209,7 +209,7 @@ onUnmounted(() => {
           <SearchInput 
             v-model="searchQuery" 
             v-model:perPage="perPage"
-            placeholder="Cari Signage" 
+            :placeholder="t('signage.searchPlaceholder')" 
             @keyup.enter="executeSearch"  
           />
         </div>
@@ -258,7 +258,7 @@ onUnmounted(() => {
                   :style="{ top: dropdownPosition.top, left: dropdownPosition.left }"
                 >
                   <button @click="handleEdit(row)" class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors">
-                    Edit Data
+                    {{ t('signage.editData') }}
                   </button>
                 </div>
               </Teleport>
@@ -280,16 +280,16 @@ onUnmounted(() => {
             <EmptyState 
               v-if="signageData.length === 0"
               :icon="notfound"
-              title="Signage Belum Tersedia"
-              description="Tambahkan signage terlebih dahulu agar dapat ditampilkan di layar."
-              buttonText="Tambah Signage"
+              :title="t('signage.empty.noData')"
+              :description="t('signage.empty.noDataDesc')"
+              :buttonText="t('signage.empty.noDataBtn')"
               @action="handleCreateNew"
             />
             <EmptyState 
               v-else
               :icon="notfound"
-              title="No Records to display"
-              :description="`Tidak ada signage yang cocok dengan kata kunci '${appliedSearchQuery}'`"
+              :title="t('signage.empty.notFound')"
+              :description="`${t('signage.empty.notFoundDesc')} '${appliedSearch}'`"
             />
           </template>
         </DataTable>

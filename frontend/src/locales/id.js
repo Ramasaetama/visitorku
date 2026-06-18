@@ -69,7 +69,11 @@ export default {
       checkIn: 'Check In',
       checkOut: 'Check Out',
       face: 'Ekspresi',
-    }
+    },
+    legend: {
+      visitor: 'Pengunjung',
+      visit: 'Kunjungan',
+    },
   },
   visitorData: {
     title: 'Daftar Pengunjung',
@@ -261,6 +265,8 @@ export default {
       action: 'Aksi',
     },
     modal: {
+      addDesc: 'Masukkan informasi pengunjung baru.',
+      editDesc: 'Perbarui informasi pengunjung.',
       addTitle: 'Tambah Pengunjung Acara',
       editTitle: 'Edit Pengunjung Acara',
       namePlaceholder: 'Masukkan nama di sini...',
@@ -510,6 +516,30 @@ export default {
       deleteLabel: 'Pengguna',
     },
   },
+  editProfile: {
+    title: 'Profil Perusahaan',
+    loading: 'Memuat data...',
+    tabs: {
+      account: 'Akun',
+      picture: 'Foto Profil',
+      password: 'Kata Sandi',
+    },
+  },
+  report: {
+    title: 'Laporan Pengunjung',
+    fromDate: 'Dari Tanggal',
+    toDate: 'Sampai Tanggal',
+    download: 'Unduh',
+    downloading: 'Mengunduh...',
+    fileUrlNotFound: 'URL file tidak ditemukan.',
+    fillDateError: 'Harap isi From Date dan To Date.',
+    visitorReport: {
+      title: 'Laporan Pengunjung',
+    },
+    visitReport: {
+      title: 'Laporan Kunjungan',
+    },
+  },
   invoice: {
     title: 'Tagihan',
     subtitle: 'Kelola dan pantau seluruh data tagihan yang ada.',
@@ -537,6 +567,11 @@ export default {
       noPdf: 'Dokumen PDF belum tersedia untuk tagihan ini.',
     },
   },
+  pagination: {
+    showing: 'Menampilkan {count} dari {total} data',
+    first: 'Pertama',
+    last: 'Terakhir',
+  },
   signage: {
     title: 'Layar Informasi',
     subtitle: 'Kelola dan pantau seluruh data layar informasi yang ada.',
@@ -549,6 +584,13 @@ export default {
       name: 'Nama',
       url: 'URL',
       action: 'Aksi',
+    },
+    empty: {
+      noData: 'Signage Belum Tersedia',
+      noDataDesc: 'Tambahkan signage terlebih dahulu agar dapat ditampilkan di layar.',
+      noDataBtn: 'Tambah Signage',
+      notFound: 'Tidak Ada Data yang Cocok',
+      notFoundDesc: 'Tidak ada signage yang cocok dengan kata kunci',
     },
     success: {
       deleted: 'Layar Informasi berhasil dihapus.',

@@ -49,8 +49,8 @@ const chartOptions = ref({
 });
 
 const chartSeries = ref([
-  { name: 'Visitor', data: [] }, 
-  { name: 'Visit', data: [] }
+  { name: t('dashboard.legend.visitor'), data: [] }, 
+  { name: t('dashboard.legend.visit'), data: [] }
 ]);
 
 const fetchWeeklyData = async () => {
@@ -60,7 +60,7 @@ const fetchWeeklyData = async () => {
     const dataAPI = response.data.data;
     chartData.value = { titles: dataAPI.titles, visits: dataAPI.visits, visitors: dataAPI.visitors };
     chartOptions.value = { ...chartOptions.value, xaxis: { ...chartOptions.value.xaxis, categories: dataAPI.titles } };
-    chartSeries.value = [ { name: 'Visitor', data: dataAPI.visitors }, { name: 'Visit', data: dataAPI.visits } ];
+    chartSeries.value = [ { name: t('dashboard.legend.visitor'), data: dataAPI.visitors }, { name: t('dashboard.legend.visit'), data: dataAPI.visits } ];
   } catch (error) {
     console.error("Gagal memuat data mingguan:", error);
   } finally {
@@ -83,7 +83,7 @@ const monthlyChartOptions = ref({
   legend: { show: false }, 
 });
 
-const monthlyChartSeries = ref([ { name: 'Visitor', data: [] }, { name: 'Visit', data: [] } ]);
+const monthlyChartSeries = ref([ { name: t('dashboard.legend.visitor'), data: [] }, { name: t('dashboard.legend.visit'), data: [] } ]);
 
 const fetchMonthlyData = async () => {
   isMonthlyChartLoading.value = true;
@@ -91,7 +91,7 @@ const fetchMonthlyData = async () => {
     const response = await getMonthlyData();
     const dataAPI = response.data.data;
     monthlyChartOptions.value = { ...monthlyChartOptions.value, xaxis: { ...monthlyChartOptions.value.xaxis, categories: dataAPI.titles } };
-    monthlyChartSeries.value = [ { name: 'Visitor', data: dataAPI.visitors }, { name: 'Visit', data: dataAPI.visits } ];
+    monthlyChartSeries.value = [ { name: t('dashboard.legend.visitor'), data: dataAPI.visitors }, { name: t('dashboard.legend.visit'), data: dataAPI.visits } ];
   } catch (error) {
     console.error("Gagal memuat data monthly:", error);
   } finally {
@@ -322,10 +322,10 @@ onMounted(() => {
             <h2 class="text-[15px] font-medium text-gray-800">{{ t('dashboard.dailyVisitor') }}</h2>
             <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 text-xs font-medium text-gray-600">
               <div class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-[2px] bg-[#2D51FD]"></span> Visitor
+                <span class="w-3 h-3 rounded-[2px] bg-[#2D51FD]"></span> {{ t('dashboard.legend.visitor') }}
               </div>
               <div class="flex items-center gap-1.5">
-                <span class="w-3 h-3 rounded-[2px] bg-[#ED9D0F]"></span> Visit
+                <span class="w-3 h-3 rounded-[2px] bg-[#ED9D0F]"></span> {{ t('dashboard.legend.visit') }}
               </div>
             </div>
           </div>
@@ -349,8 +349,8 @@ onMounted(() => {
         <div class="flex items-start sm:items-center justify-between mb-6 shrink-0">
           <h2 class="text-[15px] font-medium text-gray-800">{{ t('dashboard.monthlyVisitor') }}</h2>
           <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 text-xs font-medium text-gray-600">
-            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#2D51FD]"></span> Visitor</div>
-            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ED9D0F]"></span> Visit</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#2D51FD]"></span> {{ t('dashboard.legend.visitor') }}</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ED9D0F]"></span> {{ t('dashboard.legend.visit') }}</div>
           </div>
         </div>
 

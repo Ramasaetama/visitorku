@@ -76,18 +76,9 @@ const handleSort = (key) => {
     sortKey.value   = key;
     sortOrder.value = 'asc';
   }
+  currentPage.value = 1;
+  fetchFeedback();
 };
-
-const sortedData = computed(() => {
-  if (!sortKey.value) return feedbackData.value; 
-
-  return [...feedbackData.value].sort((a, b) => { 
-    const valA = a[sortKey.value] ?? '';
-    const valB = b[sortKey.value] ?? '';
-    const cmp = String(valA).localeCompare(String(valB), 'id', { sensitivity: 'base' });
-    return sortOrder.value === 'asc' ? cmp : -cmp;
-  });
-});
 
 // ─── Fetch Event Info ─────────────────────────────────────────────────────────
 const fetchEventInfo = async () => {
@@ -200,6 +191,7 @@ onUnmounted(() => {
     <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
       <div class="p-6 flex-1 flex flex-col">
 
+        <!-- Header -->
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-3">
             <button
@@ -214,113 +206,136 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
-          <div class="w-full sm:max-w-md">
-            <SearchInput
-              v-model="searchQuery"
-              v-model:perPage="perPage"
-              :placeholder="t('eventFeedback.searchPlaceholder')"
-              @search="executeSearch"
-            />
+
+            <div class="mb-6 flex flex-col sm:flex-row sm:items-center justify-start gap-4">
+              <div class="w-full sm:max-w-md">
+                <SearchInput
+                  v-model="searchQuery"
+                  :placeholder="t('eventFeedback.searchPlaceholder')"
+                  @keyup.enter="executeSearch"
+                />
+              </div>
+
+              <div class="flex-1" />
+
+              <!-- Download Report -->
+              <button
+                @click="handleDownloadExcel"
+                class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] text-[#38CA99] rounded-sm font-medium text-sm hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
+              >
+                <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                  <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                  <line x1="8" y1="15" x2="8" y2="12" />
+                  <line x1="12" y1="15" x2="12" y2="9" />
+                  <line x1="16" y1="15" x2="16" y2="13" />
+                </svg>
+                Report
+              </button>
+            </div>
+
+            <!-- Table -->
+            <div class="flex-1 overflow-hidden">
+              <DataTable
+                :columns="tableColumns"
+                :data="feedbackData"
+                :loading="isLoading"
+                :sort-key="sortKey"
+                :sort-order="sortOrder"
+              >
+                <template #satisfaction="{ row }">
+                  <div class="flex items-center gap-2">
+                    <template v-if="row.satisfaction === 3">
+                      <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <path d="M8 14.5c1.5 2 4.5 2 6 0" stroke-linecap="round"/>
+                      </svg>
+                    </template>
+                    <template v-else-if="row.satisfaction === 2">
+                      <svg class="w-6 h-6 text-[#F59E0B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round"/>
+                      </svg>
+                    </template>
+                    <template v-else-if="row.satisfaction === 1">
+                      <svg class="w-6 h-6 text-[#EF4444]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                        <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <path d="M8 16c1.5-2 4.5-2 6 0" stroke-linecap="round"/>
+                      </svg>
+                    </template>
+                    <span v-else class="text-gray-400 font-bold">-</span>
+                  </div>
+                </template>
+
+                <template #aksi="{ row }">
+                  <button
+                    @click="router.push({ path: `/event/feedback/${row.id}`, state: { feedbackRow: JSON.stringify(row.raw) } })"
+                    class="w-[30px] h-[30px] rounded bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors focus:outline-none"
+                    title="View Detail"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                      <path d="M2 12c0 0 4-8 10-8s10 8 10 8-4 8-10 8-10-8-10-8z"/>
+                      <circle cx="12" cy="12" r="3.5"/>
+                    </svg>
+                  </button>
+                </template>
+
+                <template #empty>
+                  <div class="flex flex-col items-center justify-center py-16 text-gray-400">
+                    <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <p class="text-sm font-medium text-gray-500">{{ t('eventFeedback.noRecords') }}</p>
+                  </div>
+                </template>
+              </DataTable>
+            </div>
+
           </div>
 
-          <div class="flex-1" />
+         <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between text-[13px] text-[#64748B]">
+          <span>{{ t('eventFeedback.showing', { from: startIndex, to: endIndex, total: totalRecords }) }}</span>
 
-          <button
-            @click="handleDownloadExcel"
-            class="flex items-center gap-2 px-5 py-2.5 bg-white border border-[#10B981] text-[#10B981] rounded-sm font-medium text-sm hover:bg-[#10B981] hover:text-white focus:ring-1 focus:ring-[#10B981]/30 transition-all group focus:outline-none"
-          >
-            <svg class="w-5 h-5 text-[#10B981] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
-              <line x1="8" y1="15" x2="8" y2="12" />
-              <line x1="12" y1="15" x2="12" y2="9" />
-              <line x1="16" y1="15" x2="16" y2="13" />
-            </svg>
-            Report
-          </button>
+          <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
+            <button
+              @click="goToPage(currentPage - 1)"
+              :disabled="currentPage === 1"
+              class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <button
+              v-for="page in visiblePages"
+              :key="page"
+              @click="goToPage(page)"
+              class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
+              :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
+            >
+              {{ page }}
+            </button>
+            <button
+              @click="goToPage(currentPage + 1)"
+              :disabled="currentPage === totalPages"
+              class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
-        <div class="flex-1 overflow-hidden">
-          <DataTable
-            :columns="tableColumns"
-            :data="sortedData"
-            :loading="isLoading"
-            :sort-key="sortKey"
-            :sort-order="sortOrder"
-            @sort="handleSort"
-          >
-            <template #satisfaction="{ row }">
-              <div class="flex items-center gap-2">
-                <template v-if="row.satisfaction === 3">
-                  <svg class="w-6 h-6 text-[#10B981]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke-width="2"/>
-                    <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
-                    <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
-                    <path d="M8 14.5c1.5 2 4.5 2 6 0" stroke-linecap="round"/>
-                  </svg>
-                </template>
-                <template v-else-if="row.satisfaction === 2">
-                  <svg class="w-6 h-6 text-[#F59E0B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke-width="2"/>
-                    <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
-                    <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
-                    <line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round"/>
-                  </svg>
-                </template>
-                <template v-else-if="row.satisfaction === 1">
-                  <svg class="w-6 h-6 text-[#EF4444]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <circle cx="12" cy="12" r="10" stroke-width="2"/>
-                    <circle cx="8.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
-                    <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
-                    <path d="M8 16c1.5-2 4.5-2 6 0" stroke-linecap="round"/>
-                  </svg>
-                </template>
-                <span v-else class="text-gray-400 font-bold">-</span>
-              </div>
-            </template>
-
-            <template #aksi="{ row }">
-              <button
-                @click="router.push({ path: `/event/feedback/${row.id}`, state: { feedbackRow: JSON.stringify(row.raw) } })"
-                class="w-[30px] h-[30px] rounded bg-[#D9E2FF] flex items-center justify-center text-[#4075FF] hover:bg-[#B3C6FF] transition-colors focus:outline-none"
-                title="View Detail"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                  <path d="M2 12c0 0 4-8 10-8s10 8 10 8-4 8-10 8-10-8-10-8z"/>
-                  <circle cx="12" cy="12" r="3.5"/>
-                </svg>
-              </button>
-            </template>
-
-            <template #empty>
-              <EmptyState 
-                v-if="feedbackData.length === 0"
-                :icon="notfound"
-                title="Feedback Belum Tersedia"
-                description="Belum ada pengunjung yang mengisi form feedback untuk event ini."
-                :showButton="false"
-              />
-              <EmptyState 
-                v-else
-                :icon="notfound"
-                title="Tidak Ditemukan"
-                :description="`Tidak ada feedback yang cocok dengan pencarian '${appliedSearch}'`"
-                :showButton="false"
-              />
-            </template>
-          </DataTable>
-        </div>
-
-      </div>
-
-      <Pagination
-        v-model:current-page="currentPage"
-        :total-data="totalRecords"
-        :per-page="perPage"
-      />
-
-    </main>
-  </div>
+      </main>
+    </div>
 </template>
 
 <style scoped>

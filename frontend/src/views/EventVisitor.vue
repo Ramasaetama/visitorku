@@ -5,6 +5,7 @@ import { useI18n } from 'vue-i18n';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
+import Modal from '@/components/common/Modal.vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 
 import {
@@ -115,8 +116,8 @@ const fetchCheckInOutCount = async () => {
   try {
     const res = await getEventCheckInOutCount(eventId.value);
     const data = res.data?.data ?? res.data ?? res;
-    checkInCount.value  = data.check_in_at  ?? data.checkin  ?? 0;
-    checkOutCount.value = data.check_out_at ?? data.checkout ?? 0;
+    checkInCount.value  = data.check_in  ?? data.checkin  ?? 0;
+    checkOutCount.value = data.check_out ?? data.checkout ?? 0;
     totalVisitor.value  = data.total     ?? data.total_visitor ?? 0;
 
   } catch (err) {
@@ -590,65 +591,67 @@ onMounted(async () => {
 
         </div>
 
-    <div v-if="showModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div class="bg-white rounded-sm shadow-xl w-full max-w-md mx-4 relative animate-fade-in-up">
-
-        <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-gray-100">
-          <h2 class="text-lg font-semibold text-gray-900">{{ isEdit ? t('eventVisitor.modal.editTitle') : t('eventVisitor.modal.addTitle') }}</h2>
-          <button @click="closeModal" class="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-              <path d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-
-        <div class="px-6 py-5 space-y-4">
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Name <span class="text-red-500">*</span></label>
-            <input
-              v-model="form.name"
-              type="text"
-              :placeholder="t('eventVisitor.modal.namePlaceholder')"
-              class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Email <span class="text-red-500">*</span></label>
-            <input
-              v-model="form.email"
-              type="email"
-              :placeholder="t('eventVisitor.modal.emailPlaceholder')"
-              class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
-            />
-          </div>
-          <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">Phone Number <span class="text-red-500">*</span></label>
-            <input
-              v-model="form.phone_number"
-              type="text"
-              :placeholder="t('eventVisitor.modal.phonePlaceholder')"
-              class="w-full border-b border-gray-300 py-2 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] transition-colors bg-transparent"
-            />
-          </div>
-        </div>
-
-        <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
-          <button
-            @click="closeModal"
-            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-500 font-medium text-sm hover:bg-gray-50 transition-colors focus:outline-none"
-          >
-            {{ t('eventVisitor.modal.cancel') }}
-          </button>
-          <button
-            @click="handleSubmit"
-            :disabled="isSaving"
-            class="px-6 py-2 bg-[#F7941D] text-white rounded-lg font-medium text-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {{ isSaving ? t('eventVisitor.modal.loading') : t('eventVisitor.modal.submit') }}
-          </button>
-        </div>
-      </div>
+<Modal
+  :show="showModal"
+  :title="isEdit ? t('eventVisitor.modal.editTitle') : t('eventVisitor.modal.addTitle')"
+  :description="isEdit ? t('eventVisitor.modal.editDesc') : t('eventVisitor.modal.addDesc')"
+  width="md"
+  @close="closeModal"
+>
+  <div class="space-y-5">
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">
+        Name <span class="text-red-500">*</span>
+      </label>
+      <input
+        v-model="form.name"
+        type="text"
+        :placeholder="t('eventVisitor.modal.namePlaceholder')"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+      />
     </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">
+        Email <span class="text-red-500">*</span>
+      </label>
+      <input
+        v-model="form.email"
+        type="email"
+        :placeholder="t('eventVisitor.modal.emailPlaceholder')"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+      />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1.5">
+        Phone Number <span class="text-red-500">*</span>
+      </label>
+      <input
+        v-model="form.phone_number"
+        type="text"
+        :placeholder="t('eventVisitor.modal.phonePlaceholder')"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+      />
+    </div>
+  </div>
+
+  <template #footer>
+    <div class="flex items-center justify-end gap-3">
+      <button
+        @click="closeModal"
+        class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
+      >
+        {{ t('eventVisitor.modal.cancel') }}
+      </button>
+      <button
+        @click="handleSubmit"
+        :disabled="isSaving"
+        class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-sm hover:bg-[#E8850E] transition-colors focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {{ isSaving ? t('eventVisitor.modal.loading') : t('eventVisitor.modal.submit') }}
+      </button>
+    </div>
+  </template>
+</Modal>
 
     <div v-if="showFinishModal" class="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm mx-4 p-8 text-center animate-fade-in-up">
@@ -688,12 +691,4 @@ button:focus {
   box-shadow: none !important;
 }
 
-.animate-fade-in-up {
-  animation: fadeInUp 0.2s ease-out forwards;
-}
-
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(10px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
-}
 </style>

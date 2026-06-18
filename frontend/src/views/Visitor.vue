@@ -2,7 +2,6 @@
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
-import Pagination from '@/components/common/Pagination.vue';
 const { t } = useI18n();
 
 import EmptyState from '@/components/common/EmptyState.vue';
@@ -11,6 +10,7 @@ import DataTable from '@/components/common/DataTable.vue';
 import notfound from '@/assets/notfound.svg';
 
 import Modal from '@/components/common/Modal.vue';  
+import Pagination from '@/components/common/Pagination.vue';
 import { getVisitor, updateVisitorNotes } from '@/services/visitorService';
 import { showError } from '@/utils/alertHelper';
 

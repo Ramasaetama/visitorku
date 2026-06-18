@@ -2,6 +2,8 @@
 import { ref, computed, onMounted, watch } from 'vue';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import Topbar from '@/components/Topbar.vue';
+import Sidebar from '@/components/Sidebar.vue';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
@@ -127,9 +129,8 @@ onMounted(fetchVisits);
 </script>
 
 <template>
-  <div class="flex-1 w-full h-full flex flex-col">
-    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-      <div class="p-6 flex-1 flex flex-col">
+  <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
+    <div class="p-6 flex-1 flex flex-col">
 
         <div class="flex items-start justify-between mb-6">
           <div>
@@ -264,15 +265,15 @@ onMounted(fetchVisits);
               <EmptyState 
                 v-if="visitData.length === 0"
                 :icon="notfound"
-                :title="t('visitData.emptyTitle')"
-                :description="t('visitData.emptyDescription')"
+                :title="t('visitData.empty.noData')"
+                :description="t('visitData.empty.noDataDesc')"
                 :showButton="false"
               />
               <EmptyState 
                 v-else
                 :icon="notfound"
-                :title="t('visitData.notFoundTitle')"
-                :description="t('visitData.notFoundDescription')"
+                :title="t('visitData.empty.notFound')"
+                :description="t('visitData.empty.notFoundDesc')"
                 :showButton="false"
               />
             </template>
@@ -285,9 +286,9 @@ onMounted(fetchVisits);
           :per-page="perPage"
         />
 
-      </div>
-    </main>
-  </div>
+    </div>
+  </main>
+
 </template>
 
 <style scoped>
