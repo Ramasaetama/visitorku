@@ -265,15 +265,15 @@ onMounted(fetchVisits);
               <EmptyState 
                 v-if="visitData.length === 0"
                 :icon="notfound"
-                :title="t('visitData.emptyTitle')"
-                :description="t('visitData.emptyDescription')"
+                :title="t('visitData.empty.noData')"
+                :description="t('visitData.empty.noDataDesc')"
                 :showButton="false"
               />
               <EmptyState 
                 v-else
                 :icon="notfound"
-                :title="t('visitData.notFoundTitle')"
-                :description="t('visitData.notFoundDescription')"
+                :title="t('visitData.empty.notFound')"
+                :description="t('visitData.empty.notFoundDesc')"
                 :showButton="false"
               />
             </template>
