@@ -1,15 +1,16 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getEventVisitorById } from '@/services/eventService';
+import { getEventVisitorById, getEventFeedbackList } from '@/services/eventService';
 
 const route    = useRoute();
 const router   = useRouter();
 const visitorId = route.params.id;
 
 // ─── State ────────────────────────────────────────────────────────────────────
-const visitorInfo = ref(null);
-const isLoading   = ref(true);
+const visitorInfo  = ref(null);
+const feedbackInfo = ref(null);
+const isLoading    = ref(true);
 
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 const fetchDetail = async () => {
@@ -17,6 +18,17 @@ const fetchDetail = async () => {
     const res  = await getEventVisitorById(visitorId);
     const data = res?.data?.data ?? res?.data ?? res;
     visitorInfo.value = data;
+
+    // Jika visitor punya feedback, fetch dari list lalu filter by event_visitor_id
+    if (data.feedback && data.event_id) {
+      try {
+        const fbRes  = await getEventFeedbackList(data.event_id);
+        const list   = fbRes?.data?.data ?? fbRes?.data ?? [];
+        feedbackInfo.value = list.find(f => f.event_visitor_id === visitorId) ?? null;
+      } catch {
+        feedbackInfo.value = null;
+      }
+    }
   } catch (err) {
     console.error('Gagal mengambil detail event visitor:', err);
   } finally {
@@ -116,7 +128,7 @@ onMounted(fetchDetail);
                   alt="Check In Photo"
                 />
                 <p class="text-[15px] font-semibold text-gray-800">
-                  {{ formatDate(visitorInfo.check_in ?? visitorInfo.checkin_at) }}
+                  {{ formatDate(visitorInfo.check_in_at) }}
                 </p>
               </div>
             </div>
@@ -130,7 +142,7 @@ onMounted(fetchDetail);
                   alt="Check Out Photo"
                 />
                 <p class="text-[15px] font-semibold text-gray-800">
-                  {{ formatDate(visitorInfo.check_out ?? visitorInfo.checkout_at) }}
+                  {{ formatDate(visitorInfo.check_out_at) }}
                 </p>
               </div>
             </div>
@@ -144,7 +156,7 @@ onMounted(fetchDetail);
         <div>
           <h2 class="text-[17px] font-bold text-gray-900 mb-4">Feedback</h2>
 
-          <div v-if="visitorInfo.feedback || visitorInfo.satisfaction" class="space-y-4">
+          <div v-if="feedbackInfo || visitorInfo.satisfaction" class="space-y-4">
 
             <!-- Satisfaction -->
             <div v-if="visitorInfo.satisfaction" class="flex items-center gap-3">
@@ -184,9 +196,24 @@ onMounted(fetchDetail);
             </div>
 
             <!-- Feedback Note -->
-            <div v-if="visitorInfo.feedback">
+            <div v-if="feedbackInfo?.notes">
               <p class="text-[13px] font-semibold text-gray-400 mb-1">Note</p>
-              <p class="text-[14px] text-gray-700 bg-gray-50 rounded-lg p-4 whitespace-pre-wrap">{{ visitorInfo.feedback }}</p>
+              <p class="text-[14px] text-gray-700 bg-gray-50 rounded-lg p-4 whitespace-pre-wrap">{{ feedbackInfo.notes }}</p>
+            </div>
+
+            <!-- Additional Data -->
+            <div v-if="feedbackInfo?.additional_data && Object.keys(feedbackInfo.additional_data).length">
+              <p class="text-[13px] font-semibold text-gray-400 mb-2">Detail Feedback</p>
+              <div class="bg-gray-50 rounded-lg p-4 space-y-2">
+                <div
+                  v-for="(value, key) in feedbackInfo.additional_data"
+                  :key="key"
+                  class="flex gap-2"
+                >
+                  <span class="text-[13px] font-semibold text-gray-500 capitalize min-w-[120px]">{{ key.replace(/_/g, ' ') }}</span>
+                  <span class="text-[13px] text-gray-700">: {{ value }}</span>
+                </div>
+              </div>
             </div>
           </div>
 

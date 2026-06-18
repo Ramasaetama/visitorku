@@ -169,8 +169,8 @@ const fetchVisitors = async () => {
       name:         v.name ?? '-',
       email:        v.email ?? '-',
       phone_number: v.phone_number ?? v.phone ?? '-',
-      check_in:     formatDateTime(v.check_in ?? v.checkin_at ?? null),
-      check_out:    formatDateTime(v.check_out ?? v.checkout_at ?? null),
+      check_in:     formatDateTime(v.check_in_at ?? null),
+      check_out:    formatDateTime(v.check_out_at ?? null),
       satisfaction: v.satisfaction,
       raw:          v,
     }));
