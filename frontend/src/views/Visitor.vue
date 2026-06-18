@@ -1,12 +1,9 @@
 <script setup>
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
-
+import Pagination from '@/components/common/Pagination.vue';
 const { t } = useI18n();
-import Sidebar from '@/components/Sidebar.vue';
-import { getAllVisits, exportVisitReport } from '@/services/visitService';
 
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
@@ -54,11 +51,16 @@ const totalItems = ref(0);
 
 watch(itemsPerPage, () => {
   if (currentPage.value !== 1) {
-    currentPage.value = 1; 
+    currentPage.value = 1; // Akan memicu watcher currentPage di bawah
   } else {
     fetchVisitors();
   }
 });
+
+watch(currentPage, () => {
+    fetchVisitors();
+  }
+);
 
 watch(currentPage, () => {
   fetchVisitors();
@@ -156,35 +158,6 @@ const sortedData = computed(() => {
   });
 });
 
-// PAGINATION UI 
-const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage.value));
-const startIndex = computed(() => totalItems.value === 0 ? 0 : ((currentPage.value - 1) * itemsPerPage.value) + 1);
-const endIndex = computed(() => Math.min(currentPage.value * itemsPerPage.value, totalItems.value));
-
-const visiblePages = computed(() => {
-  const maxVisible = 5; 
-  let start = Math.max(1, currentPage.value - 2);
-  let end = start + maxVisible - 1;
-
-  if (end > totalPages.value) {
-    end = totalPages.value;
-    start = Math.max(1, end - maxVisible + 1);
-  }
-
-  let pages = [];
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-  return pages;
-});
-
-const goToPage = (page) => {
-  if (page >= 1 && page <= totalPages.value && page !== currentPage.value) {
-    currentPage.value = page;
-    fetchVisitors(); 
-  }
-};
-
 // MODAL NOTES LOGIC
 
 const showNotesModal = ref(false);
@@ -254,7 +227,7 @@ onMounted(() => {
               <button 
                 @click="handleReport"
                 class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] 
-                       text-[#38CA99] rounded-lg font-medium text-sm 
+                       text-[#38CA99] rounded-sm font-medium text-sm 
                        hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
               >
                 <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -348,37 +321,11 @@ onMounted(() => {
             
           </div>
           
-          <div class="px-6 py-4 border-t border-gray-200 flex items-center justify-between text-[13px] text-[#64748B]">
-            <span>{{ t('visitorData.showing', { from: startIndex, to: endIndex, total: totalItems }) }}</span>
-            
-            <div v-if="totalPages > 0" class="flex items-center border border-gray-300 rounded-lg overflow-hidden bg-white shadow-sm">
-              <button 
-                @click="goToPage(currentPage - 1)" 
-                :disabled="currentPage === 1"
-                class="px-3 py-1.5 border-r border-gray-300 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"></path></svg>
-              </button>
-              
-              <button 
-                v-for="page in visiblePages" 
-                :key="page"
-                @click="goToPage(page)"
-                class="px-3.5 py-1.5 border-r border-gray-300 transition-colors focus:outline-none"
-                :class="currentPage === page ? 'bg-[#FEF4E3] text-[#F7941D] font-medium' : 'text-[#64748B] hover:bg-gray-50'"
-              >
-                {{ page }}
-              </button>
-
-              <button 
-                @click="goToPage(currentPage + 1)" 
-                :disabled="currentPage === totalPages"
-                class="px-3 py-1.5 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition-colors text-gray-500 focus:outline-none"
-              >
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-              </button>
-            </div>
-          </div>
+          <Pagination
+            v-model:current-page="currentPage"
+            :total-data="totalItems"
+            :per-page="itemsPerPage"
+          />
 
     </main>
 

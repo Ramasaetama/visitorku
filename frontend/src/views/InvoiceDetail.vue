@@ -1,9 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
-import Sidebar from '@/components/Sidebar.vue';
-import { getInvoiceById } from '@/services/invoiceService';
+import { getInvoiceById } from '@/services/InvoiceService';
 
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();

@@ -272,7 +272,7 @@ onMounted(() => {
       </div>
 
       <div class="bg-white rounded-sm border border-gray-100 p-6">
-        <h2 class="text-[15px] font-bold text-gray-800 mb-4">{{ t('dashboard.satisfactionIndex') }}</h2>
+        <h2 class="text-[15px] font-medium text-gray-800 mb-4">{{ t('dashboard.satisfactionIndex') }}</h2>
         
         <div v-if="isSatisfactionLoading" class="w-full h-10 bg-gray-100 rounded-sm animate-pulse flex items-center justify-center">
           <span class="text-xs text-gray-400">{{ t('dashboard.calculating') }}</span>
@@ -319,7 +319,7 @@ onMounted(() => {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="bg-white rounded-sm border border-gray-100 p-6 flex flex-col h-[400px]">
           <div class="flex items-start sm:items-center justify-between mb-6 shrink-0">
-            <h2 class="text-[15px] font-bold text-gray-800">{{ t('dashboard.dailyVisitor') }}</h2>
+            <h2 class="text-[15px] font-medium text-gray-800">{{ t('dashboard.dailyVisitor') }}</h2>
             <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 text-xs font-medium text-gray-600">
               <div class="flex items-center gap-1.5">
                 <span class="w-3 h-3 rounded-[2px] bg-[#2D51FD]"></span> Visitor
@@ -337,7 +337,7 @@ onMounted(() => {
         </div>
 
         <div class="bg-white rounded-sm shadow-sm border border-gray-100 p-6 flex flex-col h-[400px]">
-          <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">{{ t('dashboard.percentageByPurpose') }}</h2>
+          <h2 class="text-[15px] font-medium text-gray-800 mb-4 shrink-0">{{ t('dashboard.percentageByPurpose') }}</h2>
           <div class="flex-1 flex flex-col relative min-h-0">
             <div v-if="isCategoryLoading" class="absolute inset-0 flex items-center justify-center text-gray-400">{{ t('dashboard.loadingCategory') }}</div>
             <apexchart v-show="!isCategoryLoading" class="w-full h-full" type="donut" height="100%" width="100%" :options="categoryChartOptions" :series="categorySeries" />
@@ -347,7 +347,7 @@ onMounted(() => {
 
       <div class="bg-white border border-gray-100 p-6 min-h-[350px] flex flex-col">
         <div class="flex items-start sm:items-center justify-between mb-6 shrink-0">
-          <h2 class="text-[15px] font-bold text-gray-800">{{ t('dashboard.monthlyVisitor') }}</h2>
+          <h2 class="text-[15px] font-medium text-gray-800">{{ t('dashboard.monthlyVisitor') }}</h2>
           <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4 text-xs font-medium text-gray-600">
             <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#2D51FD]"></span> Visitor</div>
             <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-[#ED9D0F]"></span> Visit</div>
@@ -361,7 +361,7 @@ onMounted(() => {
       </div>
 
       <div class="bg-white rounded-sm shadow-sm border border-gray-100 p-6">
-        <h2 class="text-[15px] font-bold text-gray-800 mb-4 shrink-0">{{ t('dashboard.latestVisitor') }}</h2>
+        <h2 class="text-[15px] font-medium text-gray-800 mb-4 shrink-0">{{ t('dashboard.latestVisitor') }}</h2>
         <div class="w-full overflow-x-auto hide-scrollbar">
           
           <DataTable
@@ -432,7 +432,7 @@ onMounted(() => {
   box-shadow: none !important;
 }
 
-button:focus, select:focus {
+button:focus {
   outline: none !important;
   box-shadow: none !important;
 }

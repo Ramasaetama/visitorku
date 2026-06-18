@@ -365,10 +365,8 @@ const { locale, t } = useI18n();
 const langMap = { 'Indonesia': 'id', 'English': 'en' };
 const langMapReverse = { 'id': 'Indonesia', 'en': 'English' };
 
-import Sidebar from '@/components/Sidebar.vue';
 import ImageUploadModal from '@/components/ImageUploadModal.vue';
 import Modal from '@/components/common/Modal.vue';
-import Topbar from '@/components/Topbar.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
 
@@ -551,7 +549,6 @@ const saveProfile = async () => {
       return;
     }
 
-    // 🌟 FIX: Masukkan primary_color ke dalam payload agar terbaca oleh Swagger/Backend
     const payloadProfile = {
       name: companyProfile.value.name,
       address: companyProfile.value.address,

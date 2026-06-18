@@ -47,7 +47,7 @@ const toggleDropdown = async (id, event) => {
     const buttonRect = event.currentTarget.getBoundingClientRect();
     dropdownPosition.value = {
       top: `${buttonRect.bottom + window.scrollY + 5}px`,
-      left: `${buttonRect.left + window.scrollX}px` // 🌟 FIX: Mekar kanan
+      left: `${buttonRect.left + window.scrollX}px` 
     };
   }
 };
@@ -79,7 +79,6 @@ const handleSort = (key) => {
   }
 };
 
-// 🌟 FIX: Membuat fungsi sortedData aktif agar perubahan handleSort langsung ngefek di tabel
 const sortedData = computed(() => {
   if (!sortKey.value) return eventData.value; 
 
@@ -458,13 +457,13 @@ onUnmounted(() => {
                 :href="row.location_url"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-[13px] text-gray-500 truncate max-w-[130px] hover:underline"
+                class="text-[13px] text-gray-800 truncate max-w-[130px] hover:underline"
                 :title="row.location_url"
               >{{ row.location_url }}</a>
               <!-- Jika bukan URL valid, tampilkan sebagai teks biasa -->
               <span
                 v-else
-                class="text-[13px] text-gray-500 truncate max-w-[130px]"
+                class="text-[13px] text-gray-800 truncate max-w-[130px]"
                 :title="row.location_url"
               >{{ row.location_url }}</span>
               <button

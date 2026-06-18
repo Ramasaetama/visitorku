@@ -1,3 +1,61 @@
+<script setup>
+import { ref, watch, computed } from 'vue';
+import { updateAdminProfile } from '@/services/adminProfileService';
+import { showToast, showError } from '@/utils/alertHelper';
+
+const props = defineProps({
+  profileData: { type: Object, required: true }
+});
+const emit = defineEmits(['refresh']);
+
+const form = ref({ name: '', email: '', phone_number: '', address: '' });
+const originalForm = ref({ name: '', email: '', phone_number: '', address: '' });
+
+const isSaving = ref(false);
+const validationErrors = ref([]);
+
+const hasChanges = computed(() => {
+  return form.value.name !== originalForm.value.name ||
+         form.value.email !== originalForm.value.email ||
+         form.value.phone_number !== originalForm.value.phone_number ||
+         form.value.address !== originalForm.value.address;
+});
+
+// Pantau jika data dari parent sudah masuk, langsung isi formnya
+watch(() => props.profileData, (newData) => {
+  if(newData) {
+    form.value.name = newData.name || newData.fullname || '';
+    form.value.email = newData.email || '';
+    form.value.phone_number = newData.phone || newData.phone_number || '';
+    form.value.address = newData.address || '';
+
+    originalForm.value = { ...form.value };
+  }
+}, { immediate: true, deep: true });
+
+const save = async () => {
+  isSaving.value = true;
+  validationErrors.value = [];
+  try {
+    await updateAdminProfile(form.value);
+    showToast('Data akun berhasil diperbarui!', 'success');
+    
+    originalForm.value = { ...form.value };
+    
+    emit('refresh'); // Suruh parent ambil data terbaru
+  } catch (error) {
+    if (error.response?.status === 422) {
+      // Tangkap array error dari backend seperti di screenshot Anda
+      validationErrors.value = error.response.data || [{ message: 'Data tidak valid' }];
+    } else {
+      showError(error.response?.data?.message || 'Gagal menyimpan perubahan.');
+    }
+  } finally {
+    isSaving.value = false;
+  }
+};
+</script>
+
 <template>
   <div class="space-y-6 max-w-3xl">
     <div v-if="validationErrors.length > 0" class="bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100">
@@ -44,65 +102,3 @@
     </button>
   </div>
 </template>
-
-<script setup>
-import { ref, watch, computed } from 'vue';
-import { updateAdminProfile } from '@/services/adminProfileService';
-import { showToast, showError } from '@/utils/alertHelper';
-
-const props = defineProps({
-  profileData: { type: Object, required: true }
-});
-const emit = defineEmits(['refresh']);
-
-const form = ref({ name: '', email: '', phone_number: '', address: '' });
-// 🌟 FIX: Buat wadah foto copy data asli
-const originalForm = ref({ name: '', email: '', phone_number: '', address: '' });
-
-const isSaving = ref(false);
-const validationErrors = ref([]);
-
-// 🌟 FIX: Buat detektor perubahan antara form saat ini vs data foto copy
-const hasChanges = computed(() => {
-  return form.value.name !== originalForm.value.name ||
-         form.value.email !== originalForm.value.email ||
-         form.value.phone_number !== originalForm.value.phone_number ||
-         form.value.address !== originalForm.value.address;
-});
-
-// Pantau jika data dari parent sudah masuk, langsung isi formnya
-watch(() => props.profileData, (newData) => {
-  if(newData) {
-    form.value.name = newData.name || newData.fullname || '';
-    form.value.email = newData.email || '';
-    form.value.phone_number = newData.phone || newData.phone_number || '';
-    form.value.address = newData.address || '';
-
-    // 🌟 FIX: Simpan status awal ke foto copy
-    originalForm.value = { ...form.value };
-  }
-}, { immediate: true, deep: true });
-
-const save = async () => {
-  isSaving.value = true;
-  validationErrors.value = [];
-  try {
-    await updateAdminProfile(form.value);
-    showToast('Data akun berhasil diperbarui!', 'success');
-    
-    // 🌟 FIX: Update data asli karena simpan sudah berhasil
-    originalForm.value = { ...form.value };
-    
-    emit('refresh'); // Suruh parent ambil data terbaru
-  } catch (error) {
-    if (error.response?.status === 422) {
-      // Tangkap array error dari backend seperti di screenshot Anda
-      validationErrors.value = error.response.data || [{ message: 'Data tidak valid' }];
-    } else {
-      showError(error.response?.data?.message || 'Gagal menyimpan perubahan.');
-    }
-  } finally {
-    isSaving.value = false;
-  }
-};
-</script>

@@ -1,3 +1,55 @@
+<script setup>
+import { ref, computed } from 'vue';
+import { updateAdminPassword } from '@/services/adminProfileService';
+import { showToast, showError } from '@/utils/alertHelper';
+
+const form = ref({ 
+  current_password: '', 
+  new_password: '', 
+  c_new_password: '' 
+});
+const isSaving = ref(false);
+const validationErrors = ref([]);
+
+const hasChanges = computed(() => {
+  return form.value.current_password !== '' || 
+         form.value.new_password !== '' || 
+         form.value.c_new_password !== '';
+});
+
+const save = async () => {
+  validationErrors.value = [];
+
+  if (form.value.new_password !== form.value.c_new_password) {
+    validationErrors.value = [{ message: "New Password dan Confirm Password tidak sama!" }];
+    return;
+  }
+
+  if (!form.value.current_password || !form.value.new_password) {
+    validationErrors.value = [{ message: "Semua kolom password wajib diisi!" }];
+    return;
+  }
+
+  isSaving.value = true;
+  try {
+    await updateAdminPassword(form.value);
+    showToast('Password berhasil diperbarui!', 'success');
+    
+    // Reset form setelah sukses (tombol otomatis jadi abu-abu lagi)
+    form.value = { current_password: '', new_password: '', c_new_password: '' };
+  } catch (error) {
+    if (error.response?.status === 422) {
+      const errorData = error.response.data;
+      validationErrors.value = errorData.errors || [{ message: errorData.message || 'Validasi gagal' }];
+    } else {
+      showError(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan password.');
+    }
+  } finally {
+    isSaving.value = false;
+  }
+};
+</script>
+
 <template>
   <div class="space-y-6 max-w-3xl">
     <div v-if="validationErrors.length > 0" class="bg-red-50 text-red-600 p-4 rounded-xl text-sm border border-red-100">
@@ -39,56 +91,3 @@
     </button>
   </div>
 </template>
-
-<script setup>
-import { ref, computed } from 'vue';
-import { updateAdminPassword } from '@/services/adminProfileService';
-import { showToast, showError } from '@/utils/alertHelper';
-
-const form = ref({ 
-  current_password: '', 
-  new_password: '', 
-  c_new_password: '' 
-});
-const isSaving = ref(false);
-const validationErrors = ref([]);
-
-// 🌟 FIX: Detektor perubahan (tombol nyala kalau ada ketikan)
-const hasChanges = computed(() => {
-  return form.value.current_password !== '' || 
-         form.value.new_password !== '' || 
-         form.value.c_new_password !== '';
-});
-
-const save = async () => {
-  validationErrors.value = [];
-
-  if (form.value.new_password !== form.value.c_new_password) {
-    validationErrors.value = [{ message: "New Password dan Confirm Password tidak sama!" }];
-    return;
-  }
-
-  if (!form.value.current_password || !form.value.new_password) {
-    validationErrors.value = [{ message: "Semua kolom password wajib diisi!" }];
-    return;
-  }
-
-  isSaving.value = true;
-  try {
-    await updateAdminPassword(form.value);
-    showToast('Password berhasil diperbarui!', 'success');
-    
-    // Reset form setelah sukses (tombol otomatis jadi abu-abu lagi)
-    form.value = { current_password: '', new_password: '', c_new_password: '' };
-  } catch (error) {
-    if (error.response?.status === 422) {
-      const errorData = error.response.data;
-      validationErrors.value = errorData.errors || [{ message: errorData.message || 'Validasi gagal' }];
-    } else {
-      showError(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan password.');
-    }
-  } finally {
-    isSaving.value = false;
-  }
-};
-</script>

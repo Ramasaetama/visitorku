@@ -64,11 +64,11 @@ export default {
     noLatestData: 'Tidak Ada Data Untuk Ditampilkan',
     calculating: 'Menghitung data...',
     table: {
-      name: 'NAMA',
-      purpose: 'TUJUAN',
-      checkIn: 'CHECK IN',
-      checkOut: 'CHECK OUT',
-      face: 'EKSPRESI',
+      name: 'Nama',
+      purpose: 'Tujuan',
+      checkIn: 'Check In',
+      checkOut: 'Check Out',
+      face: 'Ekspresi',
     }
   },
   visitorData: {

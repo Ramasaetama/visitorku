@@ -5,8 +5,8 @@ import { useI18n } from 'vue-i18n';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue';
-import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
-import notfound from '@/assets/notfound.svg'; // 🌟 FIX: Import notfound icon
+import EmptyState from '@/components/common/EmptyState.vue';
+import notfound from '@/assets/notfound.svg'; 
 import { showError } from '@/utils/alertHelper';
 import {
   getEventById,
@@ -39,7 +39,7 @@ const toggleDropdown = async (id, event) => {
     
     dropdownPosition.value = {
       top: `${buttonRect.bottom + window.scrollY + 5}px`,
-      left: `${buttonRect.left + window.scrollX }px` // 🌟 FIX: Mekar Kanan
+      left: `${buttonRect.left + window.scrollX }px` 
     };
   }
 };

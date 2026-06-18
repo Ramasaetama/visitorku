@@ -1,5 +1,4 @@
 <script setup>
-import Sidebar from '@/components/Sidebar.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
@@ -8,11 +7,9 @@ import Toast from '@/components/common/Toast.vue';
 import FormTambahCabang from '@/components/cabang/FormTambahCabang.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
 import notfound from '@/assets/notfound.svg';
-import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
-// 🌟 FIX: Import nextTick ditambahkan di sini
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
 import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
 import { getAllBranches, createBranch, updateBranch, deleteBranch } from '@/services/cabangService';

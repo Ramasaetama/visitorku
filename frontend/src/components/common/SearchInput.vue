@@ -41,7 +41,7 @@ defineEmits(['update:modelValue', 'update:perPage', 'search']);
       <select
         :value="perPage"
         @change="$emit('update:perPage', Number($event.target.value))"
-        class="appearance-none w-[70px] h-9 pl-4 pr-9 bg-white border border-gray-200 rounded-sm text-sm text-gray-700 font-thin focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-all duration-200 cursor-pointer"
+        class="appearance-none w-70px h-9 pl-4 pr-9 bg-white border border-gray-200 rounded-sm text-sm text-gray-700 font-thin focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-all duration-200 cursor-pointer"
       >
         <option :value="5">5</option>
         <option :value="10">10</option>

@@ -163,7 +163,7 @@ const handleLogout = async () => {
           >
             <div
               v-if="isLangDropdownOpen"
-              class="absolute right-0 top-10 w-44 bg-white rounded-sm overflow-hidden border-none z-50"
+              class="absolute right-0 top-10 w-44 bg-white rounded-sm shadow-md overflow-hidden border-none z-50"
               @click.stop
             >
               <div class="px-3 py-2 bg-linear-to-r from-[#FFF8F0] to-[#FFEDD5]">
@@ -176,7 +176,7 @@ const handleLogout = async () => {
                   @click="switchLanguage(lang)"
                   class="w-full flex items-center gap-3 px-4 py-2.5 text-sm transition-all border-none"
                   :class="locale === lang.code
-                    ? 'text-[#F7941D] font-medium bg-[#FEF3E2]'
+                    ? 'text-[#F7941D] font-medium bg-[#FFFFFF]'
                     : 'text-gray-600 font-normal'"
                 >
                   <span class="text-base leading-none">{{ lang.flag }}</span>

@@ -64,11 +64,11 @@ export default {
     noLatestData: 'No Data Available',
     calculating: 'Calculating data...',
     table: {
-      name: 'NAME',
-      purpose: 'PURPOSE',
-      checkIn: 'CHECK IN',
-      checkOut: 'CHECK OUT',
-      face: 'FACE',
+      name: 'Name',
+      purpose: 'Purpose',
+      checkIn: 'Check In',
+      checkOut: 'Check Out',
+      face: 'Face',
     }
   },
   visitorData: {

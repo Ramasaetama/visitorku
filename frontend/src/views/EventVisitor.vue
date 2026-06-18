@@ -95,8 +95,8 @@ const tableColumns = computed(() => [
   { key: 'name',         label: t('eventVisitor.table.name'),         sortable: true  },
   { key: 'email',        label: t('eventVisitor.table.email'),        sortable: true  },
   { key: 'phone_number', label: t('eventVisitor.table.phoneNumber'),  sortable: false },
-  { key: 'check_in',    label: t('eventVisitor.table.checkIn'),      sortable: true  },
-  { key: 'check_out',   label: t('eventVisitor.table.checkOut'),     sortable: true  },
+  { key: 'check_in_at',    label: t('eventVisitor.table.checkIn'),      sortable: true  },
+  { key: 'check_out_at',   label: t('eventVisitor.table.checkOut'),     sortable: true  },
   { key: 'satisfaction', label: t('eventVisitor.table.satisfaction'), sortable: false },
   { key: 'aksi',        label: t('eventVisitor.table.action'),       sortable: false },
 ]);
@@ -115,8 +115,8 @@ const fetchCheckInOutCount = async () => {
   try {
     const res = await getEventCheckInOutCount(eventId.value);
     const data = res.data?.data ?? res.data ?? res;
-    checkInCount.value  = data.check_in  ?? data.checkin  ?? 0;
-    checkOutCount.value = data.check_out ?? data.checkout ?? 0;
+    checkInCount.value  = data.check_in_at  ?? data.checkin  ?? 0;
+    checkOutCount.value = data.check_out_at ?? data.checkout ?? 0;
     totalVisitor.value  = data.total     ?? data.total_visitor ?? 0;
 
   } catch (err) {
@@ -168,8 +168,8 @@ const fetchVisitors = async () => {
       name:         v.name ?? '-',
       email:        v.email ?? '-',
       phone_number: v.phone_number ?? v.phone ?? '-',
-      check_in:     formatDateTime(v.check_in ?? v.checkin_at ?? null),
-      check_out:    formatDateTime(v.check_out ?? v.checkout_at ?? null),
+      check_in_at:     formatDateTime(v.check_in_at ?? v.checkin_at ?? null),
+      check_out_at:    formatDateTime(v.check_out_at ?? v.checkout_at ?? null),
       satisfaction: v.satisfaction,
       raw:          v,
     }));

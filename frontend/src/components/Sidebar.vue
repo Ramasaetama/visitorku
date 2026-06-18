@@ -225,4 +225,9 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  button:focus {
+    outline: none !important;
+    box-shadow: none !important;
+  }
 </style>

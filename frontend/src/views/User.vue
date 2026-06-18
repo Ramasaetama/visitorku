@@ -1,5 +1,4 @@
 <script setup>
-import Sidebar from '@/components/Sidebar.vue';
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import DataTable from '@/components/common/DataTable.vue';
@@ -9,7 +8,6 @@ import FormTambahPengguna from '@/components/pengguna/FormTambahPengguna.vue';
 import FormPermissionPengguna from '@/components/pengguna/FormPermissionPengguna.vue'; 
 import Pagination from '@/components/common/Pagination.vue'; 
 import notfound from '@/assets/notfound.svg';
-import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
 
 import { ref, onMounted, computed, watch, nextTick, onUnmounted } from 'vue';
@@ -41,7 +39,7 @@ watch(searchQuery, (nilaiBaru) => {
 const tableColumns = computed(() => [
   { key: 'name', label: t('userManagement.table.name'), sortable: true },
   { key: 'email', label: t('userManagement.table.email'), sortable: true },
-  { key: 'phone', label: t('userManagement.table.phone'), sortable: true },
+  { key: 'phone_number', label: t('userManagement.table.phone'), sortable: true },
   { key: 'branch_name', label: t('userManagement.table.branch'), sortable: true },
   { key: 'aksi', label: t('userManagement.table.action'), sortable: false },
 ]);
