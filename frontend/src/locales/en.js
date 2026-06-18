@@ -259,6 +259,8 @@ export default {
       action: 'Action',
     },
     modal: {
+      addDesc: 'Enter new visitor information.',
+      editDesc: 'Update visitor information.',
       addTitle: 'Add Event Visitor',
       editTitle: 'Edit Event Visitor',
       namePlaceholder: 'Enter name here...',

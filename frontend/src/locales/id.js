@@ -265,6 +265,8 @@ export default {
       action: 'Aksi',
     },
     modal: {
+      addDesc: 'Masukkan informasi pengunjung baru.',
+      editDesc: 'Perbarui informasi pengunjung.',
       addTitle: 'Tambah Pengunjung Acara',
       editTitle: 'Edit Pengunjung Acara',
       namePlaceholder: 'Masukkan nama di sini...',

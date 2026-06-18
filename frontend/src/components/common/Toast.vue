@@ -96,7 +96,7 @@ const handleClose = () => {
 .toast-container {
   position: fixed;
   bottom: 24px;
-  left: 24px;
+  right: 24px;
   z-index: 9999;
   
   display: flex;

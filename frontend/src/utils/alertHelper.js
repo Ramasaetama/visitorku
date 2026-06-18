@@ -43,32 +43,12 @@ export const confirmAction = async (title, text) => {
 };
 
 // =============================================
-// POPUP ALERT
+// POPUP ALERT — semua muncul sebagai toast di kanan bawah
 // =============================================
 
-export const showSuccess = (pesan) => {
-  Swal.fire('Berhasil!', pesan, 'success');
-};
-
-export const showError = (pesan) => {
-  Swal.fire('Gagal!', pesan, 'error');
-};
-
-export const showWarning = (pesan) => {
-  Swal.fire('Perhatian!', pesan, 'warning');
-};
-
-export const showInfo = (pesan) => {
-  Swal.fire('Informasi', pesan, 'info');
-};
-
-// =============================================
-// TOAST (notifikasi ringan, sudut kanan atas)
-// =============================================
-
-const Toast = Swal.mixin({
+const BottomRightToast = Swal.mixin({
   toast: true,
-  position: 'top-end',
+  position: 'bottom-end',
   showConfirmButton: false,
   showCloseButton: true,
   timer: 3000,
@@ -79,13 +59,33 @@ const Toast = Swal.mixin({
   }
 });
 
+export const showSuccess = (pesan) => {
+  BottomRightToast.fire({ icon: 'success', title: pesan });
+};
+
+export const showError = (pesan) => {
+  BottomRightToast.fire({ icon: 'error', title: pesan });
+};
+
+export const showWarning = (pesan) => {
+  BottomRightToast.fire({ icon: 'warning', title: pesan });
+};
+
+export const showInfo = (pesan) => {
+  BottomRightToast.fire({ icon: 'info', title: pesan });
+};
+
+// =============================================
+// TOAST (notifikasi ringan, sudut kanan bawah)
+// =============================================
+
 /**
- * Tampilkan toast notification (bottom-center, dengan progress bar)
+ * Tampilkan toast notification (bottom-end, dengan progress bar)
  * @param {string} pesan - Pesan yang ditampilkan
  * @param {'success'|'error'|'warning'|'info'} icon - Ikon toast
  */
 export const showToast = (pesan, icon = 'success') => {
-  Toast.fire({
+  BottomRightToast.fire({
     icon: icon,
     title: pesan
   });
