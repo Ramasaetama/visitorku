@@ -291,7 +291,7 @@ const handleCloseToast = () => {
 
                     <button 
                       @click="handleEditPengguna(row)" 
-                      class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#E6F4FF] hover:text-[#008FFB] focus:outline-none transition-colors"
+                      class="w-full text-left px-4 py-2.5 text-[13px] font-medium text-gray-700 hover:bg-[#FEF4E3] hover:text-[#F7941D] focus:outline-none transition-colors"
                     >
                       Edit Data
                     </button>
@@ -363,14 +363,14 @@ const handleCloseToast = () => {
         <button 
           type="button"
           @click="handleCloseModal"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
         >
           {{ t('userManagement.modal.cancel') }}
         </button>
         <button 
           type="submit"
           form="formTambahPengguna"
-          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-sm hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
           {{ editingUser ? t('userManagement.modal.update') : t('userManagement.modal.save') }}
         </button>
@@ -396,14 +396,14 @@ const handleCloseToast = () => {
         <button 
           type="button"
           @click="showPermissionModal = false"
-          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-gray-600 border border-gray-300 rounded-sm hover:bg-gray-50 transition-colors focus:outline-none"
         >
           {{ t('userManagement.permission.cancel') }}
         </button>
         <button 
           type="submit"
           form="formPermissionPengguna"
-          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-lg hover:bg-[#E8850E] transition-colors focus:outline-none"
+          class="px-5 py-2.5 text-sm font-medium text-white bg-[#F7941D] rounded-sm hover:bg-[#E8850E] transition-colors focus:outline-none"
         >
           {{ t('userManagement.permission.save') }}
         </button>

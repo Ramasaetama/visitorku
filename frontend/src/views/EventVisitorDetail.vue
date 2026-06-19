@@ -72,7 +72,7 @@ onMounted(fetchDetail);
                 <path d="M15 19l-7-7 7-7"/>
               </svg>
             </button>
-            <h1 class="text-2xl font-semibold text-gray-800">Visitor Detail</h1>
+            <h1 class="text-xl font-bold text-gray-800">Visitor Detail</h1>
           </div>
         </div>
 
