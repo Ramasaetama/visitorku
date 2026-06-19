@@ -244,6 +244,8 @@ export default {
       notFound: 'Acara Tidak Ditemukan',
       notFoundDesc: 'Tidak ada acara yang cocok dengan kata kunci pencarian.',
     },
+    urlInvalidProtocol: 'URL harus dimulai dengan http:// atau https://.',
+    urlInvalidFormat: 'URL harus dimulai format https://www.example.com'
   },
   eventVisitor: {
     title: 'Pengunjung Acara',
@@ -525,6 +527,25 @@ export default {
       password: 'Kata Sandi',
     },
   },
+  visitorDetail: {
+    title: 'Detail Pengunjung',
+    profile: 'Profil',
+    fields: {
+      fullName: 'Nama Lengkap',
+      email: 'Email',
+      phone: 'No Telepon',
+      notes: 'Catatan',
+    },
+    history: {
+      title: 'Riwayat Check-in',
+      table: {
+        purpose: 'Tujuan',
+        location: 'Lokasi',
+        checkIn: 'Check In',
+        checkOut: 'Check Out',
+      },
+    },
+  },
   report: {
     title: 'Laporan Pengunjung',
     fromDate: 'Dari Tanggal',
@@ -593,6 +614,7 @@ export default {
       notFoundDesc: 'Tidak ada signage yang cocok dengan kata kunci',
     },
     success: {
+      updated: 'Layar Informasi berhasil diperbarui.',
       deleted: 'Layar Informasi berhasil dihapus.',
       created: 'Layar Informasi berhasil dibuat.',
     },
@@ -603,6 +625,9 @@ export default {
       nameRequired: 'Nama layar informasi wajib diisi.',
     },
     create: {
+      editSignage: 'Edit Signage',
+      saving: 'Menyimpan...',
+      saveBtn: 'Simpan Perubahan',
       selectLayout: 'Pilih Layout',
       createSignage: 'Buat Layar Informasi',
       breadcrumbCreate: 'Buat',
