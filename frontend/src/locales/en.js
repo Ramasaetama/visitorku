@@ -225,6 +225,7 @@ export default {
       finishAfterStart: 'Event finish time must be after event start time.',
       regFinishAfterStart: 'Registration finish time must be after registration start time.',
       regStartBeforeEvent: 'Registration start time must be before event start time.',
+      invalidUrl: 'Invalid URL format. Must start with https:// or http://',    
     },
     success: {
       added: 'Event successfully added.',

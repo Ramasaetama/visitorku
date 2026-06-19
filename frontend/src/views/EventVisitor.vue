@@ -169,8 +169,8 @@ const fetchVisitors = async () => {
       name:         v.name ?? '-',
       email:        v.email ?? '-',
       phone_number: v.phone_number ?? v.phone ?? '-',
-      check_in_at:     formatDateTime(v.check_in_at ?? v.checkin_at ?? null),
-      check_out_at:    formatDateTime(v.check_out_at ?? v.checkout_at ?? null),
+      check_in_at:     formatDateTime(v.check_in_at ?? null),
+      check_out_at:    formatDateTime(v.check_out_at ?? null),
       satisfaction: v.satisfaction,
       raw:          v,
     }));
@@ -431,7 +431,6 @@ onMounted(async () => {
 
     <div v-if="satisfactionStats.bad === 0 && satisfactionStats.neutral === 0 && satisfactionStats.good === 0"
       class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
-      No Data
     </div>
 
   </div>
@@ -607,7 +606,7 @@ onMounted(async () => {
         v-model="form.name"
         type="text"
         :placeholder="t('eventVisitor.modal.namePlaceholder')"
-        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
     <div>
@@ -618,7 +617,7 @@ onMounted(async () => {
         v-model="form.email"
         type="email"
         :placeholder="t('eventVisitor.modal.emailPlaceholder')"
-        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
     <div>
@@ -629,7 +628,7 @@ onMounted(async () => {
         v-model="form.phone_number"
         type="text"
         :placeholder="t('eventVisitor.modal.phonePlaceholder')"
-        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
   </div>

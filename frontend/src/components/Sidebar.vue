@@ -136,7 +136,7 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
     <div class="bg-linear-to-br from-[#FFF8F0] to-[#FFEDD5] rounded-sm shadow-[0_2px_8px_rgba(0,0,0,0.06)] p-4 border border-[#FFE4C4]">
       <div class="flex items-center justify-between mb-4">
         <span class="text-[13px] font-semibold text-[#1E293B]">{{ t('sidebar.visitorPackage') }}</span>
-        <div class="flex items-center gap-1 bg-gradient-to-r from-[#FFD893] to-[#F7941D] rounded-sm px-2.5 py-1">          <img :src="starIcon" alt="" class="w-3.5 h-3.5 filter brightness-0 invert" />
+        <div class="flex items-center gap-1 bg-linear-to-r from-[#FFD893] to-[#F7941D] rounded-sm px-2.5 py-1">          <img :src="starIcon" alt="" class="w-3.5 h-3.5 filter brightness-0 invert" />
           <span class="text-[10px] font-semibold text-white">Free</span>
         </div>
       </div>

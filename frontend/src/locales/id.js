@@ -123,7 +123,6 @@ export default {
       notFoundDesc: 'Tidak ada kunjungan yang cocok dengan kata kunci',
     }
   },
-
   companyProfile: {
     title: 'Profil Perusahaan',
     subtitle: 'Kelola informasi profil perusahaan Anda',

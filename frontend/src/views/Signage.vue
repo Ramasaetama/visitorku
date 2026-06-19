@@ -230,7 +230,7 @@ onUnmounted(() => {
             <a 
               :href="row.url" 
               target="_blank" 
-              class="text-black hover:underline"
+              class="text-black"
             >
               {{ row.url }}
             </a>
@@ -241,7 +241,7 @@ onUnmounted(() => {
               
               <button 
                 @click.stop="toggleDropdown(row.id, $event)"
-                class="w-[30px] h-[30px] rounded-sm border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative z-10"
+                class="w-[30px] h-[30px] rounded border border-[#F7941D] flex items-center justify-center text-[#F7941D] hover:bg-[#FEF4E3] transition-colors focus:outline-none relative"
                 title="Opsi"
               >
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
