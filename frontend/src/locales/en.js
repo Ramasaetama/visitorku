@@ -237,6 +237,12 @@ export default {
       generic: 'An error occurred.',
       deleteFailed: 'Failed to delete event.',
     },
+    empty: {
+      noData: 'No Event Data',
+      noDataDesc: 'No event has been created yet. Click the button above to create a new event.',
+      notFound: 'Event Not Found',
+      notFoundDesc: 'No event matches the search keyword.',
+    },
     urlInvalidProtocol: 'URL must start with http:// or https://.',
     urlInvalidFormat: 'URL must be in the format https://www.example.com'
   },
@@ -539,25 +545,6 @@ export default {
       },
     },
   },
-  visitorDetail: {
-    title: 'Detail Pengunjung',
-    profile: 'Profil',
-    fields: {
-      fullName: 'Nama Lengkap',
-      email: 'Email',
-      phone: 'No Telepon',
-      notes: 'Catatan',
-    },
-    history: {
-      title: 'Riwayat Check-in',
-      table: {
-        purpose: 'Tujuan',
-        location: 'Lokasi',
-        checkIn: 'Check In',
-        checkOut: 'Check Out',
-      },
-    },
-  },
   signage: {
     title: 'Signage',
     subtitle: 'Manage and monitor all existing signage data.',
@@ -579,6 +566,7 @@ export default {
       notFoundDesc: 'No signage matches the keyword',
     },
     success: {
+      updated: 'Signage successfully updated.',
       deleted: 'Signage successfully deleted.',
       created: 'Signage successfully created.',
     },
@@ -589,6 +577,9 @@ export default {
       nameRequired: 'Signage name is required.',
     },
     create: {
+      editSignage: 'Edit Signage',
+      saving: 'Saving...',
+      saveBtn: 'Save Changes',
       selectLayout: 'Select Layout',
       createSignage: 'Create Signage',
       breadcrumbCreate: 'Create',

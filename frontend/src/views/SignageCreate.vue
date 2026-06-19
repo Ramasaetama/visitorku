@@ -1,12 +1,17 @@
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { createSignage, uploadSignageFile } from '@/services/signageService';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { createSignage, updateSignage, getSignageById, uploadSignageFile } from '@/services/signageService';
 import { showSuccess, showError } from '@/utils/alertHelper';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
 const router = useRouter();
+const route  = useRoute();
+
+// ─── Edit Mode Detection ──────────────────────────────────────────────────────
+const editId     = computed(() => route.query.edit || null);
+const isEditMode = computed(() => !!editId.value);
 
 // ─── Step Management ──────────────────────────────────────────────────────────
 const currentStep = ref(1); // 1 = Select Layout, 2 = Form
@@ -76,9 +81,7 @@ const selectedLayoutObj = computed(() =>
 const selectLayout = (layoutId) => {
   selectedLayout.value = layoutId;
   currentStep.value = 2;
-  // Reset active panel tab
   activePanel.value = 0;
-  // Reset uploads for all panels
   panelFiles.value = {};
   panelPreviews.value = {};
 };
@@ -88,14 +91,14 @@ const changeLayout = () => {
 };
 
 // ─── Form State ───────────────────────────────────────────────────────────────
-const formName = ref('');
+const formName        = ref('');
 const formRunningText = ref('');
-const isSubmitting = ref(false);
+const isSubmitting    = ref(false);
 
 // ─── Panel / Tab Management ───────────────────────────────────────────────────
-const activePanel = ref(0); // index of active panel (Layout 1, Layout 2, etc.)
-const panelFiles = ref({}); // { panelIndex: File }
-const panelPreviews = ref({}); // { panelIndex: dataURL }
+const activePanel   = ref(0);
+const panelFiles    = ref({});
+const panelPreviews = ref({});
 
 const panelCount = computed(() => {
   if (!selectedLayoutObj.value) return 1;
@@ -107,14 +110,12 @@ const setActivePanel = (index) => {
 };
 
 // ─── File Upload ──────────────────────────────────────────────────────────────
-// ─── File Upload ──────────────────────────────────────────────────────────────
 const fileInputRef = ref(null);
-const isDragging = ref(false);
+const isDragging   = ref(false);
 
-// State untuk Modal Durasi
 const showDurationModal = ref(false);
-const durationInput = ref('60');
-const pendingFile = ref(null);
+const durationInput     = ref('60');
+const pendingFile       = ref(null);
 
 const triggerFileInput = () => {
   fileInputRef.value?.click();
@@ -142,26 +143,21 @@ const handleDrop = (e) => {
   if (file) processFile(file);
 };
 
-// Modifikasi processFile untuk menampilkan Modal jika file adalah gambar
 const processFile = (file) => {
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'video/mp4'];
   if (!validTypes.includes(file.type)) {
     showError(t('signage.error.invalidFormat'));
     return;
   }
-
   if (file.type.startsWith('image/')) {
-    // Tampilkan Modal
-    pendingFile.value = file;
-    durationInput.value = '60'; // Default 60 detik
+    pendingFile.value    = file;
+    durationInput.value  = '60';
     showDurationModal.value = true;
   } else {
-    // Jika Video, langsung proses tanpa durasi input
     finalizeFileProcess(file, null);
   }
 };
 
-// Fungsi yang dipanggil saat tombol OK di modal ditekan
 const confirmDuration = () => {
   if (pendingFile.value) {
     finalizeFileProcess(pendingFile.value, durationInput.value);
@@ -169,19 +165,16 @@ const confirmDuration = () => {
   closeDurationModal();
 };
 
-// Fungsi membatalkan upload
 const closeDurationModal = () => {
   showDurationModal.value = false;
-  pendingFile.value = null;
+  pendingFile.value       = null;
 };
 
-// Logika inti untuk menyimpan file & membuat preview
 const finalizeFileProcess = (file, duration) => {
-  panelFiles.value = { 
-    ...panelFiles.value, 
-    [activePanel.value]: { file: file, duration: duration, type: file.type } 
+  panelFiles.value = {
+    ...panelFiles.value,
+    [activePanel.value]: { file: file, duration: duration, type: file.type },
   };
-  
   const reader = new FileReader();
   reader.onload = (e) => {
     panelPreviews.value = {
@@ -193,16 +186,40 @@ const finalizeFileProcess = (file, duration) => {
 };
 
 const removeFile = (panelIndex) => {
-  const newFiles = { ...panelFiles.value };
+  const newFiles    = { ...panelFiles.value };
   const newPreviews = { ...panelPreviews.value };
   delete newFiles[panelIndex];
   delete newPreviews[panelIndex];
-  panelFiles.value = newFiles;
+  panelFiles.value    = newFiles;
   panelPreviews.value = newPreviews;
 };
 
-// Input Durasi
+// ─── Load Data saat Edit Mode ─────────────────────────────────────────────────
+onMounted(async () => {
+  if (!isEditMode.value) return;
+  try {
+    const res  = await getSignageById(editId.value);
+    const data = res.data?.data || res.data;
 
+    // Pre-fill form fields
+    formName.value        = data.name        || '';
+    formRunningText.value = data.running_text || '';
+
+    // Konversi type dari API ke layout id lokal
+    // API simpan: 'fullscreen', 'split-1-1', 'split-1-2', dll
+    // Local id  : 'fullscreen', '1-1', '1-2', dll
+    let layoutId = data.type || 'fullscreen';
+    if (layoutId.startsWith('split-')) {
+      layoutId = layoutId.replace('split-', '');
+    }
+    selectedLayout.value = layoutId;
+    currentStep.value    = 2;
+    activePanel.value    = 0;
+  } catch (err) {
+    console.error('Gagal load data signage:', err);
+    showError('Gagal memuat data signage untuk diedit');
+  }
+});
 
 // ─── Submit ───────────────────────────────────────────────────────────────────
 const handleSubmit = async () => {
@@ -212,60 +229,65 @@ const handleSubmit = async () => {
   }
   isSubmitting.value = true;
   try {
-    // 1. Upload file ke server/S3
+    // 1. Upload file baru (jika ada)
     const uploadedFilesData = {};
     for (const [panelIndex, data] of Object.entries(panelFiles.value)) {
-      const res = await uploadSignageFile(data.file); 
+      const res          = await uploadSignageFile(data.file);
       const responseData = res.data?.data || res.data;
       uploadedFilesData[panelIndex] = {
-        url: responseData.url || responseData.path || responseData.filename || responseData,
+        url:      responseData.url || responseData.path || responseData.filename || responseData,
         duration: data.duration,
-        type: data.type
+        type:     data.type,
       };
     }
 
-    // 2. Perbaikan Nama Layout
+    // 2. Perbaikan nama layout
     let finalLayoutType = selectedLayout.value;
     if (['1-1', '1-2', '2-1', '1-1-1'].includes(finalLayoutType)) {
       finalLayoutType = 'split-' + finalLayoutType;
     }
 
-    // 3. Format Array ke bentuk Multidimensi
+    // 3. Format files array
     const formattedFiles = [];
-    const panelLength = selectedLayoutObj.value.panels.length;
-    
-    // Memaksa array berisi 3 elemen untuk semua layout split
+    const panelLength    = selectedLayoutObj.value.panels.length;
     const requiredLength = finalLayoutType === 'fullscreen' ? 1 : 3;
 
     for (let i = 0; i < requiredLength; i++) {
       if (i < panelLength && uploadedFilesData[i]) {
         formattedFiles.push([
           {
-            id: Math.random().toString(36).substring(2, 12),
-            type: uploadedFilesData[i].type.startsWith('image/') ? 'image' : 'video',
-            url: uploadedFilesData[i].url,
-            duration: uploadedFilesData[i].duration || "0"
-          }
+            id:       Math.random().toString(36).substring(2, 12),
+            type:     uploadedFilesData[i].type.startsWith('image/') ? 'image' : 'video',
+            url:      uploadedFilesData[i].url,
+            duration: uploadedFilesData[i].duration || '0',
+          },
         ]);
       } else {
-        // PERBAIKAN FINAL: Kirim array kosong "[]" murni sesuai permintaan Backend!
-        formattedFiles.push([]); 
+        formattedFiles.push([]);
       }
     }
 
-    // 4. Kirim Payload ke API
+    // 4. Kirim ke API — beda endpoint untuk create vs update
     const payload = {
-      name: formName.value.trim(),
+      name:         formName.value.trim(),
       running_text: formRunningText.value.trim(),
-      type: finalLayoutType,      
-      files: formattedFiles,      
+      type:         finalLayoutType,
+      files:        formattedFiles,
     };
-    
-    await createSignage(payload);
-    showSuccess(t('signage.success.created'));
+
+    if (isEditMode.value) {
+      // ✅ UPDATE — pakai PUT /admin/signage/:id
+      await updateSignage(editId.value, payload);
+      showSuccess(t('signage.success.updated'));
+    } else {
+      // ✅ CREATE — pakai POST /admin/signage
+      await createSignage(payload);
+      showSuccess(t('signage.success.created'));
+    }
+
     router.push('/layar-informasi');
   } catch (err) {
-    console.error('Gagal membuat signage:', err);
+    console.error('Gagal menyimpan signage:', err);
     showError(err.response?.data?.message || t('signage.error.createFailed'));
   } finally {
     isSubmitting.value = false;
@@ -294,11 +316,15 @@ const goBack = () => {
                   </svg>
                 </button>
                 <h1 class="text-xl font-semibold text-gray-800">
-                  {{ currentStep === 1 ? t('signage.create.selectLayout') : t('signage.create.createSignage') }}
+                  {{
+                    currentStep === 1
+                      ? t('signage.create.selectLayout')
+                      : isEditMode
+                        ? t('signage.create.editSignage')
+                        : t('signage.create.createSignage')
+                  }}
                 </h1>
               </div>
-
-              
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
@@ -412,7 +438,6 @@ const goBack = () => {
 
               <!-- File Upload Area -->
               <div class="mb-6">
-                <!-- Wrapper-->
                 <div
                   class="p-[10px] gap-2 w-full border border-[#F7941D]/40 min-h-[80px] flex flex-wrap justify-start items-start text-[#F7941D]"
                   :class="activePanel === 0 ? 'rounded-sm rounded-tl-none' : 'rounded-sm rounded-tr-none'"
@@ -421,14 +446,12 @@ const goBack = () => {
                 <!-- Show preview if file uploaded for this panel -->
                 <div v-if="panelPreviews[activePanel]" class="relative">
                   <div class="border-2 border-dashed border-[#F7941D] rounded-sm overflow-hidden bg-gray-50">
-                    <!-- Image preview -->
                     <img
                       v-if="panelPreviews[activePanel].type.startsWith('image/')"
                       :src="panelPreviews[activePanel].url"
                       alt="Preview"
                       class="w-full max-h-[200px] object-contain"
                     />
-                    <!-- Video preview -->
                     <video
                       v-else
                       :src="panelPreviews[activePanel].url"
@@ -436,7 +459,6 @@ const goBack = () => {
                       controls
                     ></video>
                   </div>
-                  <!-- Remove button -->
                   <button
                     @click="removeFile(activePanel)"
                     class="absolute top-2 right-2 w-7 h-7 flex items-center justify-center bg-red-500 text-white rounded-sm
@@ -456,12 +478,10 @@ const goBack = () => {
                   @dragleave="handleDragLeave"
                   @drop="handleDrop"
                   class="border-2 border-dashed rounded-sm p-6 cursor-pointer transition-all flex flex-col items-center justify-center max-w-[200px] min-h-[160px]"
-
                   :class="isDragging
                     ? 'border-[#F7941D] bg-[#FCEBCF]'
                     : 'border-[#F7941D]/50 bg-[#FFFAF5] hover:border-[#F7941D] hover:bg-[#FCEBCF]'"
                 >
-                  <!-- Camera Icon -->
                   <div class="w-14 h-14 flex items-center justify-center bg-white rounded-sm shadow-sm mb-3">
                     <svg class="w-8 h-8 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -502,9 +522,11 @@ const goBack = () => {
                       <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                     </svg>
-                    {{ t('signage.create.creating') }}
+                    {{ isEditMode ? t('signage.create.saving') : t('signage.create.creating') }}
                   </span>
-                  <span v-else>{{ t('signage.create.createBtn') }}</span>
+                  <span v-else>
+                    {{ isEditMode ? t('signage.create.saveBtn') : t('signage.create.createBtn') }}
+                  </span>
                 </button>
               </div>
             </div>
