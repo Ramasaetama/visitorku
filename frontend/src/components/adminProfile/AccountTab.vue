@@ -100,4 +100,5 @@ const save = async () => {
       </svg>
       {{ isSaving ? 'Saving...' : 'Save Changes' }}
     </button>
+  </div>
 </template>
