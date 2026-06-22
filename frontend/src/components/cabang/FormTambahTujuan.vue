@@ -154,9 +154,13 @@ const cancelForm = () => {
       </label>
       <input 
         v-model="formData.phoneNumber"
-        type="tel"
+        type="text"
+        inputmode="numeric"
         required
         placeholder="Contoh: 0812 3456 7890"
+        autocomplete="off"
+        @keydown="(e) => { if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab|Home|End/.test(e.key)) e.preventDefault(); }"
+        @input="(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); formData.phoneNumber = e.target.value; }"
         class="w-full px-4 py-3 border-2 border-gray-200 rounded-sm text-sm
                placeholder-gray-400 
                focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]

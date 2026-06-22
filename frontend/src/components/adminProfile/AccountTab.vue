@@ -48,7 +48,7 @@
 <script setup>
 import { ref, watch, computed } from 'vue';
 import { updateAdminProfile } from '@/services/adminProfileService';
-import { showToast, showError } from '@/utils/alertHelper';
+import { showToast, showError, parseApiError } from '@/utils/alertHelper';
 
 const props = defineProps({
   profileData: { type: Object, required: true }
@@ -99,7 +99,7 @@ const save = async () => {
       // Tangkap array error dari backend seperti di screenshot Anda
       validationErrors.value = error.response.data || [{ message: 'Data tidak valid' }];
     } else {
-      showError(error.response?.data?.message || 'Gagal menyimpan perubahan.');
+      showError(parseApiError(error, 'Gagal menyimpan perubahan.'));
     }
   } finally {
     isSaving.value = false;

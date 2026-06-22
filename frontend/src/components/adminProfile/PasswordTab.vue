@@ -43,7 +43,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { updateAdminPassword } from '@/services/adminProfileService';
-import { showToast, showError } from '@/utils/alertHelper';
+import { showToast, showError, parseApiError } from '@/utils/alertHelper';
 
 const form = ref({ 
   current_password: '', 
@@ -85,7 +85,7 @@ const save = async () => {
       const errorData = error.response.data;
       validationErrors.value = errorData.errors || [{ message: errorData.message || 'Validasi gagal' }];
     } else {
-      showError(error.response?.data?.message || 'Terjadi kesalahan saat menyimpan password.');
+      showError(parseApiError(error, 'Terjadi kesalahan saat menyimpan password.'));
     }
   } finally {
     isSaving.value = false;

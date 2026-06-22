@@ -10,7 +10,7 @@ import notfound from '@/assets/notfound.svg';
 
 import { ref, onMounted, computed, watch, nextTick } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
+import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/alertHelper'; 
 import { getCategories, getBranches, createCategory, updateCategory, deleteCategory } from '@/services/tujuanService';
 
 const { t } = useI18n();
@@ -209,7 +209,7 @@ const handleDeleteTujuan = async (row) => {
       fetchDataTujuan();
     } catch (error) {
       console.error('Gagal menghapus data:', error);
-      showError(error.response?.data?.message || t('purpose.error.deleteFailed'));
+      showError(parseApiError(error, t('purpose.error.deleteFailed')));
     } finally {
       isLoading.value = false;
     }
@@ -245,7 +245,7 @@ const handleSubmitTujuan = async (formData) => {
 
   } catch (error) {
     console.log('Detail Penolakan Backend:', error.response?.data);
-    toastMessage.value = error.response?.data?.message || 'Terjadi kesalahan saat menyimpan data.';
+    toastMessage.value = parseApiError(error, 'Terjadi kesalahan saat menyimpan data.');
     showToast.value = true;
   } finally {
     isLoading.value = false; 

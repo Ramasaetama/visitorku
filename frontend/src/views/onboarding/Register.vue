@@ -42,11 +42,13 @@
         Mulai dengan mengisi data perusahaan untuk membuat akun VisitorKu.
       </p>
 
-      <form @submit.prevent="nextStep" class="space-y-6 form-custom-label" @focusin="isFormFocused = true" @focusout="isFormFocused = false">
+      <form @submit.prevent="nextStep" class="space-y-6 form-custom-label" autocomplete="off" @focusin="isFormFocused = true" @focusout="isFormFocused = false">
         <Input
           v-model="form.companyName"
           label="Nama Perusahaan"
           placeholder="Contoh: PT Media Sarana Data"
+          autocomplete="off"
+          name="company-name"
           required
         />
 
@@ -96,11 +98,17 @@
         Data ini akan digunakan sebagai akun utama (admin) untuk mengelola VisitorKu.
       </p>
 
-      <form @submit.prevent="submitRegister" class="space-y-5 form-custom-label">
+      <form @submit.prevent="submitRegister" class="space-y-5 form-custom-label" autocomplete="off">
+        <!-- Dummy inputs untuk menyerap autofill kredensial browser -->
+        <input type="text" name="username" autocomplete="username" style="display:none;" aria-hidden="true" tabindex="-1" />
+        <input type="password" name="password" autocomplete="current-password" style="display:none;" aria-hidden="true" tabindex="-1" />
+
         <Input
           v-model="form.adminName"
           label="Nama Lengkap"
           placeholder="Contoh: Andi Pratama"
+          autocomplete="off"
+          name="display-name"
           required
         />
 
@@ -109,15 +117,21 @@
           label="Alamat Email"
           type="email"
           placeholder="Contoh: andi@perusahaan.com"
+          autocomplete="off"
+          name="admin-email"
           required
         />
 
         <Input
           v-model="form.adminPhone"
           label="Nomor Telepon"
-          type="tel"
+          type="text"
+          inputmode="numeric"
           placeholder="Contoh: 0812 3456 7890"
+          autocomplete="off"
           required
+          @keydown="(e) => { if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab|Home|End/.test(e.key)) e.preventDefault(); }"
+          @input="(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); form.adminPhone = e.target.value; }"
         />
 
         <Textarea
@@ -139,6 +153,8 @@
           v-model="form.password"
           label="Buat Password"
           placeholder="Enter your password"
+          autocomplete="new-password"
+          name="new-password"
           required
         />
 
@@ -146,6 +162,8 @@
           v-model="form.confirmPassword"
           label="Re-enter Password"
           placeholder="Re-enter your password"
+          autocomplete="new-password"
+          name="confirm-password"
           required
           :error="passwordError"
         />
@@ -199,7 +217,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { showError } from '@/utils/alertHelper'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../../components/layout'
@@ -234,6 +252,19 @@ const form = ref({
 
 const step1IsValid = computed(() => {
   return form.value.companyName.trim() !== '' && form.value.companyAddress.trim() !== ''
+})
+
+// Cegah browser autofill mengisi field nama/email/password secara otomatis
+onMounted(() => {
+  nextTick(() => {
+    setTimeout(() => {
+      form.value.companyName = ''
+      form.value.adminName = ''
+      form.value.adminEmail = ''
+      form.value.password = ''
+      form.value.confirmPassword = ''
+    }, 50)
+  })
 })
 
 watch(() => form.value.sameAddress, (val) => {

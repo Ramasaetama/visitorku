@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { createSignage, updateSignage, getSignageById, uploadSignageFile } from '@/services/signageService';
-import { showSuccess, showError } from '@/utils/alertHelper';
+import { showSuccess, showError, parseApiError } from '@/utils/alertHelper';
 import { useI18n } from 'vue-i18n';
 
 const { t } = useI18n();
@@ -288,7 +288,7 @@ const handleSubmit = async () => {
     router.push('/layar-informasi');
   } catch (err) {
     console.error('Gagal menyimpan signage:', err);
-    showError(err.response?.data?.message || t('signage.error.createFailed'));
+    showError(parseApiError(err, t('signage.error.createFailed')));
   } finally {
     isSubmitting.value = false;
   }

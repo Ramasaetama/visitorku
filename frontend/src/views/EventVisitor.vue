@@ -6,7 +6,7 @@ import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
 import Modal from '@/components/common/Modal.vue';
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
+import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/alertHelper';
 
 import {
   getEventSatisfaction,
@@ -221,10 +221,27 @@ const editingId = ref(null);
 
 const form = ref({ name: '', email: '', phone_number: '' });
 
+// ─── Custom Event Form Fields (dari eventInfo.forms) ─────────────────────────
+const eventFormFields   = ref([]);
+const customFieldValues = ref({});
+
+const loadEventFormFields = () => {
+  const forms = eventInfo.value?.forms ?? [];
+  eventFormFields.value = forms.map(f => ({
+    field:    f.field ?? '',
+    name:     f.name  ?? '',
+    type:     f.type  ?? 'text',
+    required: !!f.required,
+    options:  f.options ?? [],
+  }));
+};
+
 const openAddModal = () => {
   isEdit.value    = false;
   editingId.value = null;
   form.value      = { name: '', email: '', phone_number: '' };
+  loadEventFormFields();
+  customFieldValues.value = Object.fromEntries(eventFormFields.value.map(f => [f.field, '']));
   showModal.value = true;
 };
 
@@ -237,6 +254,10 @@ const openEditModal = (row) => {
     email:        row.email,
     phone_number: row.phone_number,
   };
+  loadEventFormFields();
+  customFieldValues.value = Object.fromEntries(
+    eventFormFields.value.map(f => [f.field, row.raw?.[f.field] ?? ''])
+  );
   showModal.value = true;
 };
 
@@ -247,9 +268,20 @@ const handleSubmit = async () => {
     showError(t('eventVisitor.error.requiredFields'));
     return;
   }
+  // validasi required custom fields
+  for (const f of eventFormFields.value) {
+    if (f.required && !customFieldValues.value[f.field]) {
+      showError(`Field "${f.name}" wajib diisi.`);
+      return;
+    }
+  }
   isSaving.value = true;
   try {
-    const payload = { ...form.value, event_id: eventId.value };
+    const payload = {
+      ...form.value,
+      event_id: eventId.value,
+      ...customFieldValues.value,
+    };
     if (isEdit.value) {
       await updateEventVisitor(editingId.value, payload);
       showSuccess(t('eventVisitor.success.updated'));
@@ -261,7 +293,7 @@ const handleSubmit = async () => {
     await fetchVisitors();
     await fetchCheckInOutCount();
   } catch (err) {
-    showError(err.response?.data?.message || t('eventVisitor.error.generic'));
+    showError(parseApiError(err, t('eventVisitor.error.generic')));
   } finally {
     isSaving.value = false;
   }
@@ -278,7 +310,7 @@ const handleDelete = async (row) => {
     await fetchVisitors();
     await fetchCheckInOutCount();
   } catch (err) {
-    showError(err.response?.data?.message || t('eventVisitor.error.deleteFailed'));
+    showError(parseApiError(err, t('eventVisitor.error.deleteFailed')));
   }
 };
 
@@ -294,7 +326,7 @@ const handleFinish = async () => {
     showFinishModal.value = false;
     await fetchEventInfo();
   } catch (err) {
-    showError(err.response?.data?.message || t('eventVisitor.error.finishFailed'));
+    showError(parseApiError(err, t('eventVisitor.error.finishFailed')));
   } finally {
     isFinishing.value = false;
   }
@@ -628,10 +660,62 @@ onMounted(async () => {
       <input
         v-model="form.phone_number"
         type="text"
+        inputmode="numeric"
         :placeholder="t('eventVisitor.modal.phonePlaceholder')"
+        autocomplete="off"
+        @keydown="(e) => { if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab|Home|End/.test(e.key)) e.preventDefault(); }"
+        @input="(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); form.phone_number = e.target.value; }"
         class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
+
+    <!-- Dynamic Custom Fields dari EventSetting (forms) -->
+    <template v-for="f in eventFormFields" :key="f.field">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1.5">
+          {{ f.name }}
+          <span v-if="f.required" class="text-red-500">*</span>
+        </label>
+
+        <!-- text -->
+        <input
+          v-if="f.type === 'text'"
+          v-model="customFieldValues[f.field]"
+          type="text"
+          :placeholder="f.name"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        />
+
+        <!-- select -->
+        <select
+          v-else-if="f.type === 'select'"
+          v-model="customFieldValues[f.field]"
+          class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        >
+          <option value="">-- Pilih {{ f.name }} --</option>
+          <option v-for="opt in f.options" :key="opt" :value="opt">{{ opt }}</option>
+        </select>
+
+        <!-- radio -->
+        <div v-else-if="f.type === 'radio'" class="flex flex-wrap gap-4 mt-1">
+          <label
+            v-for="opt in f.options"
+            :key="opt"
+            class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer"
+          >
+            <input
+              type="radio"
+              :name="f.field"
+              :value="opt"
+              v-model="customFieldValues[f.field]"
+              class="accent-[#F7941D]"
+            />
+            {{ opt }}
+          </label>
+        </div>
+      </div>
+    </template>
+
   </div>
 
   <template #footer>

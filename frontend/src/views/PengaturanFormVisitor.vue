@@ -10,7 +10,7 @@ import customFieldIcon from '@/assets/icons/customField.svg';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
 
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
+import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/alertHelper';
 import { getAdditionalData, updateAdditionalData } 
   from '@/services/pengaturanFormService'
 
@@ -217,7 +217,7 @@ const deleteField = async (index) => {
 
     } catch (error) {
       console.error('Gagal menghapus field:', error);
-      showError(error.response?.data?.message || 'Gagal menghapus field karena kesalahan sistem.');
+      showError(parseApiError(error, 'Gagal menghapus field karena kesalahan sistem.'));
     }
   }
 };

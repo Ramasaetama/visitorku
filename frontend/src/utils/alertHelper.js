@@ -43,6 +43,74 @@ export const confirmAction = async (title, text) => {
 };
 
 // =============================================
+// PARSER ERROR API — ekstrak pesan spesifik dari backend
+// =============================================
+
+/**
+ * Mem-parse error dari Axios menjadi pesan yang informatif.
+ * Mendukung berbagai format response backend:
+ * - { message: "...", errors: { field: ["msg"] } }
+ * - { errors: { field: "msg" } }
+ * - { message: "..." }
+ *
+ * @param {Error} error - Error object dari Axios catch block
+ * @param {string} fallback - Pesan default jika tidak ada detail
+ * @returns {string}
+ */
+export const parseApiError = (error, fallback = 'Terjadi kesalahan. Silakan coba lagi.') => {
+  const data = error?.response?.data;
+
+  if (!data) {
+    if (error?.request) return 'Gagal terhubung ke server. Periksa koneksi internet Anda.';
+    return fallback;
+  }
+
+  // Helper: ubah nilai apapun menjadi string yang bermakna
+  const extractString = (val) => {
+    if (!val && val !== 0) return null;
+    if (typeof val === 'string') return val;
+    if (Array.isArray(val)) {
+      const found = val.map(extractString).filter(Boolean);
+      return found[0] || null;
+    }
+    if (typeof val === 'object') {
+      // Coba ambil properti umum dulu
+      return val.message || val.msg || val.error || val.detail
+        || Object.values(val).map(extractString).filter(Boolean)[0]
+        || null;
+    }
+    return String(val);
+  };
+
+  // Prioritas: ekstrak dari errors object (validasi per-field)
+  if (data.errors && typeof data.errors === 'object' && !Array.isArray(data.errors)) {
+    const messages = Object.values(data.errors)
+      .map(extractString)
+      .filter(Boolean);
+    if (messages.length > 0) return messages[0];
+  }
+
+  // errors sebagai array langsung
+  if (Array.isArray(data.errors) && data.errors.length > 0) {
+    const msg = extractString(data.errors[0]);
+    if (msg) return msg;
+  }
+
+  // message bukan generik
+  if (data.message && typeof data.message === 'string'
+      && data.message.toLowerCase() !== 'validation error') {
+    return data.message;
+  }
+
+  // Fallback ke field lain
+  const alt = extractString(data.error || data.msg);
+  if (alt) return alt;
+
+  return fallback;
+};
+
+
+// =============================================
 // POPUP ALERT — semua muncul sebagai toast di kanan bawah
 // =============================================
 
@@ -74,10 +142,6 @@ export const showWarning = (pesan) => {
 export const showInfo = (pesan) => {
   BottomRightToast.fire({ icon: 'info', title: pesan });
 };
-
-// =============================================
-// TOAST (notifikasi ringan, sudut kanan bawah)
-// =============================================
 
 /**
  * Tampilkan toast notification (bottom-end, dengan progress bar)

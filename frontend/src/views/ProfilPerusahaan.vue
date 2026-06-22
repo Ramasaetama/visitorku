@@ -353,7 +353,7 @@ button:focus {
 </style>
 
 <script setup>
-import { confirmDelete, showSuccess, showError, showWarning, showToast } from '@/utils/alertHelper'; 
+import { confirmDelete, showSuccess, showError, showWarning, showToast, parseApiError } from '@/utils/alertHelper'; 
 import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { themeState } from '@/utils/ThemeState'; 
@@ -585,13 +585,7 @@ const saveProfile = async () => {
   } catch (error) {
     console.error('Gagal menyimpan profil perusahaan:', error);
     
-    const errorData = error.response?.data;
-    if (error.response?.status === 422) {
-      const pesanValidasi = errorData.errors ? JSON.stringify(errorData.errors, null, 2) : errorData.message;
-      showError('Gagal Disimpan! Backend menolak karena: ' + pesanValidasi);
-    } else {
-      showError(errorData?.message || 'Terjadi kesalahan saat menyimpan perubahan.');
-    }
+    showError(parseApiError(error, 'Terjadi kesalahan saat menyimpan perubahan.'));
   } finally {
     isSaving.value = false;
   }
@@ -642,7 +636,7 @@ const processGenerate = async () => {
     });
   } catch (error) {
     showLoadingModal.value = false;
-    showError(error.response?.data?.message || 'Terjadi kesalahan saat membuat API Token');
+    showError(parseApiError(error, 'Terjadi kesalahan saat membuat API Token'));
   }
 };
 
@@ -723,7 +717,7 @@ const deleteToken = async (id, index) => {
       showSuccess('API Token berhasil dihapus dari server!');
       
     } catch (error) {
-      showError(error.response?.data?.message || 'Terjadi kesalahan saat mencoba menghapus token.');
+      showError(parseApiError(error, 'Terjadi kesalahan saat mencoba menghapus token.'));
     }
   }
 };

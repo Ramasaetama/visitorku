@@ -13,7 +13,7 @@ import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
 
 import { ref, onMounted, computed, watch, nextTick, onUnmounted } from 'vue';
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper'; 
+import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/alertHelper'; 
 import { getAllUsers, createUser, updateUser, deleteUser, updateUserPermission } from '@/services/userService';
 import { getAllBranches } from '@/services/cabangService';
 
@@ -171,7 +171,7 @@ const handleSubmitPengguna = async (formData) => {
     handleCloseModal();
     await fetchAllData();
   } catch (error) {
-    showError(error.response?.data?.message || t('userManagement.error.generic'));
+    showError(parseApiError(error, t('userManagement.error.generic')));
   }
 };
 
@@ -205,7 +205,7 @@ const handleSubmitPermission = async (data) => {
     showPermissionModal.value = false;
     await fetchAllData();
   } catch (error) {
-    showError(error.response?.data?.message || t('userManagement.error.permissionFailed'));
+    showError(parseApiError(error, t('userManagement.error.permissionFailed')));
   }
 };
 
@@ -218,7 +218,7 @@ const handleDeletePengguna = async (row) => {
       showSuccess(t('userManagement.success.deleted'));
       await fetchAllData(); 
     } catch (error) {
-      showError(error.response?.data?.message || t('userManagement.error.deleteFailed'));
+      showError(parseApiError(error, t('userManagement.error.deleteFailed')));
     }
   }
 };

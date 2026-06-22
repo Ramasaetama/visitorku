@@ -14,7 +14,7 @@ const { t } = useI18n();
 
 // 🌟 FIX: Import nextTick ditambahkan di sini
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue';
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
+import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/alertHelper';
 import { getAllBranches, createBranch, updateBranch, deleteBranch } from '@/services/cabangService';
 
 const searchQuery = ref('');
@@ -153,9 +153,7 @@ const handleSubmitCabang = async (formData) => {
 
     await fetchBranches();
   } catch (error) {
-    console.error('Gagal menyimpan cabang:', error);
-    const backendMessage = error.response?.data?.message || error.response?.data?.error;
-    toastMessage.value = backendMessage || (editingBranch.value ? t('branch.error.updateFailed') : t('branch.error.addFailed'));
+    toastMessage.value = parseApiError(error, editingBranch.value ? t('branch.error.updateFailed') : t('branch.error.addFailed'));
     showToast.value = true;
   }
 };
@@ -216,7 +214,7 @@ const handleDeleteCabang = async (row) => {
       showSuccess(t('branch.success.deleted'));
       await fetchBranches(); 
     } catch (error) {
-      showError(error.response?.data?.message || t('branch.error.deleteFailed'));
+      showError(parseApiError(error, t('branch.error.deleteFailed')));
     }
   }
 };

@@ -48,22 +48,32 @@ const profileData = ref({
 });
 
 const fetchCompanyTheme = async () => {
+  const token = sessionStorage.getItem('token');
+  if (!token) return;
   try {
     const response = await getProfile();
     const companyData = response.data || response;
     
-    if (companyData.primary_color || companyData.primary_color) {
-      themeState.primaryColor = companyData.primary_color || companyData.primary_color;
+    if (companyData.primary_color) {
+      themeState.primaryColor = companyData.primary_color;
     }
     if (companyData.background_url || companyData.background) {
       themeState.headerBg = companyData.background_url || companyData.background;
     }
   } catch (error) {
-    console.error('Gagal memuat tema perusahaan:', error);
+    if (error.response?.status === 401) {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('auth_user');
+      router.push('/login');
+    } else {
+      console.error('Gagal memuat tema perusahaan:', error);
+    }
   }
 };
 
 const fetchProfileData = async () => {
+  const token = sessionStorage.getItem('token');
+  if (!token) return;
   try {
     const response = await getAdminProfile();
     const adminData = response.data || response;
@@ -75,7 +85,13 @@ const fetchProfileData = async () => {
       profilePict: adminData.profile_picture || adminData.avatar || adminData.picture || null
     };
   } catch (error) {
-    console.error('Gagal memuat data di Topbar:', error);
+    if (error.response?.status === 401) {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('auth_user');
+      router.push('/login');
+    } else {
+      console.error('Gagal memuat data di Topbar:', error);
+    }
   }
 };
 

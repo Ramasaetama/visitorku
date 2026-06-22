@@ -30,6 +30,14 @@ export const getEventCheckInOutCount = (id) => {
   return api.get(`/admin/event/${id}/check-in-out-count`);
 };
 
+export const updateEventForm = (id, payload) => {
+  return api.put(`/admin/event/${id}/update-form`, payload);
+};
+
+export const updateEventFormFeedback = (id, payload) => {
+  return api.put(`/admin/event/${id}/update-form-feedback`, payload);
+};
+
 export const downloadEventExcel = (eventId) => {
   return api.get(`/admin/event/download/${eventId}/event-excel`, {
     responseType: 'blob',

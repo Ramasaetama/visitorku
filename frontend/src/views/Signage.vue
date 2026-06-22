@@ -9,7 +9,7 @@ import Pagination from '@/components/common/Pagination.vue';
 import notfound from '@/assets/notfound.svg';
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
+import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/alertHelper';
 import {
   getAllSignages,
   deleteSignage,
@@ -164,7 +164,7 @@ const handleDelete = async (row) => {
     showSuccess(t('signage.success.deleted'));
     await fetchSignages();
   } catch (err) {
-    showError(err.response?.data?.message || t('signage.error.deleteFailed'));
+    showError(parseApiError(err, t('signage.error.deleteFailed')));
   }
 };
 

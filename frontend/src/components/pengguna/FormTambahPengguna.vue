@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, onMounted, nextTick } from 'vue';
 
 const props = defineProps({
   initialData: {
@@ -52,6 +52,21 @@ const resetForm = () => {
   passwordError.value = '';
 };
 
+// Cegah browser autofill mengisi field nama saat mode Tambah
+onMounted(() => {
+  if (!props.initialData) {
+    // Browser autofill terjadi sesaat setelah mount, bersihkan dengan delay kecil
+    nextTick(() => {
+      setTimeout(() => {
+        if (!props.initialData) {
+          formData.name = '';
+          formData.email = '';
+        }
+      }, 50);
+    });
+  }
+});
+
 const handleSubmit = async () => {
   passwordError.value = '';
 
@@ -100,13 +115,18 @@ defineExpose({ resetForm });
 </script>
 
 <template>
-  <form id="formTambahPengguna" @submit.prevent="handleSubmit" class="space-y-4">
+  <form id="formTambahPengguna" @submit.prevent="handleSubmit" class="space-y-4" autocomplete="off">
+    <!-- Dummy inputs to absorb browser credential autofill -->
+    <input type="text" name="username" autocomplete="username" style="display:none;" aria-hidden="true" tabindex="-1" />
+    <input type="password" name="password" autocomplete="current-password" style="display:none;" aria-hidden="true" tabindex="-1" />
     
     <div>
       <label class="block text-sm font-medium text-gray-700 mb-1.5">Nama Pengguna<span class="text-red-500">*</span></label>
       <input 
         v-model="formData.name"
         type="text" required
+        autocomplete="off"
+        name="display-name"
         placeholder="Contoh: Budi Santoso"
         class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
       />
@@ -126,8 +146,13 @@ defineExpose({ resetForm });
         <label class="block text-sm font-medium text-gray-700 mb-1.5">Nomor Telepon<span class="text-red-500">*</span></label>
         <input 
           v-model="formData.phone_number"
-          type="tel" required
+          type="text"
+          inputmode="numeric"
+          required
           placeholder="Contoh: 08123456789"
+          autocomplete="off"
+          @keydown="(e) => { if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab|Home|End/.test(e.key)) e.preventDefault(); }"
+          @input="(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); formData.phone_number = e.target.value; }"
           class="w-full px-4 py-2.5 border-2 border-gray-200 rounded-sm text-sm placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D] transition-colors"
         />
       </div>

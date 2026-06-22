@@ -2,8 +2,8 @@
 import { ref, computed, onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRoute, useRouter } from 'vue-router'; 
-import { showSuccess, showError, confirmDelete } from '@/utils/alertHelper';
-import { getEventById } from '@/services/eventService';
+import { showSuccess, showError, confirmDelete, parseApiError } from '@/utils/alertHelper';
+import { getEventById,updateEventForm, updateEventFormFeedback } from '@/services/eventService';
 
 import EmptyState from '@/components/common/EmptyState.vue'; 
 import notfound from '@/assets/notfound.svg';
@@ -31,29 +31,25 @@ const fetchEventInfo = async () => {
 const activeTab = ref('register'); // 'register' | 'feedback'
 
 // ─── Field Type Options ───────────────────────────────────────────────────────
-const fieldTypeOptions = ['Text', 'Number', 'Email', 'Phone', 'Textarea', 'Date'];
+const fieldTypeOptions = ['text', 'select', 'radio'];
 
 // ─── Register Fields ──────────────────────────────────────────────────────────
 const registerFields = ref([]);
-const registerSettingId = ref(null);
 const isLoadingRegister = ref(false);
 const isSavingRegister  = ref(false);
 
 const fetchRegisterFields = async () => {
   isLoadingRegister.value = true;
   try {
-    const res = await api.get(`/admin/event/${eventId.value}/form`);
-    const data = res.data?.data ?? res.data ?? res;
-    registerSettingId.value = data.id ?? null;
-    const raw = Array.isArray(data) ? data : (data.forms ?? data.fields ?? []);
-    registerFields.value = raw.map(f => ({
-      name:     f.name ?? f.field ?? '',
-      type:     capitalize(f.type ?? 'Text'),
+    const res = await getEventById(eventId.value);
+    const data = res.data?.data ?? res.data;
+    registerFields.value = (data.forms ?? []).map(f => ({
+      name:     f.name ?? '',
+      type:     f.type ?? 'text',
       required: !!f.required,
-      _isNew:   false,
+      options:  f.options ?? [],
     }));
   } catch (err) {
-    // jika endpoint belum ada, mulai dengan field kosong
     registerFields.value = [];
   } finally {
     isLoadingRegister.value = false;
@@ -62,22 +58,19 @@ const fetchRegisterFields = async () => {
 
 // ─── Feedback Fields ──────────────────────────────────────────────────────────
 const feedbackFields    = ref([]);
-const feedbackSettingId = ref(null);
 const isLoadingFeedback = ref(false);
 const isSavingFeedback  = ref(false);
 
 const fetchFeedbackFields = async () => {
   isLoadingFeedback.value = true;
   try {
-    const res = await api.get(`/admin/event/${eventId.value}/feedback-form`);
-    const data = res.data?.data ?? res.data ?? res;
-    feedbackSettingId.value = data.id ?? null;
-    const raw = Array.isArray(data) ? data : (data.forms ?? data.fields ?? []);
-    feedbackFields.value = raw.map(f => ({
-      name:     f.name ?? f.field ?? '',
-      type:     capitalize(f.type ?? 'Text'),
+    const res = await getEventById(eventId.value);
+    const data = res.data?.data ?? res.data;
+    feedbackFields.value = (data.form_feedback ?? []).map(f => ({
+      name:     f.name ?? '',
+      type:     f.type ?? 'text',
       required: !!f.required,
-      _isNew:   false,
+      options:  f.options ?? [],
     }));
   } catch (err) {
     feedbackFields.value = [];
@@ -86,19 +79,17 @@ const fetchFeedbackFields = async () => {
   }
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
 const generateSlug = (text) =>
   text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');
 
 // ─── Add Field Row ─────────────────────────────────────────────────────────────
 const addRegisterField = () => {
-  registerFields.value.push({ name: '', type: 'Text', required: false, _isNew: true });
+  registerFields.value.push({ name: '', type: 'text', required: false, options: [] });
 };
 
 const addFeedbackField = () => {
-  feedbackFields.value.push({ name: '', type: 'Text', required: false, _isNew: true });
+  feedbackFields.value.push({ name: '', type: 'text', required: false, options: [] });
 };
 
 // ─── Delete Field Row ──────────────────────────────────────────────────────────
@@ -117,29 +108,22 @@ const removeFeedbackField = async (index) => {
 // ─── Save Register ────────────────────────────────────────────────────────────
 const saveRegister = async () => {
   const invalid = registerFields.value.find(f => !f.name.trim());
-  if (invalid) {
-    showError(t('eventSetting.error.emptyName'));
-    return;
-  }
+  if (invalid) { showError(t('eventSetting.error.emptyName')); return; }
   isSavingRegister.value = true;
   try {
-    const payload = {
+    await updateEventForm(eventId.value, {
       forms: registerFields.value.map(f => ({
         field:    generateSlug(f.name),
         name:     f.name,
-        type:     f.type.toLowerCase(),
+        type:     f.type,
         required: f.required,
+        ...(f.options?.length ? { options: f.options } : {}),
       })),
-    };
-    if (registerSettingId.value) {
-      await api.put(`/admin/event/${eventId.value}/form`, payload);
-    } else {
-      await api.post(`/admin/event/${eventId.value}/form`, payload);
-    }
+    });
     showSuccess(t('eventSetting.success.register'));
     await fetchRegisterFields();
   } catch (err) {
-    showError(err.response?.data?.message || t('eventSetting.error.saveFailed'));
+    showError(parseApiError(err, t('eventSetting.error.saveFailed')));
   } finally {
     isSavingRegister.value = false;
   }
@@ -148,29 +132,22 @@ const saveRegister = async () => {
 // ─── Save Feedback ─────────────────────────────────────────────────────────────
 const saveFeedback = async () => {
   const invalid = feedbackFields.value.find(f => !f.name.trim());
-  if (invalid) {
-    showError(t('eventSetting.error.emptyName'));
-    return;
-  }
+  if (invalid) { showError(t('eventSetting.error.emptyName')); return; }
   isSavingFeedback.value = true;
   try {
-    const payload = {
-      forms: feedbackFields.value.map(f => ({
+    await updateEventFormFeedback(eventId.value, {
+      form_feedback: feedbackFields.value.map(f => ({
         field:    generateSlug(f.name),
         name:     f.name,
-        type:     f.type.toLowerCase(),
+        type:     f.type,
         required: f.required,
+        ...(f.options?.length ? { options: f.options } : {}),
       })),
-    };
-    if (feedbackSettingId.value) {
-      await api.put(`/admin/event/${eventId.value}/feedback-form`, payload);
-    } else {
-      await api.post(`/admin/event/${eventId.value}/feedback-form`, payload);
-    }
+    });
     showSuccess(t('eventSetting.success.feedback'));
     await fetchFeedbackFields();
   } catch (err) {
-    showError(err.response?.data?.message || t('eventSetting.error.saveFailed'));
+    showError(parseApiError(err, t('eventSetting.error.saveFailed')));
   } finally {
     isSavingFeedback.value = false;
   }

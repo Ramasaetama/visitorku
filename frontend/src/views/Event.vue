@@ -14,7 +14,7 @@ import EditIcon from '@/assets/edit-box-line.svg';
 import EmptyState from '@/components/common/EmptyState.vue';
 import notfound from '@/assets/notfound.svg';
 
-import { confirmDelete, showSuccess, showError } from '@/utils/alertHelper';
+import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/alertHelper';
 import {
   getAllEvents,
   createEvent,
@@ -338,7 +338,7 @@ const handleSubmit = async () => {
     closeModal();
     await fetchEvents();
   } catch (err) {
-    showError(err.response?.data?.message || t('event.error.generic'));
+    showError(parseApiError(err, t('event.error.generic')));
   } finally {
     isSaving.value = false;
   }
@@ -354,7 +354,7 @@ const handleDelete = async (row) => {
     showSuccess(t('event.success.deleted'));
     await fetchEvents();
   } catch (err) {
-    showError(err.response?.data?.message || t('event.error.deleteFailed'));
+    showError(parseApiError(err, t('event.error.deleteFailed')));
   }
 };
 
