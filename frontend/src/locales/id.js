@@ -317,7 +317,7 @@ export default {
   eventSetting: {
     title: 'Setelan Formulir',
     tabs: {
-      register: 'Register',
+      register: 'Registrasi',
       feedback: 'Umpan Balik',
     },
     emptyHint: 'Belum ada field. Klik "Add Form" untuk menambahkan.',
@@ -339,6 +339,12 @@ export default {
       dashboard: 'Ringkasan',
       event: 'Acara',
       setting: 'Setelan',
+    },
+    options: {
+      title: 'Pilihan',
+      placeholder: 'Tambah pilihan...',
+      addBtn: 'Tambah',
+      empty: 'Belum ada pilihan',
     },
   },
   branch: {

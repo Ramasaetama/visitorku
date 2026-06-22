@@ -340,6 +340,12 @@ export default {
       event: 'Event',
       setting: 'Setting',
     },
+    options: {
+      title: 'Options',
+      placeholder: 'Add option...',
+      addBtn: 'Add',
+      empty: 'No options yet',
+    },
   },
   branch: {
     title: 'Company Branch',
