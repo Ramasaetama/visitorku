@@ -96,8 +96,8 @@ const tableColumns = computed(() => [
   { key: 'name',         label: t('eventVisitor.table.name'),         sortable: true  },
   { key: 'email',        label: t('eventVisitor.table.email'),        sortable: true  },
   { key: 'phone_number', label: t('eventVisitor.table.phoneNumber'),  sortable: false },
-  { key: 'check_in',    label: t('eventVisitor.table.checkIn'),      sortable: true  },
-  { key: 'check_out',   label: t('eventVisitor.table.checkOut'),     sortable: true  },
+  { key: 'check_in_at',    label: t('eventVisitor.table.checkIn'),      sortable: true  },
+  { key: 'check_out_at',   label: t('eventVisitor.table.checkOut'),     sortable: true  },
   { key: 'satisfaction', label: t('eventVisitor.table.satisfaction'), sortable: false },
   { key: 'aksi',        label: t('eventVisitor.table.action'),       sortable: false },
 ]);
@@ -169,8 +169,8 @@ const fetchVisitors = async () => {
       name:         v.name ?? '-',
       email:        v.email ?? '-',
       phone_number: v.phone_number ?? v.phone ?? '-',
-      check_in:     formatDateTime(v.check_in_at ?? null),
-      check_out:    formatDateTime(v.check_out_at ?? null),
+      check_in_at:     formatDateTime(v.check_in_at ?? null),
+      check_out_at:    formatDateTime(v.check_out_at ?? null),
       satisfaction: v.satisfaction,
       raw:          v,
     }));
@@ -463,7 +463,6 @@ onMounted(async () => {
 
     <div v-if="satisfactionStats.bad === 0 && satisfactionStats.neutral === 0 && satisfactionStats.good === 0"
       class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-500 text-xs">
-      No Data
     </div>
 
   </div>
@@ -639,7 +638,7 @@ onMounted(async () => {
         v-model="form.name"
         type="text"
         :placeholder="t('eventVisitor.modal.namePlaceholder')"
-        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
     <div>
@@ -650,7 +649,7 @@ onMounted(async () => {
         v-model="form.email"
         type="email"
         :placeholder="t('eventVisitor.modal.emailPlaceholder')"
-        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
     <div>
@@ -665,7 +664,7 @@ onMounted(async () => {
         autocomplete="off"
         @keydown="(e) => { if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab|Home|End/.test(e.key)) e.preventDefault(); }"
         @input="(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); form.phone_number = e.target.value; }"
-        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
 

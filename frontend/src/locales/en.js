@@ -64,11 +64,11 @@ export default {
     noLatestData: 'No Data Available',
     calculating: 'Calculating data...',
     table: {
-      name: 'NAME',
-      purpose: 'PURPOSE',
-      checkIn: 'CHECK IN',
-      checkOut: 'CHECK OUT',
-      face: 'FACE',
+      name: 'Name',
+      purpose: 'Purpose',
+      checkIn: 'Check In',
+      checkOut: 'Check Out',
+      face: 'Face',
     },
     legend: {
       visitor: 'Visitor',
@@ -225,6 +225,7 @@ export default {
       finishAfterStart: 'Event finish time must be after event start time.',
       regFinishAfterStart: 'Registration finish time must be after registration start time.',
       regStartBeforeEvent: 'Registration start time must be before event start time.',
+      invalidUrl: 'Invalid URL format. Must start with https:// or http://',    
     },
     success: {
       added: 'Event successfully added.',

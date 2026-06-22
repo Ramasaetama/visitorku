@@ -54,7 +54,6 @@ import ProfilePictureTab from '@/components/adminProfile/ProfilePictureTab.vue';
 import PasswordTab from '@/components/adminProfile/PasswordTab.vue';
 import { getAdminProfile } from '@/services/adminProfileService';
 
-// 🌟 FIX: Import Topbar dan Sidebar sudah dibasmi dari sini
 
 const { t } = useI18n();
 

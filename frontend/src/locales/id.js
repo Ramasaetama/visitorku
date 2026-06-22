@@ -64,11 +64,11 @@ export default {
     noLatestData: 'Tidak Ada Data Untuk Ditampilkan',
     calculating: 'Menghitung data...',
     table: {
-      name: 'NAMA',
-      purpose: 'TUJUAN',
-      checkIn: 'CHECK IN',
-      checkOut: 'CHECK OUT',
-      face: 'EKSPRESI',
+      name: 'Nama',
+      purpose: 'Tujuan',
+      checkIn: 'Check In',
+      checkOut: 'Check Out',
+      face: 'Ekspresi',
     },
     legend: {
       visitor: 'Pengunjung',
@@ -123,7 +123,6 @@ export default {
       notFoundDesc: 'Tidak ada kunjungan yang cocok dengan kata kunci',
     }
   },
-
   companyProfile: {
     title: 'Profil Perusahaan',
     subtitle: 'Kelola informasi profil perusahaan Anda',

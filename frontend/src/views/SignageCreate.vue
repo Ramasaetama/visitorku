@@ -14,7 +14,7 @@ const editId     = computed(() => route.query.edit || null);
 const isEditMode = computed(() => !!editId.value);
 
 // ─── Step Management ──────────────────────────────────────────────────────────
-const currentStep = ref(1); // 1 = Select Layout, 2 = Form
+const currentStep = ref(isEditMode.value ? 2 : 1); 
 
 // ─── Layout Options ───────────────────────────────────────────────────────────
 const layoutOptions = [
@@ -90,10 +90,35 @@ const changeLayout = () => {
   currentStep.value = 1;
 };
 
+// Logika Cerdas untuk Tombol Back di Header Kiri Atas
+const handleHeaderBack = () => {
+  if (isEditMode.value) {
+    if (currentStep.value === 2) {
+      goBack(); 
+    } else {
+      currentStep.value = 2; 
+    }
+  } else {
+    if (currentStep.value === 1) {
+      goBack(); 
+    } else {
+      currentStep.value = 1; 
+    }
+  }
+};
+
+const goBack = () => {
+  router.push('/layar-informasi');
+};
+
 // ─── Form State ───────────────────────────────────────────────────────────────
 const formName        = ref('');
 const formRunningText = ref('');
 const isSubmitting    = ref(false);
+
+const initialFormName        = ref('');
+const initialFormRunningText = ref('');
+const initialLayout          = ref('');
 
 // ─── Panel / Tab Management ───────────────────────────────────────────────────
 const activePanel   = ref(0);
@@ -108,6 +133,23 @@ const panelCount = computed(() => {
 const setActivePanel = (index) => {
   activePanel.value = index;
 };
+
+// Computed untuk mendeteksi apakah ada perubahan data pada Form
+const isSaveDisabled = computed(() => {
+  if (isSubmitting.value) return true;
+  if (!formName.value.trim()) return true;
+
+  if (isEditMode.value) {
+    const nameChanged = formName.value.trim() !== initialFormName.value.trim();
+    const runningTextChanged = formRunningText.value.trim() !== initialFormRunningText.value.trim();
+    const layoutChanged = selectedLayout.value !== initialLayout.value; 
+    const fileChanged = Object.keys(panelFiles.value).length > 0;
+
+    return !(nameChanged || runningTextChanged || layoutChanged || fileChanged);
+  }
+
+  return false;
+});
 
 // ─── File Upload ──────────────────────────────────────────────────────────────
 const fileInputRef = ref(null);
@@ -201,18 +243,19 @@ onMounted(async () => {
     const res  = await getSignageById(editId.value);
     const data = res.data?.data || res.data;
 
-    // Pre-fill form fields
     formName.value        = data.name        || '';
     formRunningText.value = data.running_text || '';
 
-    // Konversi type dari API ke layout id lokal
-    // API simpan: 'fullscreen', 'split-1-1', 'split-1-2', dll
-    // Local id  : 'fullscreen', '1-1', '1-2', dll
+    initialFormName.value        = data.name        || '';
+    initialFormRunningText.value = data.running_text || '';
+
     let layoutId = data.type || 'fullscreen';
     if (layoutId.startsWith('split-')) {
       layoutId = layoutId.replace('split-', '');
     }
+    
     selectedLayout.value = layoutId;
+    initialLayout.value  = layoutId;
     currentStep.value    = 2;
     activePanel.value    = 0;
   } catch (err) {
@@ -229,7 +272,6 @@ const handleSubmit = async () => {
   }
   isSubmitting.value = true;
   try {
-    // 1. Upload file baru (jika ada)
     const uploadedFilesData = {};
     for (const [panelIndex, data] of Object.entries(panelFiles.value)) {
       const res          = await uploadSignageFile(data.file);
@@ -241,13 +283,11 @@ const handleSubmit = async () => {
       };
     }
 
-    // 2. Perbaikan nama layout
     let finalLayoutType = selectedLayout.value;
     if (['1-1', '1-2', '2-1', '1-1-1'].includes(finalLayoutType)) {
       finalLayoutType = 'split-' + finalLayoutType;
     }
 
-    // 3. Format files array
     const formattedFiles = [];
     const panelLength    = selectedLayoutObj.value.panels.length;
     const requiredLength = finalLayoutType === 'fullscreen' ? 1 : 3;
@@ -267,7 +307,6 @@ const handleSubmit = async () => {
       }
     }
 
-    // 4. Kirim ke API — beda endpoint untuk create vs update
     const payload = {
       name:         formName.value.trim(),
       running_text: formRunningText.value.trim(),
@@ -276,11 +315,9 @@ const handleSubmit = async () => {
     };
 
     if (isEditMode.value) {
-      // ✅ UPDATE — pakai PUT /admin/signage/:id
       await updateSignage(editId.value, payload);
       showSuccess(t('signage.success.updated'));
     } else {
-      // ✅ CREATE — pakai POST /admin/signage
       await createSignage(payload);
       showSuccess(t('signage.success.created'));
     }
@@ -293,10 +330,6 @@ const handleSubmit = async () => {
     isSubmitting.value = false;
   }
 };
-
-const goBack = () => {
-  router.push('/layar-informasi');
-};
 </script>
 
 <template>
@@ -308,7 +341,7 @@ const goBack = () => {
             <div class="flex items-center justify-between mb-6">
               <div class="flex items-center gap-3">
                 <button
-                  @click="currentStep === 1 ? goBack() : changeLayout()"
+                  @click="handleHeaderBack"
                   class="w-8 h-8 flex items-center justify-center bg-[#FEF3E2] rounded-sm hover:bg-[#FDDCB5] transition-colors"
                 >
                   <svg class="w-4 h-4 text-[#F7941D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,41 +361,42 @@ const goBack = () => {
             </div>
 
             <!-- ══════════════════════════════════════════════════════════ -->
-            <!-- STEP 1: Select Layout                                     -->
+            <!-- STEP 1: Select Layout                                      -->
             <!-- ══════════════════════════════════════════════════════════ -->
             <div v-if="currentStep === 1" class="flex-1">
               <div class="grid grid-cols-3 gap-5">
-            <button
-  v-for="layout in layoutOptions"
-  :key="layout.id"
-  @click="selectLayout(layout.id)"
-  class="group relative border-2 rounded-sm overflow-hidden transition-all duration-200 hover:border-[#F7941D] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30"
-  :class="selectedLayout === layout.id ? 'border-[#F7941D] shadow-md' : 'border-gray-200'"
->
-  <!-- Layout Visual Preview -->
-  <div class="flex h-56">
-    <template v-if="layout.id === 'fullscreen-header'">
-      <div class="flex flex-col w-full h-full">
-        <div class="bg-[#F7941D]" style="height: 28%"></div>
-        <div class="bg-[#E0E0E0] flex-1"></div>
-      </div>
-    </template>
-    <template v-else>
-      <div
-        v-for="(panel, pIdx) in layout.panels"
-        :key="pIdx"
-        :style="{ flex: panel.flex, backgroundColor: panel.color }"
-      ></div>
-    </template>
-  </div>
+                <button
+                  v-for="layout in layoutOptions"
+                  :key="layout.id"
+                  @click="selectLayout(layout.id)"
+                  class="group relative border-2 rounded-sm overflow-hidden transition-all duration-200 hover:border-[#F7941D] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#F7941D]/30"
+                  :class="selectedLayout === layout.id ? 'border-[#F7941D] shadow-md' : 'border-gray-200'"
+                >
+                  <!-- Layout Visual Preview -->
+                  <div class="flex h-56">
+                    <template v-if="layout.id === 'fullscreen-header'">
+                      <div class="flex flex-col w-full h-full">
+                        <div class="bg-[#F7941D]" style="height: 28%"></div>
+                        <div class="bg-[#E0E0E0] flex-1"></div>
+                      </div>
+                    </template>
+                    <template v-else>
+                      <div
+                        v-for="(panel, pIdx) in layout.panels"
+                        :key="pIdx"
+                        :style="{ flex: panel.flex, backgroundColor: panel.color }"
+                      ></div>
+                    </template>
+                  </div>
 
-  <!-- Label Overlay -->
-  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <span class="text-base font-bold text-gray-800">{{ layout.name }}</span>
-  </div>
-</button>
+                  <!-- Label Overlay -->
+                  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <span class="text-base font-bold text-gray-800">{{ layout.name }}</span>
+                  </div>
+                </button>
               </div>
             </div>
+            
             <div v-else class="flex-1 flex flex-col">
               <!-- Name -->
               <div class="mb-4">
@@ -511,7 +545,7 @@ const goBack = () => {
               <div class="flex justify-end pt-4">
                 <button
                   @click="handleSubmit"
-                  :disabled="isSubmitting || !formName.trim()"
+                  :disabled="isSaveDisabled"
                   class="px-8 py-2.5 text-sm font-semibold text-white bg-[#F7941D] rounded-sm
                          hover:bg-[#E8850E] transition-colors
                          disabled:opacity-50 disabled:cursor-not-allowed
@@ -519,7 +553,7 @@ const goBack = () => {
                 >
                   <span v-if="isSubmitting" class="flex items-center gap-2">
                     <svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke-width="4"/>
                       <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
                     </svg>
                     {{ isEditMode ? t('signage.create.saving') : t('signage.create.creating') }}
@@ -565,3 +599,10 @@ const goBack = () => {
   </div>
   </div>
 </template>
+
+<style scoped>
+button:focus, select:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+</style>

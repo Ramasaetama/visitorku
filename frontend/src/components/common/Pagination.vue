@@ -23,7 +23,6 @@ const emit = defineEmits(['update:currentPage'])
 
 const totalPages = computed(() => Math.ceil(props.totalData / props.perPage) || 1)
 
-// 🌟 FIX: Logika baru! Murni cuma nampilin 5 angka sejajar tanpa titik-titik (Ellipsis)
 const visiblePages = computed(() => {
   const total = totalPages.value
   const current = props.currentPage

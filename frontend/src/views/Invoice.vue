@@ -5,7 +5,7 @@ import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
 import { useRouter } from 'vue-router';
-import { getAllInvoices, confirmInvoice } from '@/services/invoiceService';
+import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
 
 const { t } = useI18n();
 
@@ -19,7 +19,6 @@ const currentPage   = ref(1);
 const totalRecords  = ref(0);
 const router        = useRouter();
 
-// 🌟 State untuk Modal Receipt
 const isReceiptModalOpen = ref(false);
 const selectedReceiptUrl = ref('');
 
@@ -65,7 +64,6 @@ const goToDetail = (row) => {
   router.push(`/master/invoice/detail/${row.id}`);
 };
 
-// 🌟 Fungsi Buka/Tutup Modal Receipt
 const openReceiptModal = (url) => {
   selectedReceiptUrl.value = url;
   isReceiptModalOpen.value = true;

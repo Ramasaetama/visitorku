@@ -1,12 +1,8 @@
 <script setup>
 import { ref, computed, watch, onMounted, nextTick } from 'vue';
 import { useRouter } from 'vue-router';
-import Topbar from '@/components/Topbar.vue';
 import { useI18n } from 'vue-i18n';
-
 const { t } = useI18n();
-import Sidebar from '@/components/Sidebar.vue';
-import { getAllVisits, exportVisitReport } from '@/services/visitService';
 
 import EmptyState from '@/components/common/EmptyState.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
@@ -55,11 +51,16 @@ const totalItems = ref(0);
 
 watch(itemsPerPage, () => {
   if (currentPage.value !== 1) {
-    currentPage.value = 1; 
+    currentPage.value = 1; // Akan memicu watcher currentPage di bawah
   } else {
     fetchVisitors();
   }
 });
+
+watch(currentPage, () => {
+    fetchVisitors();
+  }
+);
 
 watch(currentPage, () => {
   fetchVisitors();
@@ -157,8 +158,6 @@ const sortedData = computed(() => {
   });
 });
 
-// PAGINATION UI handled by <Pagination> component
-
 // MODAL NOTES LOGIC
 
 const showNotesModal = ref(false);
@@ -228,7 +227,7 @@ onMounted(() => {
               <button 
                 @click="handleReport"
                 class="flex items-center gap-2 px-5 py-2.5 bg-white border-2 border-[#38CA99] 
-                       text-[#38CA99] rounded-lg font-medium text-sm 
+                       text-[#38CA99] rounded-sm font-medium text-sm 
                        hover:bg-[#38CA99] hover:text-white transition-all group focus:outline-none"
               >
                 <svg class="w-5 h-5 text-[#38CA99] group-hover:text-white transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">

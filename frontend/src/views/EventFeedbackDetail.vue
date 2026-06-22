@@ -102,26 +102,24 @@ onMounted(fetchDetail);
 </script>
 
 <template>
-  <div class="p-4 h-full">
-    <div class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
-      <div class="p-8 flex-1 flex flex-col overflow-y-auto">
+  <div class="flex-1 w-full h-full flex flex-col">
+    <main class="bg-white rounded-2xl shadow-sm h-full min-h-[calc(100vh-7rem)] flex flex-col relative w-full">
+      <div class="p-6 flex-1 flex flex-col overflow-y-auto">
 
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-3">
             <button
               @click="goBack"
               class="w-8 h-8 flex items-center justify-center bg-[#FEF4E3] text-[#F7941D] rounded-sm hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M15 19l-7-7 7-7"/>
               </svg>
             </button>
-            <h1 class="text-xl font-semibold text-gray-800">Visitor Detail</h1>
+            <h1 class="text-xl font-bold text-gray-800">Visitor Detail</h1>
           </div>
         </div>
 
-        <!-- Loading Skeleton -->
         <div v-if="isLoading" class="animate-pulse space-y-8">
           <div class="grid grid-cols-2 gap-8">
             <div class="space-y-4">
@@ -141,12 +139,9 @@ onMounted(fetchDetail);
           </div>
         </div>
 
-        <!-- Content -->
         <div v-else-if="detail" class="space-y-8">
-          <!-- Info Grid -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-6">
 
-            <!-- Left Column -->
             <div class="space-y-5">
               <div>
                 <p class="text-[15px] font-medium text-gray-400 mb-1">Full Name</p>
@@ -168,7 +163,6 @@ onMounted(fetchDetail);
               </div>
             </div>
 
-            <!-- Right Column -->
             <div class="space-y-5">
               <div>
                 <p class="text-[15px] font-medium text-gray-400 mb-1">Check In</p>
@@ -185,16 +179,13 @@ onMounted(fetchDetail);
             </div>
           </div>
 
-          <!-- Divider -->
           <hr class="border-gray-100" />
 
-          <!-- Feedback Section -->
           <div>
             <h2 class="text-[17px] font-bold text-gray-900 mb-5">Feedback</h2>
 
             <div v-if="get(['satisfaction']) || get(['notes','feedback'])" class="flex items-center gap-6">
 
-              <!-- Large Satisfaction Emoji Box -->
               <div
                 class="w-[100px] h-[100px] rounded-lg border-2 flex items-center justify-center flex-shrink-0"
                 :class="{
@@ -204,7 +195,6 @@ onMounted(fetchDetail);
                   'border-gray-200 text-gray-400':   !get(['satisfaction']),
                 }"
               >
-                <!-- Happy -->
                 <template v-if="get(['satisfaction']) === 3">
                   <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
@@ -213,7 +203,6 @@ onMounted(fetchDetail);
                     <path d="M8 14.5c1.5 2 4.5 2 6 0" stroke-linecap="round" stroke-width="1.5"/>
                   </svg>
                 </template>
-                <!-- Neutral -->
                 <template v-else-if="get(['satisfaction']) === 2">
                   <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
@@ -222,7 +211,6 @@ onMounted(fetchDetail);
                     <line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round" stroke-width="1.5"/>
                   </svg>
                 </template>
-                <!-- Sad -->
                 <template v-else-if="get(['satisfaction']) === 1">
                   <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
@@ -231,7 +219,6 @@ onMounted(fetchDetail);
                     <path d="M8 16c1.5-2 4.5-2 6 0" stroke-linecap="round" stroke-width="1.5"/>
                   </svg>
                 </template>
-                <!-- No satisfaction data -->
                 <template v-else>
                   <svg class="w-14 h-14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
                     <circle cx="12" cy="12" r="10" stroke-width="1.5"/>
@@ -240,7 +227,6 @@ onMounted(fetchDetail);
                 </template>
               </div>
 
-              <!-- Notes -->
               <div>
                 <p class="text-[15px] font-medium text-gray-400 mb-1">Notes</p>
                 <p class="text-[15px] font-medium text-gray-800">
@@ -249,7 +235,6 @@ onMounted(fetchDetail);
               </div>
             </div>
 
-            <!-- No Feedback -->
             <div v-else class="flex flex-col items-center justify-center py-10 text-gray-400">
               <svg class="w-10 h-10 mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -260,7 +245,6 @@ onMounted(fetchDetail);
 
         </div>
 
-        <!-- Error State -->
         <div v-else class="flex flex-col items-center justify-center py-20 text-gray-400">
           <svg class="w-12 h-12 mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
@@ -270,8 +254,8 @@ onMounted(fetchDetail);
         </div>
 
       </div>
-    </div>
-  </div>
+    </main>
+  </div> 
 </template>
 
 <style scoped>

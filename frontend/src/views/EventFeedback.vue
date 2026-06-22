@@ -5,8 +5,8 @@ import { useI18n } from 'vue-i18n';
 import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue';
-import EmptyState from '@/components/common/EmptyState.vue'; // 🌟 FIX: Import EmptyState
-import notfound from '@/assets/notfound.svg'; // 🌟 FIX: Import notfound icon
+import EmptyState from '@/components/common/EmptyState.vue';
+import notfound from '@/assets/notfound.svg'; 
 import { showError } from '@/utils/alertHelper';
 import {
   getEventById,
@@ -39,7 +39,7 @@ const toggleDropdown = async (id, event) => {
     
     dropdownPosition.value = {
       top: `${buttonRect.bottom + window.scrollY + 5}px`,
-      left: `${buttonRect.left + window.scrollX }px` // 🌟 FIX: Mekar Kanan
+      left: `${buttonRect.left + window.scrollX }px` 
     };
   }
 };
@@ -196,7 +196,7 @@ onUnmounted(() => {
           <div class="flex items-center gap-3">
             <button
               @click="router.push(`/event/${eventId}/visitor`)"
-              class="w-8 h-8 rounded-lg bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
+              class="w-8 h-8 rounded-sm bg-[#FEF4E3] flex items-center justify-center text-[#F7941D] hover:bg-[#F7941D] hover:text-white transition-colors focus:outline-none"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                 <path d="M19 12H5M12 19l-7-7 7-7"/>
@@ -204,25 +204,6 @@ onUnmounted(() => {
             </button>
             <h1 class="text-xl font-semibold text-gray-800">Event Feedback</h1>
           </div>
-          <nav class="flex items-center gap-1.5 text-sm text-gray-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-            <span>Dashboard</span>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <button @click="router.push('/event')" class="hover:text-[#F7941D] transition-colors">Event</button>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <button @click="router.push(`/event/${eventId}/visitor`)" class="hover:text-[#F7941D] transition-colors">Event Visitor</button>
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-            <span class="text-[#F7941D] font-medium">Event Feedback</span>
-          </nav>
         </div>
 
 
@@ -233,24 +214,6 @@ onUnmounted(() => {
                   :placeholder="t('eventFeedback.searchPlaceholder')"
                   @keyup.enter="executeSearch"
                 />
-              </div>
-
-              <div class="relative shrink-0">
-                <select
-                  v-model="perPage"
-                  class="appearance-none bg-white border border-gray-200 rounded-sm pl-4 pr-9 py-2 text-[13px] text-gray-400 font-medium focus:outline-none focus:border-gray-300 cursor-pointer w-[70px]"
-                >
-                  <option :value="5">5</option>
-                  <option :value="10">10</option>
-                  <option :value="25">25</option>
-                  <option :value="50">50</option>
-                  <option :value="100">100</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-gray-400">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
               </div>
 
               <div class="flex-1" />
@@ -288,7 +251,6 @@ onUnmounted(() => {
                         <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                         <path d="M8 14.5c1.5 2 4.5 2 6 0" stroke-linecap="round"/>
                       </svg>
-                      <span class="text-[13px] text-[#10B981] font-medium">Happy</span>
                     </template>
                     <template v-else-if="row.satisfaction === 2">
                       <svg class="w-6 h-6 text-[#F59E0B]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -297,7 +259,6 @@ onUnmounted(() => {
                         <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                         <line x1="8" y1="15" x2="16" y2="15" stroke-linecap="round"/>
                       </svg>
-                      <span class="text-[13px] text-[#F59E0B] font-medium">Neutral</span>
                     </template>
                     <template v-else-if="row.satisfaction === 1">
                       <svg class="w-6 h-6 text-[#EF4444]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -306,7 +267,6 @@ onUnmounted(() => {
                         <circle cx="15.5" cy="9.5" r="1.5" fill="currentColor" stroke="none"/>
                         <path d="M8 16c1.5-2 4.5-2 6 0" stroke-linecap="round"/>
                       </svg>
-                      <span class="text-[13px] text-[#EF4444] font-medium">Sad</span>
                     </template>
                     <span v-else class="text-gray-400 font-bold">-</span>
                   </div>
