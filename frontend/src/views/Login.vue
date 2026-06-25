@@ -213,7 +213,7 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { OnboardingLayout } from '../components/layout'
 import { Input, PasswordInput } from '../components/common'
-import { loginUser } from '@/services/authService';
+import { loginUser, resetPassword } from '@/services/authService';
 import { showWarning } from '@/utils/alertHelper';
 
 const router = useRouter()
@@ -233,6 +233,34 @@ const closeForgotPassword = () => {
   forgotPasswordEmail.value = ''
   forgotPasswordError.value = ''
   forgotPasswordSuccess.value = false
+}
+
+const handleForgotPassword = async () => {
+  if (!forgotPasswordEmail.value.trim()) return
+
+  isSendingReset.value = true
+  forgotPasswordError.value = ''
+
+  try {
+    await resetPassword(forgotPasswordEmail.value.trim())
+    forgotPasswordSuccess.value = true
+  } catch (error) {
+    console.error('[ForgotPassword] Error:', error)
+    const status = error.response?.status
+    const message = error.response?.data?.message
+
+    if (status === 404) {
+      forgotPasswordError.value = 'Email tidak ditemukan. Pastikan email yang Anda masukkan sudah terdaftar.'
+    } else if (status === 429) {
+      forgotPasswordError.value = 'Terlalu banyak permintaan. Tunggu beberapa saat lalu coba lagi.'
+    } else if (!error.response) {
+      forgotPasswordError.value = 'Koneksi gagal. Periksa koneksi internet Anda.'
+    } else {
+      forgotPasswordError.value = message || 'Gagal mengirim email reset password. Silakan coba lagi.'
+    }
+  } finally {
+    isSendingReset.value = false
+  }
 }
 
 const form = ref({

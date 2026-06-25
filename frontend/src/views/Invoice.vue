@@ -5,7 +5,7 @@ import DataTable from '@/components/common/DataTable.vue';
 import SearchInput from '@/components/common/SearchInput.vue';
 import Pagination from '@/components/common/Pagination.vue'; 
 import { useRouter } from 'vue-router';
-import { getAllInvoices, confirmInvoice } from '@/services/InvoiceService';
+import { getAllInvoices, confirmInvoice } from '@/services/invoiceService';
 
 const { t } = useI18n();
 
