@@ -162,6 +162,100 @@
                      </div>
                   </div>
                 </div> 
+
+                <!-- ====================== USAGE SECTION ====================== -->
+                <hr class="border-gray-200 mb-10 mt-10" />
+                <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
+                  <div class="lg:w-55 shrink-0">
+                    <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Usage</h2>
+                    <p class="text-[13px] text-gray-500 leading-relaxed">Kuota & penggunaan sumber daya paket Anda saat ini.</p>
+                  </div>
+                  <div class="flex-1 space-y-6">
+
+                    <!-- Visit Quota -->
+                    <div>
+                      <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[13px] font-semibold text-gray-700">Visit Quota</span>
+                        <span class="text-[12px] text-[#F7941D] font-medium">
+                          {{ priceData.visitLimit === 0 ? 'Unlimited' : priceData.visitLimit + '/Month' }}
+                        </span>
+                      </div>
+                      <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-[#F7941D] rounded-full transition-all"
+                          :style="{ width: visitPercent + '%' }"></div>
+                      </div>
+                      <p class="text-[11px] text-gray-400 mt-1">
+                        {{ visitPercent.toFixed(0) }}% Used
+                        <span v-if="priceData.visitLimit > 0" class="ml-2 text-gray-400">
+                          ({{ priceData.visitUsed }} / {{ priceData.visitLimit }})
+                        </span>
+                      </p>
+                    </div>
+
+                    <!-- Storage -->
+                    <div>
+                      <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-[13px] font-semibold text-gray-700">Storage</span>
+                        <span class="text-[12px] text-[#F7941D] font-medium">
+                          {{ priceData.storageLimitMB === 0 ? 'Unlimited' : Math.round(priceData.storageLimitMB) + ' MB' }}
+                        </span>
+                      </div>
+                      <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-[#F7941D] rounded-full transition-all"
+                          :style="{ width: storagePercent + '%' }"></div>
+                      </div>
+                      <p class="text-[11px] text-gray-400 mt-1">
+                        {{ priceData.storageUsedMB.toFixed(2) }} MB Used
+                      </p>
+                    </div>
+
+                    <!-- Account Limit + Branch Limit -->
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <p class="text-[13px] font-semibold text-gray-700 mb-0.5">Account Limit</p>
+                        <p class="text-[13px] text-[#F7941D] font-medium">
+                          {{ priceData.userUsed }} / {{ priceData.userLimit === 0 ? '∞' : priceData.userLimit }} User
+                        </p>
+                      </div>
+                      <div>
+                        <p class="text-[13px] font-semibold text-gray-700 mb-0.5">Branch Limit</p>
+                        <p class="text-[13px] text-[#F7941D] font-medium">
+                          {{ priceData.branchUsed }} / {{ priceData.branchLimit === 0 ? '∞' : priceData.branchLimit }} Branch
+                        </p>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- ================ UPGRADE PACKAGE SECTION ================= -->
+                <hr class="border-gray-200 mb-10" />
+                <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
+                  <div class="lg:w-55 shrink-0">
+                    <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Upgrade Paket</h2>
+                    <p class="text-[13px] text-gray-500 leading-relaxed">Tingkatkan paket Anda untuk mendapatkan lebih banyak fitur dan kapasitas.</p>
+                  </div>
+                  <div class="flex-1">
+                    <!-- Current active plan card -->
+                    <div class="border border-[#F7941D]/30 rounded-sm bg-[#FFF8F0] p-5">
+                      <div class="flex items-center justify-between mb-3">
+                        <span class="text-[15px] font-bold text-gray-900">{{ priceData.planName || 'Visitorku Free' }}</span>
+                        <span class="text-[14px] font-bold text-[#F7941D]">
+                          {{ priceData.price === 0 ? 'Rp 0' : 'Rp ' + priceData.price.toLocaleString('id-ID') }}
+                          <span class="text-[12px] font-normal text-gray-500"> /month</span>
+                        </span>
+                      </div>
+                      <p class="text-[12px] text-gray-500 mb-4">Features</p>
+                      <button
+                        @click="$router.push('/upgrade-plan')"
+                        class="inline-flex items-center gap-2 px-5 py-2 border border-[#F7941D] text-[#F7941D] text-[13px] font-semibold rounded-sm bg-white hover:bg-[#FEF3E2] transition"
+                      >
+                        Upgrade
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
                 <div class="flex justify-end pt-8 pb-4 border-t border-gray-100 mt-10">
                   <button 
                     @click="saveProfile" 
@@ -354,7 +448,8 @@ button:focus {
 
 <script setup>
 import { confirmDelete, showSuccess, showError, showWarning, showToast, parseApiError } from '@/utils/alertHelper'; 
-import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey} from '@/services/companyProfileService';
+import { getProfile, updateProfile, uploadCompanyLogo, uploadCompanyBackground, updateLanguageTimezone, generateAPItoken, getCompanyApiKey, deleteApiKey, getPriceMe } from '@/services/companyProfileService';
+import { priceState } from '@/utils/priceState';
 import { ref, computed, onMounted, watch, onUnmounted } from 'vue';
 import { themeState } from '@/utils/ThemeState'; 
 import { useI18n } from 'vue-i18n';
@@ -397,6 +492,22 @@ const isCopied = ref(false);
 
 const existingTokens = ref([]); 
 const activeMenuIndex = ref(null);
+
+// ======================= PRICE / USAGE STATE =======================
+// Local reactive mirror of the priceState for template bindings
+const priceData = priceState;
+
+const visitPercent = computed(() => {
+  if (!priceData.visitLimit || priceData.visitLimit === 0) return priceData.visitUsed > 0 ? 5 : 0;
+  return Math.min(100, (priceData.visitUsed / priceData.visitLimit) * 100);
+});
+
+const storagePercent = computed(() => {
+  if (!priceData.storageLimitMB || priceData.storageLimitMB === 0) return priceData.storageUsedMB > 0 ? 5 : 0;
+  return Math.min(100, (priceData.storageUsedMB / priceData.storageLimitMB) * 100);
+});
+// ================================================================
+
 
 const toggleTokenMenu = (index) => {
   activeMenuIndex.value = activeMenuIndex.value === index ? null : index;
@@ -517,10 +628,35 @@ const fetchApiKeyData = async () => {
   }
 };
 
+// ======================= PRICE FETCHERS =======================
+const fetchPriceData = async () => {
+  try {
+    const meRes = await getPriceMe();
+    const me = meRes?.data || meRes || {};
+    priceData.planName    = me.name || me.package_name || 'Visitorku Free';
+    priceData.planType    = me.type || (me.price === 0 ? 'free' : 'paid');
+    priceData.price       = me.price ?? 0;
+    priceData.visitUsed   = me.visit_used ?? me.used_visit ?? 0;
+    priceData.visitLimit  = me.visit_limit ?? me.max_visit ?? 0;
+    priceData.storageUsedMB  = (me.storage_used ?? me.used_storage ?? 0) / (1024 * 1024);
+    priceData.storageLimitMB = (me.storage_limit ?? me.max_storage ?? 0) / (1024 * 1024);
+    priceData.userUsed    = me.user_used ?? me.used_user ?? 0;
+    priceData.userLimit   = me.user_limit ?? me.max_user ?? 0;
+    priceData.branchUsed  = me.branch_used ?? me.used_branch ?? 0;
+    priceData.branchLimit = me.branch_limit ?? me.max_branch ?? 0;
+    priceData.isLoaded = true;
+  } catch (err) {
+    console.warn('Gagal memuat data harga:', err);
+  }
+};
+// ================================================================
+
 onMounted(() => {
   fetchProfileData();
   fetchApiKeyData();
+  fetchPriceData();
 });
+
 
 // Data foto copy dari server
 const originalProfile = ref({

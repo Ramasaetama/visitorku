@@ -165,7 +165,7 @@ const handleSubmitPengguna = async (formData) => {
     } else {
       await createUser(formData);
     }
-    showSuccess(t('userManagement.success.saved'));
+    showSuccess(t(editingUser.value ? 'userManagement.success.updated' : 'userManagement.success.added'));
     handleCloseModal();
     await fetchAllData();
   } catch (error) {

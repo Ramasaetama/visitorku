@@ -125,7 +125,7 @@
         <Input
           v-model="form.adminPhone"
           label="Nomor Telepon"
-          type="text"
+          type="tel"
           inputmode="numeric"
           placeholder="Contoh: 0812 3456 7890"
           autocomplete="off"
@@ -226,7 +226,7 @@ import authService from '../../services/authService'
 import mailIcon from '../../assets/images/mail-icon.png'
 
 // IMPORT DARI AUTH SERVICE, BUKAN API LAGI
-import { registerUser } from '../../services/authService.js' // Sesuaikan titik folder jika perlu
+import { registerUser } from '../../services/authService.js' 
 
 const router = useRouter()
 

@@ -1,7 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
+import { priceState } from '@/utils/priceState';
 
 // Import icons directly
 import layoutMasonryIcon from '@/assets/layout-masonry-line.svg';
@@ -19,6 +20,7 @@ import calendarIcon from '@/assets/calendar-line.svg';
 
 const { t } = useI18n();
 const route = useRoute();
+const router = useRouter();
 
 const showQuickGuide = ref(true);
 
@@ -62,6 +64,40 @@ const quickGuideItems = computed(() => [
 
 const completedCount = computed(() => quickGuideItems.value.filter(item => item.completed).length);
 const progressPercent = computed(() => Math.round((completedCount.value / quickGuideItems.value.length) * 100));
+
+// ---- Package widget helpers ----
+const sidebarPlanLabel = computed(() => {
+  if (!priceState.isLoaded) return 'Free';
+  return priceState.planType === 'free' || priceState.price === 0 ? 'Free' : 'Pro';
+});
+
+const sidebarPlanName = computed(() => priceState.planName || 'Visitorku Free');
+
+const sidebarVisitLabel = computed(() => {
+  if (!priceState.isLoaded) return t('sidebar.unlimited');
+  return priceState.visitLimit === 0
+    ? t('sidebar.unlimited')
+    : `${priceState.visitUsed} / ${priceState.visitLimit}`;
+});
+
+const sidebarVisitWidth = computed(() => {
+  if (!priceState.isLoaded || priceState.visitLimit === 0) return '5%';
+  return Math.min(100, (priceState.visitUsed / priceState.visitLimit) * 100) + '%';
+});
+
+const sidebarStorageLabel = computed(() => {
+  if (!priceState.isLoaded) return t('sidebar.unlimited');
+  return priceState.storageLimitMB === 0
+    ? t('sidebar.unlimited')
+    : `${priceState.storageUsedMB.toFixed(2)} / ${priceState.storageLimitMB} MB`;
+});
+
+const sidebarStorageWidth = computed(() => {
+  if (!priceState.isLoaded || priceState.storageLimitMB === 0) return '5%';
+  return Math.min(100, (priceState.storageUsedMB / priceState.storageLimitMB) * 100) + '%';
+});
+
+const goToUpgrade = () => router.push('/profil-perusahaan');
 </script>
 
 <template>
@@ -137,28 +173,28 @@ const progressPercent = computed(() => Math.round((completedCount.value / quickG
       <div class="flex items-center justify-between mb-4">
         <span class="text-[13px] font-semibold text-[#1E293B]">{{ t('sidebar.visitorPackage') }}</span>
         <div class="flex items-center gap-1 bg-linear-to-r from-[#FFD893] to-[#F7941D] rounded-sm px-2.5 py-1">          <img :src="starIcon" alt="" class="w-3.5 h-3.5 filter brightness-0 invert" />
-          <span class="text-[10px] font-semibold text-white">Free</span>
+          <span class="text-[10px] font-semibold text-white">{{ sidebarPlanLabel }}</span>
         </div>
       </div>
       <div class="mb-3">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] text-[#64748B] font-medium">{{ t('sidebar.visitLimit') }}</span>
-          <span class="text-[11px] text-[#64748B]">{{ t('sidebar.unlimited') }}</span>
+          <span class="text-[11px] text-[#64748B]">{{ sidebarVisitLabel }}</span>
         </div>
         <div class="h-1 bg-[#FFD9B3] rounded-full overflow-hidden">
-          <div class="h-full bg-[#F7941D] rounded-full w-1/4"></div>
+          <div class="h-full bg-[#F7941D] rounded-full transition-all" :style="{ width: sidebarVisitWidth }"></div>
         </div>
       </div>
       <div class="mb-4">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-[11px] text-[#64748B] font-medium">{{ t('sidebar.storageCapacity') }}</span>
-          <span class="text-[11px] text-[#64748B]">{{ t('sidebar.unlimited') }}</span>
+          <span class="text-[11px] text-[#64748B]">{{ sidebarStorageLabel }}</span>
         </div>
         <div class="h-1 bg-[#FFD9B3] rounded-full overflow-hidden">
-          <div class="h-full bg-[#F7941D] rounded-full w-1/6"></div>
+          <div class="h-full bg-[#F7941D] rounded-full transition-all" :style="{ width: sidebarStorageWidth }"></div>
         </div>
       </div>
-      <button class="w-full border-2 border-[#F7941D] text-[#F7941D] text-[12px] font-semibold py-2.5 rounded-sm hover:bg-[#F7941D] hover:text-white transition-all">
+      <button @click="goToUpgrade" class="w-full border-2 border-[#F7941D] text-[#F7941D] text-[12px] font-semibold py-2.5 rounded-sm hover:bg-[#F7941D] hover:text-white transition-all">
         {{ t('sidebar.upgradePackage') }}
       </button>
     </div>

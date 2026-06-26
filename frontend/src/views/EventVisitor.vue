@@ -661,10 +661,7 @@ onMounted(async () => {
         type="text"
         inputmode="numeric"
         :placeholder="t('eventVisitor.modal.phonePlaceholder')"
-        autocomplete="off"
-        @keydown="(e) => { if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab|Home|End/.test(e.key)) e.preventDefault(); }"
-        @input="(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); form.phone_number = e.target.value; }"
-        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-sm px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
+        class="w-full bg-[#F8FAFC] border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:border-[#F7941D] focus:ring-1 focus:ring-[#F7941D]/20 transition-colors"
       />
     </div>
 

@@ -96,3 +96,33 @@ export const deleteApiKey = async (apiKeyId) => {
     throw error;
   }
 };
+
+// Fungsi GET semua paket harga yang tersedia
+export const getPriceAll = async () => {
+  try {
+    const response = await api.get('/admin/price');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Fungsi GET paket harga aktif perusahaan saat ini
+export const getPriceMe = async () => {
+  try {
+    const response = await api.get('/admin/price/me');
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Fungsi POST upgrade paket harga
+export const upgradePricePlan = async (payload) => {
+  try {
+    const response = await api.post('/admin/price/upgrade', payload);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

@@ -50,6 +50,13 @@ const routes = [
     component: () => import('../views/ProfilPerusahaan.vue'),
     meta: { middleware: [auth] },
   },
+  // Upgrade Plan
+  {
+    path: '/upgrade-plan',
+    name: 'UpgradePlan',
+    component: () => import('../views/UpgradePlan.vue'),
+    meta: { middleware: [auth] },
+  },
   // Edit Profile
   {
     path: '/edit-profile',
