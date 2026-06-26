@@ -21,7 +21,7 @@ const formData = reactive({
   address: props.initialData?.address || '',
   branch_id: props.initialData?.branch_id || '', 
   password: '', 
-  c_password: '', // Konsisten gunakan c_password
+  c_password: '', 
 });
 
 watch(() => props.initialData, (newData) => {
@@ -52,10 +52,10 @@ const resetForm = () => {
   passwordError.value = '';
 };
 
-// Cegah browser autofill mengisi field nama saat mode Tambah
+
 onMounted(() => {
   if (!props.initialData) {
-    // Browser autofill terjadi sesaat setelah mount, bersihkan dengan delay kecil
+
     nextTick(() => {
       setTimeout(() => {
         if (!props.initialData) {
@@ -93,7 +93,7 @@ const handleSubmit = async () => {
       branch_id: formData.branch_id === '' ? null : formData.branch_id 
     };
 
-    // Sertakan password dan c_password sesuai standar API Swagger Anda
+
     if (formData.password) {
       payload.password = formData.password;
       payload.c_password = formData.c_password; 

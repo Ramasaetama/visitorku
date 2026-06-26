@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { getInvoiceById } from '@/services/InvoiceService';
+import { getInvoiceById } from '@/services/invoiceService';
 
 import { useI18n } from 'vue-i18n';
 const { t } = useI18n();

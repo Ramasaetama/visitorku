@@ -167,17 +167,17 @@
                 <hr class="border-gray-200 mb-10 mt-10" />
                 <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                   <div class="lg:w-55 shrink-0">
-                    <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Usage</h2>
-                    <p class="text-[13px] text-gray-500 leading-relaxed">Kuota & penggunaan sumber daya paket Anda saat ini.</p>
+                    <h2 class="text-[18px] font-semibold text-gray-900 mb-1">{{ t('companyProfile.usage.heading') }}</h2>
+                    <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.usage.desc') }}</p>
                   </div>
                   <div class="flex-1 space-y-6">
 
                     <!-- Visit Quota -->
                     <div>
                       <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-[13px] font-semibold text-gray-700">Visit Quota</span>
+                        <span class="text-[13px] font-semibold text-gray-700">{{ t('companyProfile.usage.visitQuota') }}</span>
                         <span class="text-[12px] text-[#F7941D] font-medium">
-                          {{ priceData.visitLimit === 0 ? 'Unlimited' : priceData.visitLimit + '/Month' }}
+                          {{ priceData.visitLimit === 0 ? t('companyProfile.usage.unlimited') : priceData.visitLimit + t('companyProfile.usage.perMonth') }}
                         </span>
                       </div>
                       <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -185,7 +185,7 @@
                           :style="{ width: visitPercent + '%' }"></div>
                       </div>
                       <p class="text-[11px] text-gray-400 mt-1">
-                        {{ visitPercent.toFixed(0) }}% Used
+                        {{ visitPercent.toFixed(0) }}{{ t('companyProfile.usage.used') }}
                         <span v-if="priceData.visitLimit > 0" class="ml-2 text-gray-400">
                           ({{ priceData.visitUsed }} / {{ priceData.visitLimit }})
                         </span>
@@ -195,9 +195,9 @@
                     <!-- Storage -->
                     <div>
                       <div class="flex items-center justify-between mb-1.5">
-                        <span class="text-[13px] font-semibold text-gray-700">Storage</span>
+                        <span class="text-[13px] font-semibold text-gray-700">{{ t('companyProfile.usage.storage') }}</span>
                         <span class="text-[12px] text-[#F7941D] font-medium">
-                          {{ priceData.storageLimitMB === 0 ? 'Unlimited' : Math.round(priceData.storageLimitMB) + ' MB' }}
+                          {{ priceData.storageLimitMB === 0 ? t('companyProfile.usage.unlimited') : Math.round(priceData.storageLimitMB) + ' MB' }}
                         </span>
                       </div>
                       <div class="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -205,22 +205,22 @@
                           :style="{ width: storagePercent + '%' }"></div>
                       </div>
                       <p class="text-[11px] text-gray-400 mt-1">
-                        {{ priceData.storageUsedMB.toFixed(2) }} MB Used
+                        {{ priceData.storageUsedMB.toFixed(2) }} {{ t('companyProfile.usage.storageMB') }}
                       </p>
                     </div>
 
                     <!-- Account Limit + Branch Limit -->
                     <div class="grid grid-cols-2 gap-4">
                       <div>
-                        <p class="text-[13px] font-semibold text-gray-700 mb-0.5">Account Limit</p>
+                        <p class="text-[13px] font-semibold text-gray-700 mb-0.5">{{ t('companyProfile.usage.accountLimit') }}</p>
                         <p class="text-[13px] text-[#F7941D] font-medium">
-                          {{ priceData.userUsed }} / {{ priceData.userLimit === 0 ? '∞' : priceData.userLimit }} User
+                          {{ priceData.userUsed }} / {{ priceData.userLimit === 0 ? '∞' : priceData.userLimit }} {{ t('companyProfile.usage.user') }}
                         </p>
                       </div>
                       <div>
-                        <p class="text-[13px] font-semibold text-gray-700 mb-0.5">Branch Limit</p>
+                        <p class="text-[13px] font-semibold text-gray-700 mb-0.5">{{ t('companyProfile.usage.branchLimit') }}</p>
                         <p class="text-[13px] text-[#F7941D] font-medium">
-                          {{ priceData.branchUsed }} / {{ priceData.branchLimit === 0 ? '∞' : priceData.branchLimit }} Branch
+                          {{ priceData.branchUsed }} / {{ priceData.branchLimit === 0 ? '∞' : priceData.branchLimit }} {{ t('companyProfile.usage.branch') }}
                         </p>
                       </div>
                     </div>
@@ -232,8 +232,8 @@
                 <hr class="border-gray-200 mb-10" />
                 <div class="flex flex-col lg:flex-row gap-6 lg:gap-12 mb-10">
                   <div class="lg:w-55 shrink-0">
-                    <h2 class="text-[18px] font-semibold text-gray-900 mb-1">Upgrade Paket</h2>
-                    <p class="text-[13px] text-gray-500 leading-relaxed">Tingkatkan paket Anda untuk mendapatkan lebih banyak fitur dan kapasitas.</p>
+                    <h2 class="text-[18px] font-semibold text-gray-900 mb-1">{{ t('companyProfile.upgradePlan.heading') }}</h2>
+                    <p class="text-[13px] text-gray-500 leading-relaxed">{{ t('companyProfile.upgradePlan.desc') }}</p>
                   </div>
                   <div class="flex-1">
                     <!-- Current active plan card -->
@@ -242,15 +242,15 @@
                         <span class="text-[15px] font-bold text-gray-900">{{ priceData.planName || 'Visitorku Free' }}</span>
                         <span class="text-[14px] font-bold text-[#F7941D]">
                           {{ priceData.price === 0 ? 'Rp 0' : 'Rp ' + priceData.price.toLocaleString('id-ID') }}
-                          <span class="text-[12px] font-normal text-gray-500"> /month</span>
+                          <span class="text-[12px] font-normal text-gray-500"> {{ t('companyProfile.upgradePlan.perMonth') }}</span>
                         </span>
                       </div>
-                      <p class="text-[12px] text-gray-500 mb-4">Features</p>
+                      <p class="text-[12px] text-gray-500 mb-4">{{ t('companyProfile.upgradePlan.features') }}</p>
                       <button
                         @click="$router.push('/upgrade-plan')"
                         class="inline-flex items-center gap-2 px-5 py-2 border border-[#F7941D] text-[#F7941D] text-[13px] font-semibold rounded-sm bg-white hover:bg-[#FEF3E2] transition"
                       >
-                        Upgrade
+                        {{ t('companyProfile.upgradePlan.upgradeBtn') }}
                       </button>
                     </div>
                   </div>

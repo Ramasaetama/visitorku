@@ -1,13 +1,4 @@
 import { useRouter } from 'vue-router';
-
-/**
- * useAutoLogout — logs the user out after `idleMinutes` of inactivity.
- *
- * Usage in App.vue:
- *   const { initAutoLogout, destroyAutoLogout } = useAutoLogout(15);
- *   onMounted(() => { if (localStorage.getItem('token')) initAutoLogout(); });
- *   onUnmounted(() => destroyAutoLogout());
- */
 export function useAutoLogout(idleMinutes = 15) {
   const router = useRouter();
   let timer = null;

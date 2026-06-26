@@ -11,6 +11,6 @@ const app = createApp(App)
 
 app.use(router)
 app.use(VueSweetalert2)
-app.use(VueApexCharts);
-app.use(i18n);
+app.use(VueApexCharts)
+app.use(i18n)
 app.mount('#app')

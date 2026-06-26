@@ -1,5 +1,4 @@
 import api from './api';
-//KUMPULAN API UNTUK CABANG
 
 /**
  * GET /admin/branch
