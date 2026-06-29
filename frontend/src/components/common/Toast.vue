@@ -1,16 +1,4 @@
 <script setup>
-/**
- * Toast Component
- * Komponen reusable untuk menampilkan notifikasi sukses
- * 
- * Props:
- * - show: Boolean - mengontrol visibility toast
- * - message: String - pesan yang ditampilkan
- * - duration: Number - durasi sebelum auto-dismiss (default 4000ms)
- * 
- * Events:
- * - close: Dipanggil ketika toast di-close (manual atau auto)
- */
 import { watch } from 'vue';
 import checkIcon from '@/assets/check-circle-svgrepo-com.svg';
 import closeIcon from '@/assets/close-line.svg';

@@ -293,7 +293,6 @@ const closeModal = () => {
 };
 
 const handleSubmit = async () => {
-  // Tandai field URL sudah disentuh agar error muncul
   urlTouched.value = true;
 
   if (
@@ -627,61 +626,65 @@ onUnmounted(() => {
         </Transition>
       </div>
 
-      <DateTimePicker
-        v-model="form.start_at"
-        :label="t('event.modal.startAt')"
-        :required="true"
-      />
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-4">
+        <div>
+          <DateTimePicker
+            v-model="form.start_at"
+            :label="t('event.modal.startAt')"
+            :required="true"
+          />
+        </div>
 
-      <div>
-        <DateTimePicker
-          v-model="form.finish_at"
-          :label="t('event.modal.finishAt')"
-          :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.event_finish_at }"
-        />
-        <Transition name="err-fade">
-          <p v-if="dateErrors.event_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-            {{ dateErrors.event_finish_at }}
-          </p>
-        </Transition>
-      </div>
+        <div>
+          <DateTimePicker
+            v-model="form.finish_at"
+            :label="t('event.modal.finishAt')"
+            :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.event_finish_at }"
+          />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.event_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.event_finish_at }}
+            </p>
+          </Transition>
+        </div>
 
-      <div>
-        <DateTimePicker
-          v-model="form.registration_start_at"
-          :label="t('event.modal.regStartAt')"
-          :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_start_at }"
-        />
-        <Transition name="err-fade">
-          <p v-if="dateErrors.registration_start_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-            {{ dateErrors.registration_start_at }}
-          </p>
-        </Transition>
-      </div>
+        <div>
+          <DateTimePicker
+            v-model="form.registration_start_at"
+            :label="t('event.modal.regStartAt')"
+            :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_start_at }"
+          />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.registration_start_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.registration_start_at }}
+            </p>
+          </Transition>
+        </div>
 
-      <div>
-        <DateTimePicker
-          v-model="form.registration_finish_at"
-          :label="t('event.modal.regFinishAt')"
-          :required="true"
-          :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_finish_at }"
-        />
-        <Transition name="err-fade">
-          <p v-if="dateErrors.registration_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
-            <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-            </svg>
-            {{ dateErrors.registration_finish_at }}
-          </p>
-        </Transition>
+        <div>
+          <DateTimePicker
+            v-model="form.registration_finish_at"
+            :label="t('event.modal.regFinishAt')"
+            :required="true"
+            :class="{ 'ring-1 ring-red-400 rounded-sm': dateErrors.registration_finish_at }"
+          />
+          <Transition name="err-fade">
+            <p v-if="dateErrors.registration_finish_at" class="mt-1.5 flex items-center gap-1.5 text-xs text-red-500">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              </svg>
+              {{ dateErrors.registration_finish_at }}
+            </p>
+          </Transition>
+        </div>
       </div>
     </div>
 

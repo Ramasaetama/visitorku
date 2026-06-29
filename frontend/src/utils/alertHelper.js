@@ -4,9 +4,6 @@ import Swal from 'sweetalert2';
 // KONFIRMASI
 // =============================================
 
-/**
- * Konfirmasi hapus data (merah)
- */
 export const confirmDelete = async (namaItem) => {
   const result = await Swal.fire({
     title: 'Are you sure?',
@@ -23,9 +20,6 @@ export const confirmDelete = async (namaItem) => {
   return result.isConfirmed;
 };
 
-/**
- * Konfirmasi aksi generik (logout, batal, dsb)
- */
 export const confirmAction = async (title, text) => {
   const result = await Swal.fire({
     title: title,
@@ -46,17 +40,6 @@ export const confirmAction = async (title, text) => {
 // PARSER ERROR API — ekstrak pesan spesifik dari backend
 // =============================================
 
-/**
- * Mem-parse error dari Axios menjadi pesan yang informatif.
- * Mendukung berbagai format response backend:
- * - { message: "...", errors: { field: ["msg"] } }
- * - { errors: { field: "msg" } }
- * - { message: "..." }
- *
- * @param {Error} error - Error object dari Axios catch block
- * @param {string} fallback - Pesan default jika tidak ada detail
- * @returns {string}
- */
 export const parseApiError = (error, fallback = 'Terjadi kesalahan. Silakan coba lagi.') => {
   const data = error?.response?.data;
 
@@ -143,11 +126,6 @@ export const showInfo = (pesan) => {
   BottomRightToast.fire({ icon: 'info', title: pesan });
 };
 
-/**
- * Tampilkan toast notification (bottom-end, dengan progress bar)
- * @param {string} pesan - Pesan yang ditampilkan
- * @param {'success'|'error'|'warning'|'info'} icon - Ikon toast
- */
 export const showToast = (pesan, icon = 'success') => {
   BottomRightToast.fire({
     icon: icon,

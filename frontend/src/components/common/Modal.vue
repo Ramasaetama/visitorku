@@ -1,21 +1,4 @@
 <script setup>
-/**
- * Side-over Modal Component
- * Komponen modal yang muncul dari sisi kanan layar
- * 
- * Props:
- * - show: Boolean untuk menampilkan/menyembunyikan modal
- * - title: Judul modal
- * - description: Deskripsi opsional di bawah judul
- * - width: Lebar modal ('md', 'lg', 'xl', 'half') default: 'lg'
- * 
- * Events:
- * - close: Dipanggil ketika modal ditutup (klik X atau overlay)
- * 
- * Slots:
- * - default: Konten utama modal (scrollable)
- * - footer: Tombol-tombol di bagian bawah (sticky)
- */
 
 defineProps({
   show: {
@@ -33,7 +16,7 @@ defineProps({
   width: {
     type: String,
     default: 'lg',
-    validator: (value) => ['md', 'lg', 'xl', 'half'].includes(value)
+    validator: (value) => ['md', 'lg', 'xl', 'half', 'third'].includes(value)
   }
 });
 
@@ -44,7 +27,8 @@ const widthClasses = {
   md: 'w-full max-w-md',
   lg: 'w-full max-w-lg',
   xl: 'w-full max-w-xl',
-  half: 'w-full max-w-[50vw]'
+  half: 'w-full max-w-[50vw]',
+  third: 'w-full max-w-[35vw] min-w-[380px]'
 };
 </script>
 

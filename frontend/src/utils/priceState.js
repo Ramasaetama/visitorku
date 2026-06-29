@@ -1,10 +1,5 @@
 import { reactive } from 'vue';
 
-/**
- * Shared reactive state for the active price plan.
- * Updated by ProfilPerusahaan on mount and after upgrade.
- * Consumed by Sidebar to render the package widget.
- */
 export const priceState = reactive({
   // Current plan info
   planName: '',       // e.g. "Visitorku Free"

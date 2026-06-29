@@ -374,7 +374,7 @@ const deleteField = async (index) => {
           <div class="relative">
             <select
               v-model="formData.fieldType"
-              class="w-full px-4 py-3 border border-gray-300 rounded-sm font-poppins text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors bg-white appearance-none pr-10"
+              class="w-full px-4 py-3 border border-gray-300 rounded-sm font-poppins text-gray-900 focus:outline-none focus:border-[#F7941D] hover:border-[#F7941D] transition-colors bg-white appearance-none pr-10"
             >
               <option v-for="opt in fieldTypeOptions" :key="opt.value" :value="opt.value">
                 {{ opt.label }}
@@ -445,7 +445,6 @@ button:focus, select:focus {
   box-shadow: none !important;
 }
 
-/* Memaksa label di dalam Input menjadi font-normal (400) agar tidak terlihat semi-bold */
 .custom-medium-label :deep(label) {
   font-weight: 400 !important;
 }

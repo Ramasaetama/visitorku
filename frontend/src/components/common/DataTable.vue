@@ -1,12 +1,4 @@
 <script setup>
-/**
- * DataTable Component
- * Komponen reusable untuk tabel data
- * * Props:
- * - columns: array kolom [{key, label, sortable}]
- * - data: array data yang ditampilkan
- * - loading: status loading
- */
 
 // Import icons for actions
 import editIcon from '@/assets/edit.svg';
@@ -37,14 +29,6 @@ const props = defineProps({
 
 defineEmits(['sort', 'edit', 'delete']);
 
-/**
- * Fungsi untuk mendapatkan class styling header berdasarkan posisi kolom
- * LOGIKA DINAMIS (bukan hardcode key):
- * - Kolom pertama: border kanan putih untuk gap
- * - Kolom tengah (bukan pertama/terakhir dan bukan 'aksi'): border kanan putih
- * - Kolom terakhir sebelum 'aksi': border kanan putih untuk gap
- * - Kolom 'aksi': tidak ada border kanan
- */
 const getHeaderClass = (key, index) => {
   const classes = [];
   const isLast = index === props.columns.length - 1;
@@ -75,10 +59,6 @@ const getHeaderClass = (key, index) => {
   return classes.join(' ');
 };
 
-/**
- * Fungsi untuk mendapatkan class styling cell (td) berdasarkan posisi kolom
- * LOGIKA SAMA dengan getHeaderClass untuk konsistensi visual
- */
 const getCellClass = (key, index) => {
   const classes = ['px-4', 'py-3', 'text-sm', 'text-gray-600', 'border-b-[3px]', 'border-b-[#EDEDED]'];
   const isLast = index === props.columns.length - 1;

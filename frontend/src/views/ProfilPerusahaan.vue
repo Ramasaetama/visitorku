@@ -465,7 +465,6 @@ import Modal from '@/components/common/Modal.vue';
 import headerbg from '@/assets/Header.svg';
 import nochathistory from '@/assets/NoChatHistory.svg';
 
-// Hapus email & phone karena itu milik Admin
 const companyProfile = ref({
   id: '', 
   name: '',

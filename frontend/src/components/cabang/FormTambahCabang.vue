@@ -1,16 +1,4 @@
 <script setup>
-/**
- * FormTambahCabang Component
- * Form untuk menambahkan atau mengedit cabang
- * 
- * Props:
- * - initialData: Object data cabang untuk mode edit (opsional)
- *   { namaCabang, alamatCabang, kontakCabang }
- * 
- * Events:
- * - submit: Dipanggil ketika form di-submit dengan data cabang
- * - cancel: Dipanggil ketika user membatalkan
- */
 import { ref, reactive, watch } from 'vue';
 
 const props = defineProps({

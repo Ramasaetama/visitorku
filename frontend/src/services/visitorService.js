@@ -10,12 +10,10 @@ export const getLatestVisitor = () => {
   return api.get('/admin/visitor/latest');
 };
 
-//catatan
 export const updateVisitorNotes = (id, payload) => {
   return api.put(`/admin/visitor/notes/${id}`, payload); 
 };
 
-//detail
 export const getVisitorDetail = (id) => {
   return api.get(`/admin/visitor/${id}`);
 };

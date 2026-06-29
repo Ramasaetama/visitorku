@@ -1,15 +1,4 @@
 <script setup>
-/**
- * EmptyState Component
- * Komponen reusable untuk menampilkan state kosong (empty state)
- * 
- * Props:
- * - icon: path ke gambar ilustrasi (opsional)
- * - title: judul pesan empty state
- * - description: deskripsi tambahan
- * - buttonText: teks tombol action
- * - showButton: tampilkan tombol atau tidak (default: true)
- */
 
 defineProps({
   icon: {
