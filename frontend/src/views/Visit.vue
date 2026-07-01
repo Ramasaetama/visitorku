@@ -14,7 +14,6 @@ import { getAllVisits } from '@/services/visitService';
 const { t } = useI18n();
 const router = useRouter();
 
-// ─── State ───────────────────────────────────────────────────────────────────
 const visitData     = ref([]);
 const isLoading     = ref(false);
 const searchQuery   = ref('');
@@ -23,7 +22,6 @@ const perPage       = ref(10);
 const currentPage   = ref(1);
 const totalRecords  = ref(0);
 
-// ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = computed(() => [
   { key: 'name',      label: t('visitData.table.name'),      sortable: true  },
   { key: 'purpose',   label: t('visitData.table.purpose'),   sortable: true  },
@@ -32,7 +30,6 @@ const tableColumns = computed(() => [
   { key: 'face',      label: t('visitData.table.face'),      sortable: false },
 ]);
 
-// ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('check_in');
 const sortOrder = ref('desc');
 
@@ -47,7 +44,6 @@ const handleSort = (key) => {
   fetchVisits();
 };
 
-// ─── Fetch Data ───────────────────────────────────────────────────────────────
 const fetchVisits = async () => {
   isLoading.value = true;
   try {
@@ -76,7 +72,6 @@ const fetchVisits = async () => {
       raw:           v,
     }));
   } catch (err) {
-    console.error('Gagal memuat data visit:', err);
     visitData.value    = [];
     totalRecords.value = 0;
   } finally {
@@ -84,7 +79,6 @@ const fetchVisits = async () => {
   }
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
 const formatDateTime = (val) => {
   if (!val) return '-';
   const d = new Date(val);
@@ -93,7 +87,6 @@ const formatDateTime = (val) => {
   return `${pad(d.getDate())}-${pad(d.getMonth() + 1)}-${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 };
 
-// ─── Search & Watchers ────────────────────────────────────────────────────────
 const executeSearch = () => {
   appliedSearch.value = searchQuery.value;
   currentPage.value = 1;
@@ -120,7 +113,6 @@ watch(currentPage, () => {
   fetchVisits();
 });
 
-// ─── Report ───────────────────────────────────────────────────────────────────
 const handleReport = () => {
   router.push('/report');
 };

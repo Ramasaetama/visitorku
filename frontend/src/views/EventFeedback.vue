@@ -20,11 +20,9 @@ const route  = useRoute();
 const router = useRouter();
 const eventId = computed(() => route.params.id);
 
-// ─── Event Info ───────────────────────────────────────────────────────────────
 const eventInfo        = ref(null);
 const satisfactionData = ref(null);
 
-// ─── State Dropdown Opsi dengan Posisi Dinamis ────────────────────────────────
 const activeDropdown = ref(null);
 const dropdownPosition = ref({ top: '0px', left: '0px' });
 
@@ -48,7 +46,6 @@ const closeDropdown = () => {
   activeDropdown.value = null;
 };
 
-// ─── State ───────────────────────────────────────────────────────────────────
 const feedbackData  = ref([]);
 const isLoading     = ref(false);
 const searchQuery   = ref('');
@@ -57,7 +54,6 @@ const perPage       = ref(10);
 const currentPage   = ref(1);
 const totalRecords  = ref(0);
 
-// ─── Kolom Tabel ─────────────────────────────────────────────────────────────
 const tableColumns = computed(() => [
   { key: 'name',         label: t('eventFeedback.table.name'),         sortable: true  },
   { key: 'notes',        label: t('eventFeedback.table.notes'),        sortable: false },
@@ -65,7 +61,6 @@ const tableColumns = computed(() => [
   { key: 'aksi',         label: t('eventFeedback.table.action'),       sortable: false },
 ]);
 
-// ─── Sorting ─────────────────────────────────────────────────────────────────
 const sortKey   = ref('name');
 const sortOrder = ref('asc');
 
@@ -80,7 +75,6 @@ const handleSort = (key) => {
   fetchFeedback();
 };
 
-// ─── Fetch Event Info ─────────────────────────────────────────────────────────
 const fetchEventInfo = async () => {
   try {
     const res = await getEventById(eventId.value);

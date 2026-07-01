@@ -14,13 +14,11 @@ import { confirmDelete, showSuccess, showError, parseApiError } from '@/utils/al
 import { getAdditionalData, updateAdditionalData } 
   from '@/services/pengaturanFormService'
 
-// ── State ──
 const showModal = ref(false)
 const showToast = ref(false)
 const toastMessage = ref('')
 const activeKebab = ref(null)
 
-// ── Dropdown State dengan Posisi Dinamis ──
 const activeDropdown = ref(null);
 const dropdownPosition = ref({ top: '0px', left: '0px' });
 
@@ -43,18 +41,14 @@ const closeDropdown = () => {
   activeDropdown.value = null;
 };
 
-// ── Default Fields (non-deletable) ──
 const defaultFields = ref([
   { id: 1, name: 'Name', type: 'Text', isDefault: true },
   { id: 2, name: 'Email', type: 'Text', isDefault: true },
   { id: 3, name: 'Phone Number', type: 'Number', isDefault: true },
 ])
 
-// ── Custom Fields ──
 const customFields = ref([])
 const additionalDataId = ref(null)
-
-// ── Form Data ──
 const formData = ref({
   fieldName: '',
   fieldType: 'Text',
@@ -114,48 +108,41 @@ const handleCloseToast = () => {
   showToast.value = false
 }
 
-// 1. Tambahkan state penanda index yang sedang diedit
 const editingFieldIndex = ref(null);
 
-// 2. Fungsi bantuan untuk mengubah "Nama Depan" menjadi "nama_depan" (sesuai req backend)
 const generateFieldSlug = (text) => {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/(^_|_$)/g, '');
 };
 
-// 3. Perbarui fungsi Buka Modal Tambah
 const openModal = () => {
   closeDropdown();
   formData.value = { fieldName: '', fieldType: 'Text', placeholder: '', required: false };
-  editingFieldIndex.value = null; // Pastikan mode Tambah
+  editingFieldIndex.value = null; 
   showModal.value = true;
 };
 
-// 4. Tambahkan fungsi Buka Modal Edit
 const handleEditForm = (index) => {
   closeDropdown();
   const fieldToEdit = customFields.value[index];
   
   formData.value = {
     fieldName: fieldToEdit.name,
-    // Kembalikan huruf kapital pertama agar select option Vue tidak error
     fieldType: fieldToEdit.type.charAt(0).toUpperCase() + fieldToEdit.type.slice(1), 
     required: fieldToEdit.required || false,
     placeholder: fieldToEdit.placeholder || ''
   };
   
-  editingFieldIndex.value = index; // Tandai bahwa ini mode Edit
+  editingFieldIndex.value = index;
   showModal.value = true;
 };
 
-// 5. Fungsi Gabungan Simpan (Tambah & Edit)
 const saveField = async () => {
   if (!isFormValid.value) return;
 
-  // Format data persis seperti yang diminta Backend
   const newFieldData = {
     field: generateFieldSlug(formData.value.fieldName), 
     name: formData.value.fieldName,
-    type: formData.value.fieldType.toLowerCase(), // Backend minta huruf kecil (text, number, dll)
+    type: formData.value.fieldType.toLowerCase(),
     required: formData.value.required,
     placeholder: formData.value.placeholder // Tambahkan placeholder ke payload jika diperlukan
   };
@@ -163,14 +150,13 @@ const saveField = async () => {
   try {
     let updatedFields = [...customFields.value];
 
-    // Jika Edit, timpa datanya. Jika Tambah, taruh di paling bawah.
     if (editingFieldIndex.value !== null) {
       updatedFields[editingFieldIndex.value] = newFieldData;
     } else {
       updatedFields.push(newFieldData);
     }
 
-    // Tembak API (PUT)
+    // API (PUT)
     await updateAdditionalData(additionalDataId.value, { forms: updatedFields });
 
     // Update tabel & tutup modal
@@ -188,10 +174,9 @@ const saveField = async () => {
   }
 };
 
-// 6. Perbarui Fungsi Hapus (Delete) dengan SweetAlert
 const deleteField = async (index) => {
   closeDropdown();
-  // Panggil pop-up konfirmasi khas aplikasi Anda
+  // konfirmasi delete
   const isConfirmed = await confirmDelete('Custom Field');
   
   if (isConfirmed) {
